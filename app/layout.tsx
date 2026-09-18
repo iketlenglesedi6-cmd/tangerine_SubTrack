@@ -30,9 +30,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
+      <body className="min-h-full flex flex-col bg-[#fffaf5] text-zinc-800">
         <ClerkProvider>
-          <header className="flex justify-end items-center gap-4 p-4 border-b">
+          <header className="flex justify-end items-center gap-4 border-b border-[#f6e4c7] bg-[#fffaf5] p-4">
             <Show when="signed-out">
               <SignInButton />
               <SignUpButton />

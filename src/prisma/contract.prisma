@@ -1,0 +1,23 @@
+model Category {
+  id            Int            @id @default(autoincrement())
+  name          String
+  userId        String
+  subscriptions Subscription[]
+  createdAt     TimestamptzString @default(now())
+
+  @@unique([userId, name])
+}
+
+model Subscription {
+  id           Int      @id @default(autoincrement())
+  name         String
+  cost         Float
+  billingCycle String
+  renewalDate  TimestamptzString
+  status       String   @default("active")
+  userId       String
+  category     Category @relation(fields: [categoryId], references: [id])
+  categoryId   Int
+  createdAt    TimestamptzString @default(now())
+  updatedAt    temporal.updatedAtString()
+}
