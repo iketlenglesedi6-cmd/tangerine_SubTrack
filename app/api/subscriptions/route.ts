@@ -1,32 +1,35 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const subscriptions = [
-  {
-    id: "sub_1",
-    name: "Netflix",
-    cost: 15.99,
-    billingCycle: "monthly",
-    renewalDate: "2026-09-18T00:00:00.000Z",
-    status: "active",
-    userId: "demo-user",
-    categoryId: "cat_1",
-    createdAt: "2026-09-01T00:00:00.000Z",
-    updatedAt: "2026-09-01T00:00:00.000Z",
-  },
-  {
-    id: "sub_2",
-    name: "Adobe Creative Cloud",
-    cost: 59.99,
-    billingCycle: "monthly",
-    renewalDate: "2026-09-22T00:00:00.000Z",
-    status: "active",
-    userId: "demo-user",
-    categoryId: "cat_2",
-    createdAt: "2026-09-01T00:00:00.000Z",
-    updatedAt: "2026-09-01T00:00:00.000Z",
-  },
-];
+import { db } from "@/src/prisma/db";
+
+function serializeSubscription(record: {
+  id: number;
+  name: string;
+  cost: number;
+  billingCycle: string;
+  renewalDate: string;
+  status: string;
+  userId: string;
+  categoryId: number;
+  createdAt: string;
+  updatedAt: string;
+  category?: { id: number; name: string } | null;
+}) {
+  return {
+    id: String(record.id),
+    name: record.name,
+    cost: Number(record.cost),
+    billingCycle: record.billingCycle,
+    renewalDate: new Date(record.renewalDate).toISOString(),
+    status: record.status,
+    userId: record.userId,
+    categoryId: String(record.categoryId),
+    category: record.category ?? null,
+    createdAt: new Date(record.createdAt).toISOString(),
+    updatedAt: new Date(record.updatedAt).toISOString(),
+  };
+}
 
 export async function GET() {
   const { userId } = await auth();
@@ -35,7 +38,12 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  return NextResponse.json(subscriptions.filter((sub) => sub.userId === userId || sub.userId === "demo-user"));
+  const rows = await db.orm.public.Subscription
+    .where({ userId })
+    .include("category", (category) => category.select("id", "name"))
+    .all();
+
+  return NextResponse.json(rows.map(serializeSubscription));
 }
 
 export async function POST(request: Request) {
@@ -46,21 +54,43 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
+  const name = String(body.name ?? "Untitled subscription").trim();
 
-  const next = {
-    id: `sub_${Date.now()}`,
-    name: String(body.name ?? "Untitled subscription"),
+  if (!name) {
+    return NextResponse.json({ error: "Subscription name is required" }, { status: 400 });
+  }
+
+  const categoryName = String(body.categoryName ?? body.category ?? "General").trim() || "General";
+  const categoryValue = Number(body.categoryId ?? 0);
+
+  let categoryId = Number.isFinite(categoryValue) && categoryValue > 0 ? categoryValue : null;
+
+  if (!categoryId) {
+    const existingCategory = await db.orm.public.Category.where({ userId, name: categoryName }).first();
+
+    if (existingCategory) {
+      categoryId = existingCategory.id;
+    } else {
+      const createdCategory = await db.orm.public.Category.create({
+        name: categoryName,
+        userId,
+        createdAt: new Date().toISOString(),
+      });
+      categoryId = createdCategory.id;
+    }
+  }
+
+  const record = await db.orm.public.Subscription.create({
+    name,
     cost: Number(body.cost ?? 0),
     billingCycle: String(body.billingCycle ?? "monthly"),
     renewalDate: new Date(body.renewalDate ?? Date.now()).toISOString(),
     status: String(body.status ?? "active"),
     userId,
-    categoryId: String(body.categoryId ?? "uncategorized"),
+    categoryId,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
-  };
+  });
 
-  subscriptions.push(next);
-
-  return NextResponse.json(next, { status: 201 });
+  return NextResponse.json(serializeSubscription(record), { status: 201 });
 }

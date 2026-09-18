@@ -1,58 +1,9 @@
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
+import { SubscriptionForm } from "@/components/subscription-form";
 import { calculateDashboardSummary } from "@/src/lib/dashboard";
-
-const subscriptions = [
-  {
-    id: "sub_1",
-    name: "Netflix",
-    cost: 15.99,
-    billingCycle: "monthly",
-    renewalDate: "2026-09-18T00:00:00.000Z",
-    status: "active",
-    userId: "demo-user",
-    categoryId: "cat_1",
-    createdAt: "2026-09-01T00:00:00.000Z",
-    updatedAt: "2026-09-01T00:00:00.000Z",
-  },
-  {
-    id: "sub_2",
-    name: "Adobe Creative Cloud",
-    cost: 59.99,
-    billingCycle: "monthly",
-    renewalDate: "2026-09-22T00:00:00.000Z",
-    status: "active",
-    userId: "demo-user",
-    categoryId: "cat_2",
-    createdAt: "2026-09-01T00:00:00.000Z",
-    updatedAt: "2026-09-01T00:00:00.000Z",
-  },
-  {
-    id: "sub_3",
-    name: "Gym Membership",
-    cost: 35,
-    billingCycle: "monthly",
-    renewalDate: "2026-09-28T00:00:00.000Z",
-    status: "canceled",
-    userId: "demo-user",
-    categoryId: "cat_3",
-    createdAt: "2026-09-01T00:00:00.000Z",
-    updatedAt: "2026-09-01T00:00:00.000Z",
-  },
-  {
-    id: "sub_4",
-    name: "Spotify Family",
-    cost: 16.99,
-    billingCycle: "monthly",
-    renewalDate: "2026-09-27T00:00:00.000Z",
-    status: "active",
-    userId: "demo-user",
-    categoryId: "cat_4",
-    createdAt: "2026-09-01T00:00:00.000Z",
-    updatedAt: "2026-09-01T00:00:00.000Z",
-  },
-];
+import { db } from "@/src/prisma/db";
 
 function currency(value: number) {
   return new Intl.NumberFormat("en-US", {
@@ -69,6 +20,32 @@ function formatDate(date: string) {
   });
 }
 
+function normalizeSubscription(record: {
+  id: number;
+  name: string;
+  cost: number;
+  billingCycle: string;
+  renewalDate: string;
+  status: string;
+  userId: string;
+  categoryId: number;
+  createdAt: string;
+  updatedAt: string;
+}) {
+  return {
+    id: String(record.id),
+    name: record.name,
+    cost: Number(record.cost),
+    billingCycle: record.billingCycle,
+    renewalDate: new Date(record.renewalDate).toISOString(),
+    status: record.status,
+    userId: record.userId,
+    categoryId: String(record.categoryId),
+    createdAt: new Date(record.createdAt).toISOString(),
+    updatedAt: new Date(record.updatedAt).toISOString(),
+  };
+}
+
 export default async function DashboardPage() {
   const { userId } = await auth();
 
@@ -76,15 +53,11 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
-  const summary = calculateDashboardSummary(
-    subscriptions.filter(
-      (sub) => sub.userId === userId || sub.userId === "demo-user"
-    )
-  );
+  const rows = await db.orm.public.Subscription.where({ userId }).all();
+  const normalizedSubscriptions = rows.map(normalizeSubscription);
+  const summary = calculateDashboardSummary(normalizedSubscriptions);
 
-  const activeSubscriptions = subscriptions.filter(
-    (sub) => (sub.userId === userId || sub.userId === "demo-user") && sub.status === "active"
-  );
+  const activeSubscriptions = normalizedSubscriptions.filter((sub) => sub.status === "active");
   const biggestSubscription = [...activeSubscriptions].sort(
     (left, right) => right.cost - left.cost
   )[0];
@@ -98,9 +71,9 @@ export default async function DashboardPage() {
   ];
 
   const actions = [
-    "Netflix and Spotify are small individually but add up fast.",
-    "Adobe is your single highest monthly cost and deserves a quick review.",
-    "You have 4 renewals coming soon; plan your budget before they hit.",
+    "Your recurring charges are being tracked in real time from the database.",
+    "The highest cost is the first place to review before the next renewal window.",
+    "Upcoming renewals are surfaced automatically so budget planning stays proactive.",
   ];
 
   return (
@@ -234,7 +207,45 @@ export default async function DashboardPage() {
         </aside>
       </section>
 
-      <section className="grid gap-5 lg:grid-cols-[0.8fr_1.2fr]">
+      <section className="rounded-[1.75rem] border border-[#e7ddd2] bg-[#fbf8f4] p-5 shadow-[0_10px_20px_rgba(31,26,23,0.02)]">
+        <div className="mb-4 flex items-center justify-between gap-3">
+          <h2 className="text-xl font-bold text-zinc-900">Your subscriptions</h2>
+          <span className="text-[0.68rem] font-medium uppercase tracking-[0.18em] text-zinc-500">
+            {normalizedSubscriptions.length} saved
+          </span>
+        </div>
+
+        {normalizedSubscriptions.length === 0 ? (
+          <div className="rounded-2xl border border-dashed border-[#dcc9b4] bg-white p-6 text-center text-zinc-600">
+            No subscriptions added yet. Use the form below to add your first recurring expense.
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {normalizedSubscriptions.map((subscription) => (
+              <div
+                key={subscription.id}
+                className="flex flex-col gap-3 rounded-2xl border border-[#e7ddd2] bg-white p-4 md:flex-row md:items-center md:justify-between"
+              >
+                <div>
+                  <p className="font-semibold text-zinc-900">{subscription.name}</p>
+                  <p className="text-sm text-zinc-500">
+                    {subscription.billingCycle === "yearly" ? "Yearly" : "Monthly"} • {subscription.status}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-6 text-sm text-zinc-600">
+                  <span>{currency(subscription.cost)}</span>
+                  <span>{formatDate(subscription.renewalDate)}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr]">
+        <SubscriptionForm />
+
         <div className="rounded-[1.75rem] border border-[#e7ddd2] bg-[#fbf8f4] p-5 shadow-[0_10px_20px_rgba(31,26,23,0.02)]">
           <h2 className="text-xl font-bold text-zinc-900">Spend by category</h2>
           <div className="mt-5 space-y-4">

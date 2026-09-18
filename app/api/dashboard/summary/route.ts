@@ -2,45 +2,33 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { calculateDashboardSummary } from "@/src/lib/dashboard";
+import { db } from "@/src/prisma/db";
 
-const subscriptions = [
-  {
-    id: "sub_1",
-    name: "Netflix",
-    cost: 15.99,
-    billingCycle: "monthly",
-    renewalDate: "2026-09-18T00:00:00.000Z",
-    status: "active",
-    userId: "demo-user",
-    categoryId: "cat_1",
-    createdAt: "2026-09-01T00:00:00.000Z",
-    updatedAt: "2026-09-01T00:00:00.000Z",
-  },
-  {
-    id: "sub_2",
-    name: "Adobe Creative Cloud",
-    cost: 59.99,
-    billingCycle: "monthly",
-    renewalDate: "2026-09-22T00:00:00.000Z",
-    status: "active",
-    userId: "demo-user",
-    categoryId: "cat_2",
-    createdAt: "2026-09-01T00:00:00.000Z",
-    updatedAt: "2026-09-01T00:00:00.000Z",
-  },
-  {
-    id: "sub_3",
-    name: "Gym Membership",
-    cost: 35,
-    billingCycle: "monthly",
-    renewalDate: "2026-09-28T00:00:00.000Z",
-    status: "canceled",
-    userId: "demo-user",
-    categoryId: "cat_3",
-    createdAt: "2026-09-01T00:00:00.000Z",
-    updatedAt: "2026-09-01T00:00:00.000Z",
-  },
-];
+function toDashboardRecord(record: {
+  id: number;
+  name: string;
+  cost: number;
+  billingCycle: string;
+  renewalDate: string;
+  status: string;
+  userId: string;
+  categoryId: number;
+  createdAt: string;
+  updatedAt: string;
+}) {
+  return {
+    id: String(record.id),
+    name: record.name,
+    cost: Number(record.cost),
+    billingCycle: record.billingCycle,
+    renewalDate: new Date(record.renewalDate).toISOString(),
+    status: record.status,
+    userId: record.userId,
+    categoryId: String(record.categoryId),
+    createdAt: new Date(record.createdAt).toISOString(),
+    updatedAt: new Date(record.updatedAt).toISOString(),
+  };
+}
 
 export async function GET() {
   const { userId } = await auth();
@@ -49,7 +37,8 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const userSubscriptions = subscriptions.filter((sub) => sub.userId === userId || sub.userId === "demo-user");
+  const rows = await db.orm.public.Subscription.where({ userId }).all();
+  const summary = calculateDashboardSummary(rows.map(toDashboardRecord));
 
-  return NextResponse.json(calculateDashboardSummary(userSubscriptions));
+  return NextResponse.json(summary);
 }
