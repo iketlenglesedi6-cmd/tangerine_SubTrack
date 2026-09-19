@@ -1,11 +1,7 @@
 import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
-const categories = [
-  { id: "cat_1", name: "Entertainment", userId: "demo-user" },
-  { id: "cat_2", name: "Productivity", userId: "demo-user" },
-  { id: "cat_3", name: "Health", userId: "demo-user" },
-];
+import { db } from "@/src/prisma/db";
 
 export async function GET() {
   const { userId } = await auth();
@@ -14,7 +10,14 @@ export async function GET() {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  return NextResponse.json(categories.filter((category) => category.userId === userId || category.userId === "demo-user"));
+  const rows = await db.orm.public.Category.where({ userId }).all();
+
+  return NextResponse.json(rows.map((category) => ({
+    id: String(category.id),
+    name: category.name,
+    userId: category.userId,
+    createdAt: new Date(category.createdAt).toISOString(),
+  })));
 }
 
 export async function POST(request: Request) {
@@ -31,8 +34,27 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Category name is required" }, { status: 400 });
   }
 
-  const next = { id: `cat_${Date.now()}`, name: value, userId };
-  categories.push(next);
+  const existing = await db.orm.public.Category.where({ userId, name: value }).first();
 
-  return NextResponse.json(next, { status: 201 });
+  if (existing) {
+    return NextResponse.json({
+      id: String(existing.id),
+      name: existing.name,
+      userId: existing.userId,
+      createdAt: new Date(existing.createdAt).toISOString(),
+    });
+  }
+
+  const created = await db.orm.public.Category.create({
+    name: value,
+    userId,
+    createdAt: new Date().toISOString(),
+  });
+
+  return NextResponse.json({
+    id: String(created.id),
+    name: created.name,
+    userId: created.userId,
+    createdAt: new Date(created.createdAt).toISOString(),
+  }, { status: 201 });
 }
