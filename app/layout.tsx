@@ -59,7 +59,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           <header className="flex items-center justify-between border-b border-[#1C1917]/8 px-6 py-4">
             <Link href="/" className="flex items-center gap-2">
               <Image
-                src="/tangerine-subtrack-logo.png"
+                src="/tangerine-icon.png"
                 alt="SubTrack"
                 width={28}
                 height={28}
