@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { SubscriptionForm } from "@/components/subscription-form";
+import { SubscriptionRowActions } from "@/components/subscription-row-actions";
 import { calculateDashboardSummary } from "@/src/lib/dashboard";
 import { db } from "@/src/prisma/db";
 
@@ -129,9 +130,12 @@ export default async function DashboardPage() {
                       {sub.status === "canceled" && " · canceled"}
                     </p>
                   </div>
-                  <div className="text-right">
-                    <p className="font-medium text-[#1C1917]">{currency(sub.cost)}</p>
-                    <p className="text-sm text-[#78716C]">{formatDate(sub.renewalDate)}</p>
+                  <div className="flex items-center gap-6">
+                    <div className="text-right">
+                      <p className="font-medium text-[#1C1917]">{currency(sub.cost)}</p>
+                      <p className="text-sm text-[#78716C]">{formatDate(sub.renewalDate)}</p>
+                    </div>
+                    <SubscriptionRowActions id={sub.id} currentStatus={sub.status} />
                   </div>
                 </div>
               ))}
