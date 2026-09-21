@@ -26,9 +26,7 @@ export function SubscriptionForm() {
     try {
       const response = await fetch("/api/subscriptions", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name.trim(),
           cost: Number(cost || 0),
@@ -50,7 +48,7 @@ export function SubscriptionForm() {
       setRenewalDate("");
       setStatus("active");
       setCategoryName("Entertainment");
-      setMessage("Subscription saved successfully.");
+      setMessage("Subscription saved.");
       window.location.reload();
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Something went wrong.");
@@ -60,30 +58,31 @@ export function SubscriptionForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4 rounded-[1.75rem] border border-[#e7ddd2] bg-[#fbf8f4] p-5 shadow-[0_10px_20px_rgba(31,26,23,0.02)]">
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-[0.68rem] font-semibold uppercase tracking-[0.24em] text-[#7a5b3a]">
-            Add subscription
-          </p>
-          <h2 className="mt-2 text-xl font-black tracking-[-0.05em] text-zinc-900">
-            Track a new recurring expense
-          </h2>
-        </div>
+    <form
+      onSubmit={handleSubmit}
+      className="space-y-4 rounded-2xl border border-[#1C1917]/8 bg-white p-5"
+    >
+      <div>
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#F97316]">
+          Add subscription
+        </p>
+        <h2 className="mt-1 text-lg font-semibold text-[#1C1917]">
+          Track a new recurring expense
+        </h2>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <label className="block text-sm font-medium text-zinc-700">
-          Subscription name
+        <label className="block text-sm font-medium text-[#1C1917]">
+          Name
           <input
             value={name}
             onChange={(event) => setName(event.target.value)}
             placeholder="Netflix"
-            className="mt-2 w-full rounded-2xl border border-[#e3d4c0] bg-white px-3 py-2.5 text-zinc-900 outline-none transition focus:border-[#8c6a4b]"
+            className="mt-1.5 w-full rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none transition focus:border-[#F97316]"
           />
         </label>
 
-        <label className="block text-sm font-medium text-zinc-700">
+        <label className="block text-sm font-medium text-[#1C1917]">
           Price
           <input
             type="number"
@@ -91,67 +90,65 @@ export function SubscriptionForm() {
             step="0.01"
             value={cost}
             onChange={(event) => setCost(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-[#e3d4c0] bg-white px-3 py-2.5 text-zinc-900 outline-none transition focus:border-[#8c6a4b]"
+            className="mt-1.5 w-full rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none transition focus:border-[#F97316]"
           />
         </label>
 
-        <label className="block text-sm font-medium text-zinc-700">
+        <label className="block text-sm font-medium text-[#1C1917]">
           Billing cycle
           <select
             value={billingCycle}
             onChange={(event) => setBillingCycle(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-[#e3d4c0] bg-white px-3 py-2.5 text-zinc-900 outline-none transition focus:border-[#8c6a4b]"
+            className="mt-1.5 w-full rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none transition focus:border-[#F97316]"
           >
             <option value="monthly">Monthly</option>
             <option value="yearly">Yearly</option>
           </select>
         </label>
 
-        <label className="block text-sm font-medium text-zinc-700">
+        <label className="block text-sm font-medium text-[#1C1917]">
           Status
           <select
             value={status}
             onChange={(event) => setStatus(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-[#e3d4c0] bg-white px-3 py-2.5 text-zinc-900 outline-none transition focus:border-[#8c6a4b]"
+            className="mt-1.5 w-full rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none transition focus:border-[#F97316]"
           >
             <option value="active">Active</option>
             <option value="canceled">Canceled</option>
           </select>
         </label>
 
-        <label className="block text-sm font-medium text-zinc-700">
+        <label className="block text-sm font-medium text-[#1C1917]">
           Renewal date
           <input
             type="date"
             value={renewalDate}
             onChange={(event) => setRenewalDate(event.target.value)}
-            className="mt-2 w-full rounded-2xl border border-[#e3d4c0] bg-white px-3 py-2.5 text-zinc-900 outline-none transition focus:border-[#8c6a4b]"
+            className="mt-1.5 w-full rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none transition focus:border-[#F97316]"
           />
         </label>
 
-        <label className="block text-sm font-medium text-zinc-700">
+        <label className="block text-sm font-medium text-[#1C1917]">
           Category
           <input
             value={categoryName}
             onChange={(event) => setCategoryName(event.target.value)}
             placeholder="Entertainment"
-            className="mt-2 w-full rounded-2xl border border-[#e3d4c0] bg-white px-3 py-2.5 text-zinc-900 outline-none transition focus:border-[#8c6a4b]"
+            className="mt-1.5 w-full rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none transition focus:border-[#F97316]"
           />
         </label>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex items-center justify-between">
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex items-center justify-center rounded-full bg-[#171513] px-5 py-2.5 text-sm font-semibold text-[#f8f2ee] transition hover:bg-[#2a221f] disabled:cursor-not-allowed disabled:opacity-60"
+          className="rounded-lg bg-[#F97316] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#EA580C] disabled:cursor-not-allowed disabled:opacity-60"
         >
           {isSubmitting ? "Saving..." : "Save subscription"}
         </button>
 
-        {message ? (
-          <p className="text-sm text-zinc-700">{message}</p>
-        ) : null}
+        {message ? <p className="text-sm text-[#78716C]">{message}</p> : null}
       </div>
     </form>
   );
