@@ -122,7 +122,7 @@ export default async function DashboardPage() {
           ) : (
             <div className="divide-y divide-[#1C1917]/8 border-t border-[#1C1917]/8">
               {subscriptions.map((sub) => (
-                <div key={sub.id} className="flex items-center justify-between py-4">
+                <div key={sub.id} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between py-4">
                   <div>
                     <p className="font-medium text-[#1C1917]">{sub.name}</p>
                     <p className="text-sm text-[#78716C]">
@@ -130,7 +130,7 @@ export default async function DashboardPage() {
                       {sub.status === "canceled" && " · canceled"}
                     </p>
                   </div>
-                  <div className="flex items-center gap-6">
+                  <div className="flex items-center gap-4 sm:gap-6">
                     <div className="text-right">
                       <p className="font-medium text-[#1C1917]">{currency(sub.cost)}</p>
                       <p className="text-sm text-[#78716C]">{formatDate(sub.renewalDate)}</p>
