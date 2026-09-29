@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard | SubTrack",
+  description: "Track your active subscriptions, upcoming renewals, and monthly spend in one place.",
+};
+
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 

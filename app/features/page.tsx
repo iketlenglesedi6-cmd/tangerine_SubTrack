@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Features | SubTrack",
+  description: "See how SubTrack helps you track renewals, spending, and subscriptions in one dashboard.",
+};
+
 const featureGroups = [
   {
     title: "Renewal radar",
