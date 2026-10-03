@@ -130,7 +130,7 @@ export default async function DashboardPage() {
                       {sub.status === "canceled" && " · canceled"}
                     </p>
                   </div>
-                  <div className="flex items-center gap-4 sm:gap-6">
+                  <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:gap-6">
                     <div className="text-right">
                       <p className="font-medium text-[#1C1917]">{currency(sub.cost)}</p>
                       <p className="text-sm text-[#78716C]">{formatDate(sub.renewalDate)}</p>
