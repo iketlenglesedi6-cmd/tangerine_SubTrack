@@ -27,8 +27,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
-  const value = String(body.name ?? "").trim();
+  const body: unknown = await request.json();
+  const value =
+    typeof body === "object" && body !== null && "name" in body && typeof body.name === "string"
+      ? body.name.trim()
+      : "";
 
   if (!value) {
     return NextResponse.json({ error: "Category name is required" }, { status: 400 });
@@ -37,12 +40,7 @@ export async function POST(request: Request) {
   const existing = await db.orm.public.Category.where({ userId, name: value }).first();
 
   if (existing) {
-    return NextResponse.json({
-      id: String(existing.id),
-      name: existing.name,
-      userId: existing.userId,
-      createdAt: new Date(existing.createdAt).toISOString(),
-    });
+    return NextResponse.json({ error: "A category with that name already exists" }, { status: 409 });
   }
 
   const created = await db.orm.public.Category.create({

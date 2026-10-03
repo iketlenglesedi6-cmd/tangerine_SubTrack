@@ -86,7 +86,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </Show>
 
             <Show when="signed-in">
-              <UserButton />
+              <div className="flex items-center gap-4">
+                <Link href="/categories" className="text-sm font-medium text-[#78716C] hover:text-[#1C1917]">
+                  Categories
+                </Link>
+                <UserButton />
+              </div>
             </Show>
           </header>
           {children}
