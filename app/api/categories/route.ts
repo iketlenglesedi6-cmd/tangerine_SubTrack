@@ -27,8 +27,16 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
-  const value = String(body.name ?? "").trim();
+  let body: unknown;
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Request body must be valid JSON" }, { status: 400 });
+  }
+  const value =
+    typeof body === "object" && body !== null && "name" in body && typeof body.name === "string"
+      ? body.name.trim()
+      : "";
 
   if (!value) {
     return NextResponse.json({ error: "Category name is required" }, { status: 400 });
