@@ -2,6 +2,7 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { db } from "@/src/prisma/db";
+import { isSupportedCurrency } from "@/src/lib/currency";
 
 export async function PATCH(
   request: Request,
@@ -44,6 +45,13 @@ export async function PATCH(
       return NextResponse.json({ error: "Cost must be a non-negative number" }, { status: 400 });
     }
     updates.cost = cost;
+  }
+  if (body.currency !== undefined) {
+    const currency = String(body.currency).toUpperCase();
+    if (!isSupportedCurrency(currency)) {
+      return NextResponse.json({ error: "Choose a supported currency" }, { status: 400 });
+    }
+    updates.currency = currency;
   }
   if (typeof body.billingCycle === "string") {
     if (body.billingCycle !== "monthly" && body.billingCycle !== "yearly") {

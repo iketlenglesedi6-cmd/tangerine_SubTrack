@@ -8,6 +8,7 @@ function toDashboardRecord(record: {
   id: number;
   name: string;
   cost: number;
+  currency: string;
   billingCycle: string;
   renewalDate: string;
   status: string;
@@ -20,6 +21,7 @@ function toDashboardRecord(record: {
     id: String(record.id),
     name: record.name,
     cost: Number(record.cost),
+    currency: record.currency,
     billingCycle: record.billingCycle,
     renewalDate: new Date(record.renewalDate).toISOString(),
     status: record.status,

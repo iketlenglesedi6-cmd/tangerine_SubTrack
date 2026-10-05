@@ -1,7 +1,10 @@
+import { getNextRenewalDate } from "@/src/lib/renewals";
+
 export type DashboardSubscription = {
   id: string;
   name: string;
   cost: number;
+  currency?: string;
   billingCycle: string;
   renewalDate: string;
   status: string;
@@ -12,12 +15,17 @@ export type DashboardSubscription = {
 };
 
 export type DashboardSummary = {
-  totalMonthlySpend: number;
   activeSubscriptionCount: number;
+  monthlySpendByCurrency: Array<{
+    currency: string;
+    monthlySpend: number;
+    activeSubscriptionCount: number;
+  }>;
   upcomingRenewals: Array<{
     id: string;
     name: string;
     cost: number;
+    currency: string;
     renewalDate: string;
   }>;
 };
@@ -25,33 +33,44 @@ export type DashboardSummary = {
 export function calculateDashboardSummary(
   subscriptions: DashboardSubscription[]
 ): DashboardSummary {
+  const now = new Date();
   const activeSubscriptions = subscriptions.filter((item) => item.status === "active");
 
-  const totalMonthlySpend = activeSubscriptions.reduce((sum, subscription) => {
+  const monthlySpend = new Map<string, { total: number; count: number }>();
+  for (const subscription of activeSubscriptions) {
     const normalizedCost = Number(subscription.cost) || 0;
+    const currency = subscription.currency ?? "USD";
+    const current = monthlySpend.get(currency) ?? { total: 0, count: 0 };
 
-    if (subscription.billingCycle === "yearly") {
-      return sum + normalizedCost / 12;
-    }
+    current.total += subscription.billingCycle === "yearly" ? normalizedCost / 12 : normalizedCost;
+    current.count += 1;
+    monthlySpend.set(currency, current);
+  }
 
-    return sum + normalizedCost;
-  }, 0);
+  const monthlySpendByCurrency = Array.from(monthlySpend.entries())
+    .map(([currency, values]) => ({
+      currency,
+      monthlySpend: Number(values.total.toFixed(2)),
+      activeSubscriptionCount: values.count,
+    }))
+    .sort((left, right) => left.currency.localeCompare(right.currency));
 
   const upcomingRenewals = [...activeSubscriptions]
-    .sort(
-      (left, right) =>
-        new Date(left.renewalDate).getTime() - new Date(right.renewalDate).getTime()
-    )
     .map((subscription) => ({
       id: subscription.id,
       name: subscription.name,
       cost: Number(subscription.cost) || 0,
-      renewalDate: subscription.renewalDate,
+      currency: subscription.currency ?? "USD",
+      renewalDate: getNextRenewalDate(subscription.renewalDate, subscription.billingCycle, now),
     }));
 
+  upcomingRenewals.sort(
+    (left, right) => new Date(left.renewalDate).getTime() - new Date(right.renewalDate).getTime(),
+  );
+
   return {
-    totalMonthlySpend: Number(totalMonthlySpend.toFixed(2)),
     activeSubscriptionCount: activeSubscriptions.length,
+    monthlySpendByCurrency,
     upcomingRenewals,
   };
 }

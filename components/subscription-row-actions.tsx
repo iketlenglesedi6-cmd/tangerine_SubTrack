@@ -62,7 +62,7 @@ export function SubscriptionRowActions({
         disabled={isWorking}
         className="text-[#78716C] underline decoration-dotted underline-offset-4 hover:text-[#1C1917] disabled:opacity-50"
       >
-        {currentStatus === "active" ? "Cancel" : "Reactivate"}
+        {currentStatus === "active" ? "Mark canceled" : "Reactivate tracking"}
       </button>
       {message ? <span role="status" className="basis-full text-xs text-red-700">{message}</span> : null}
       <button

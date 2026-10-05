@@ -2,11 +2,13 @@ import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
 import { db } from "@/src/prisma/db";
+import { isSupportedCurrency } from "@/src/lib/currency";
 
 function serializeSubscription(record: {
   id: number;
   name: string;
   cost: number;
+  currency: string;
   billingCycle: string;
   renewalDate: string;
   status: string;
@@ -20,6 +22,7 @@ function serializeSubscription(record: {
     id: String(record.id),
     name: record.name,
     cost: Number(record.cost),
+    currency: record.currency,
     billingCycle: record.billingCycle,
     renewalDate: new Date(record.renewalDate).toISOString(),
     status: record.status,
@@ -74,6 +77,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Cost must be a non-negative number" }, { status: 400 });
   }
 
+  const currency = String(body.currency ?? "USD").toUpperCase();
+  if (!isSupportedCurrency(currency)) {
+    return NextResponse.json({ error: "Choose a supported currency" }, { status: 400 });
+  }
+
   const billingCycle = String(body.billingCycle ?? "monthly");
   if (billingCycle !== "monthly" && billingCycle !== "yearly") {
     return NextResponse.json({ error: "Billing cycle must be monthly or yearly" }, { status: 400 });
@@ -123,6 +131,7 @@ export async function POST(request: Request) {
   const record = await db.orm.public.Subscription.create({
     name,
     cost,
+    currency,
     billingCycle,
     renewalDate: renewalDate.toISOString(),
     status,
