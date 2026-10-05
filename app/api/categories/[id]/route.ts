@@ -15,11 +15,15 @@ async function getOwnedCategory(id: string, userId: string) {
 
 export async function PATCH(request: Request, { params }: RouteContext) {
   const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const { id } = await params;
   const category = await getOwnedCategory(id, userId);
-  if (!category) return NextResponse.json({ error: "Category not found" }, { status: 404 });
+  if (!category) {
+    return NextResponse.json({ error: "Category not found" }, { status: 404 });
+  }
 
   let body: unknown;
   try {
@@ -32,7 +36,9 @@ export async function PATCH(request: Request, { params }: RouteContext) {
     typeof body === "object" && body !== null && "name" in body && typeof body.name === "string"
       ? body.name.trim()
       : "";
-  if (!name) return NextResponse.json({ error: "Category name is required" }, { status: 400 });
+  if (!name) {
+    return NextResponse.json({ error: "Category name is required" }, { status: 400 });
+  }
 
   const duplicate = await db.orm.public.Category.where({ userId, name }).first();
   if (duplicate && duplicate.id !== category.id) {
@@ -40,7 +46,10 @@ export async function PATCH(request: Request, { params }: RouteContext) {
   }
 
   const updated = await db.orm.public.Category.where({ id: category.id, userId }).update({ name });
-  if (!updated) return NextResponse.json({ error: "Category not found" }, { status: 404 });
+  if (!updated) {
+    return NextResponse.json({ error: "Category not found" }, { status: 404 });
+  }
+
   return NextResponse.json({
     id: String(updated.id),
     name: updated.name,
@@ -51,18 +60,22 @@ export async function PATCH(request: Request, { params }: RouteContext) {
 
 export async function DELETE(_request: Request, { params }: RouteContext) {
   const { userId } = await auth();
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  if (!userId) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
 
   const { id } = await params;
   const category = await getOwnedCategory(id, userId);
-  if (!category) return NextResponse.json({ error: "Category not found" }, { status: 404 });
+  if (!category) {
+    return NextResponse.json({ error: "Category not found" }, { status: 404 });
+  }
 
   const linkedSubscription = await db.orm.public.Subscription
     .where({ categoryId: category.id, userId })
     .first();
   if (linkedSubscription) {
     return NextResponse.json(
-      { error: "Delete this category's subscriptions before deleting it" },
+      { error: "Move or delete this category's subscriptions before deleting the category" },
       { status: 409 },
     );
   }

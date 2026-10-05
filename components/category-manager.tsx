@@ -1,107 +1,212 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 
-type Category = { id: string; name: string };
+type Category = {
+  id: string;
+  name: string;
+};
 
-export function CategoryManager({ categories }: { categories: Category[] }) {
-  const router = useRouter();
+export function CategoryManager({ categories: initialCategories }: { categories: Category[] }) {
+  const [categories, setCategories] = useState(initialCategories);
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
-  const [message, setMessage] = useState("");
   const [isWorking, setIsWorking] = useState(false);
+  const [message, setMessage] = useState("");
 
-  async function send(url: string, method: "POST" | "PATCH" | "DELETE", name?: string) {
+  async function getError(response: Response) {
+    const payload: unknown = await response.json().catch(() => null);
+    if (
+      typeof payload === "object" &&
+      payload !== null &&
+      "error" in payload &&
+      typeof payload.error === "string"
+    ) {
+      return payload.error;
+    }
+    return "Something went wrong. Please try again.";
+  }
+
+  async function createCategory(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const name = newName.trim();
+    if (!name) {
+      setMessage("Enter a category name.");
+      return;
+    }
+
     setIsWorking(true);
     setMessage("");
     try {
-      const response = await fetch(url, {
-        method,
-        ...(name ? {
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name }),
-        } : {}),
+      const response = await fetch("/api/categories", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
       });
-      const payload = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(payload.error || "Unable to update categories.");
-      setMessage("Categories updated.");
-      setEditingId(null);
+      if (!response.ok) throw new Error(await getError(response));
+      const category = (await response.json()) as Category;
+      setCategories((current) =>
+        [...current, category].sort((left, right) => left.name.localeCompare(right.name)),
+      );
       setNewName("");
-      router.refresh();
+      setMessage("Category added.");
     } catch (error) {
-      setMessage(error instanceof Error ? error.message : "Something went wrong.");
+      setMessage(error instanceof Error ? error.message : "Unable to add category.");
+    } finally {
+      setIsWorking(false);
+    }
+  }
+
+  async function saveRename(id: string) {
+    const name = editingName.trim();
+    if (!name) {
+      setMessage("Enter a category name.");
+      return;
+    }
+
+    setIsWorking(true);
+    setMessage("");
+    try {
+      const response = await fetch(`/api/categories/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name }),
+      });
+      if (!response.ok) throw new Error(await getError(response));
+      const updated = (await response.json()) as Category;
+      setCategories((current) =>
+        current
+          .map((category) => (category.id === id ? updated : category))
+          .sort((left, right) => left.name.localeCompare(right.name)),
+      );
+      setEditingId(null);
+      setMessage("Category renamed.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to rename category.");
+    } finally {
+      setIsWorking(false);
+    }
+  }
+
+  async function deleteCategory(category: Category) {
+    if (!window.confirm(`Delete "${category.name}"?`)) return;
+
+    setIsWorking(true);
+    setMessage("");
+    try {
+      const response = await fetch(`/api/categories/${category.id}`, { method: "DELETE" });
+      if (!response.ok) throw new Error(await getError(response));
+      setCategories((current) => current.filter((item) => item.id !== category.id));
+      setMessage("Category deleted.");
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Unable to delete category.");
     } finally {
       setIsWorking(false);
     }
   }
 
   return (
-    <section aria-labelledby="category-heading" className="rounded-2xl border border-[#1C1917]/8 bg-white p-5">
-      <h2 id="category-heading" className="text-lg font-semibold text-[#1C1917]">Manage categories</h2>
+    <section
+      aria-labelledby="category-heading"
+      className="rounded-2xl border border-[#1C1917]/8 bg-white p-5"
+    >
+      <h2 id="category-heading" className="text-lg font-semibold text-[#1C1917]">
+        Manage categories
+      </h2>
       <form
-        className="mt-4 flex gap-2"
-        onSubmit={(event) => {
-          event.preventDefault();
-          if (newName.trim()) void send("/api/categories", "POST", newName.trim());
-        }}
+        onSubmit={createCategory}
+        className="mt-4 flex flex-col gap-3 border-b border-[#1C1917]/10 pb-6 sm:flex-row"
       >
         <label className="sr-only" htmlFor="new-category">New category name</label>
         <input
           id="new-category"
           value={newName}
           onChange={(event) => setNewName(event.target.value)}
+          maxLength={80}
           placeholder="Add a category"
-          className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 px-3 py-2 text-sm text-[#1C1917] outline-none focus:border-[#F97316]"
+          className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none focus:border-[#F97316]"
         />
-        <button disabled={isWorking || !newName.trim()} className="rounded-lg bg-[#F97316] px-3 py-2 text-sm font-medium text-white disabled:opacity-50">
-          Add
+        <button
+          type="submit"
+          disabled={isWorking || !newName.trim()}
+          className="rounded-lg bg-[#F97316] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#EA580C] disabled:opacity-60"
+        >
+          Add category
         </button>
       </form>
 
       {categories.length === 0 ? (
-        <p className="mt-4 text-sm text-[#78716C]">No categories yet.</p>
+        <p className="border-b border-[#1C1917]/10 py-8 text-sm text-[#78716C]">
+          No categories yet.
+        </p>
       ) : (
-        <ul className="mt-4 divide-y divide-[#1C1917]/8">
+        <ul className="divide-y divide-[#1C1917]/10">
           {categories.map((category) => (
-            <li key={category.id} className="flex flex-wrap items-center justify-between gap-3 py-3">
+            <li
+              key={category.id}
+              className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between"
+            >
               {editingId === category.id ? (
                 <form
-                  className="flex min-w-0 flex-1 gap-2"
+                  className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row"
                   onSubmit={(event) => {
                     event.preventDefault();
-                    if (editingName.trim()) void send(`/api/categories/${category.id}`, "PATCH", editingName.trim());
+                    void saveRename(category.id);
                   }}
                 >
-                  <label className="sr-only" htmlFor={`category-${category.id}`}>Rename {category.name}</label>
+                  <label className="sr-only" htmlFor={`rename-${category.id}`}>
+                    Rename {category.name}
+                  </label>
                   <input
-                    id={`category-${category.id}`}
+                    id={`rename-${category.id}`}
                     value={editingName}
                     onChange={(event) => setEditingName(event.target.value)}
-                    className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 px-3 py-2 text-sm text-[#1C1917] outline-none focus:border-[#F97316]"
+                    maxLength={80}
+                    className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#F97316]"
                   />
-                  <button disabled={isWorking || !editingName.trim()} className="text-sm font-medium text-[#9A3412] disabled:opacity-50">Save</button>
-                  <button type="button" onClick={() => setEditingId(null)} className="text-sm text-[#78716C]">Cancel</button>
+                  <div className="flex gap-3">
+                    <button
+                      type="submit"
+                      disabled={isWorking || !editingName.trim()}
+                      className="text-sm font-medium text-[#1C1917] underline disabled:opacity-50"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingId(null)}
+                      disabled={isWorking}
+                      className="text-sm text-[#78716C] underline disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                  </div>
                 </form>
               ) : (
                 <>
-                  <span className="text-sm font-medium text-[#1C1917]">{category.name}</span>
-                  <div className="flex gap-4">
+                  <p className="font-medium text-[#1C1917]">{category.name}</p>
+                  <div className="flex items-center gap-4">
                     <button
-                      disabled={isWorking}
-                      onClick={() => { setEditingId(category.id); setEditingName(category.name); }}
-                      className="text-sm text-[#78716C] underline underline-offset-4 disabled:opacity-50"
-                    >Edit</button>
-                    <button
+                      type="button"
                       disabled={isWorking}
                       onClick={() => {
-                        if (confirm(`Delete ${category.name}? Categories with subscriptions cannot be deleted.`)) {
-                          void send(`/api/categories/${category.id}`, "DELETE");
-                        }
+                        setEditingId(category.id);
+                        setEditingName(category.name);
+                        setMessage("");
                       }}
-                      className="text-sm text-[#78716C] underline underline-offset-4 hover:text-red-700 disabled:opacity-50"
-                    >Delete</button>
+                      className="text-sm text-[#78716C] underline decoration-dotted underline-offset-4 hover:text-[#1C1917] disabled:opacity-50"
+                    >
+                      Rename
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isWorking}
+                      onClick={() => void deleteCategory(category)}
+                      className="text-sm text-[#78716C] underline decoration-dotted underline-offset-4 hover:text-red-600 disabled:opacity-50"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </>
               )}
@@ -109,7 +214,10 @@ export function CategoryManager({ categories }: { categories: Category[] }) {
           ))}
         </ul>
       )}
-      {message ? <p role="status" className="mt-3 text-sm text-[#57534E]">{message}</p> : null}
+
+      <p aria-live="polite" className="min-h-6 pt-3 text-sm text-[#78716C]">
+        {message}
+      </p>
     </section>
   );
 }
