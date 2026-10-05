@@ -114,6 +114,13 @@
                   "kind": "scalar"
                 }
               },
+              "currency": {
+                "nullable": false,
+                "type": {
+                  "codecId": "pg/text@1",
+                  "kind": "scalar"
+                }
+              },
               "id": {
                 "nullable": false,
                 "type": {
@@ -188,6 +195,9 @@
                 },
                 "createdAt": {
                   "column": "createdAt"
+                },
+                "currency": {
+                  "column": "currency"
                 },
                 "id": {
                   "column": "id"
@@ -294,6 +304,15 @@
                   "nativeType": "timestamptz",
                   "nullable": false
                 },
+                "currency": {
+                  "codecId": "pg/text@1",
+                  "default": {
+                    "kind": "literal",
+                    "value": "USD"
+                  },
+                  "nativeType": "text",
+                  "nullable": false
+                },
                 "id": {
                   "codecId": "pg/int4@1",
                   "default": {
@@ -374,7 +393,7 @@
         "kind": "postgres-schema"
       }
     },
-    "storageHash": "e3929986ba91ef677877d68935818ef5268eb887e4633b7733d70040ef149a83"
+    "storageHash": "384dae2cab3fcc75ac5de8d5f0e51fe7f6773b7ca12d312f27a8e34abc0ac280"
   },
   "execution": {
     "executionHash": "d32020f6e69df8056b9addbaf90b293b38c12f47a445cf3b8a258de442724f93",

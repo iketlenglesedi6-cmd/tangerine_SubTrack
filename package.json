@@ -11,6 +11,7 @@
     "postinstall": "prisma skills sync || exit 0",
     "contract:emit": "prisma contract emit",
     "db:init": "prisma db init",
+    "db:migrate": "prisma db migrate",
     "db:verify": "prisma db verify"
   },
   "dependencies": {

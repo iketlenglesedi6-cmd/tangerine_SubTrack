@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Features | SubTrack",
@@ -7,26 +8,23 @@ export const metadata: Metadata = {
 
 const featureGroups = [
   {
-    title: "Renewal radar",
-    text: "See which subscriptions are approaching renewal and plan ahead before your budget gets hit.",
-    metric: "4 renewals" ,
+    title: "See what renews next",
+    text: "Keep each subscription’s next expected charge date in one schedule. SubTrack advances past dates by the billing cycle you choose.",
   },
   {
-    title: "Spend forecasting",
-    text: "Translate recurring charges into monthly totals and understand the real cost of your subscriptions.",
-    metric: "$248 / month",
+    title: "Compare spending by currency",
+    text: "View monthly equivalents and category totals without adding different currencies into a misleading single number.",
   },
   {
-    title: "Category control",
-    text: "Track where your money is going across entertainment, work tools, health, and lifestyle spending.",
-    metric: "4 categories",
+    title: "Find recurring charges",
+    text: "Import a bank statement CSV, review possible monthly or yearly charges, and choose which ones to track.",
   },
 ];
 
 const workflow = [
-  "Connect your subscriptions and track recurring charges",
-  "Review calendar reminders and upcoming renewal dates",
-  "Cut unnecessary spend before it becomes a surprise bill",
+  "Enter subscriptions yourself or import a statement exported by your bank",
+  "Review detected recurring charges before adding them to your tracker",
+  "Check upcoming renewals and review spending by category and currency",
 ];
 
 export default function FeaturesPage() {
@@ -55,10 +53,18 @@ export default function FeaturesPage() {
             </div>
             <h2 className="text-xl font-bold tracking-[-0.05em] text-zinc-900">{feature.title}</h2>
             <p className="mt-3 text-sm leading-6 text-zinc-600">{feature.text}</p>
-            <p className="mt-5 text-xs font-semibold uppercase tracking-[0.2em] text-[#7a5b3a]">{feature.metric}</p>
           </div>
         ))}
       </section>
+
+      <div className="mt-8 flex flex-wrap gap-3">
+        <Link href="/pricing" className="rounded-lg border border-[#d9c5af] px-5 py-3 text-sm font-medium text-zinc-800 hover:bg-[#f7f3ee]">
+          See what’s included
+        </Link>
+        <Link href="/import" className="rounded-lg bg-[#9A3412] px-5 py-3 text-sm font-medium text-white hover:bg-[#7C2D12]">
+          Import a statement
+        </Link>
+      </div>
 
       <section className="mt-10 rounded-[2rem] border border-[#e7ddd2] bg-[#f6f1ea] p-8 md:p-10">
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">

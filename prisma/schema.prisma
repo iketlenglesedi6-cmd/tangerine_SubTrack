@@ -21,6 +21,7 @@ model Subscription {
   id           Int      @id @default(autoincrement())
   name         String
   cost         Float
+  currency     String   @default("USD")
   billingCycle String
   renewalDate  DateTime
   status       String   @default("active")

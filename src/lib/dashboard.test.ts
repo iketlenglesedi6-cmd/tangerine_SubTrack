@@ -43,8 +43,10 @@ test("dashboard summary totals active subscriptions and sorts upcoming renewals"
     },
   ]);
 
-  assert.equal(summary.totalMonthlySpend, 40);
   assert.equal(summary.activeSubscriptionCount, 2);
+  assert.deepEqual(summary.monthlySpendByCurrency, [
+    { currency: "USD", monthlySpend: 40, activeSubscriptionCount: 2 },
+  ]);
   assert.deepEqual(
     summary.upcomingRenewals.map((item) => item.name),
     ["Spotify", "Adobe"]
