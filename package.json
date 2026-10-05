@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "eslint",
     "postinstall": "prisma skills sync || exit 0",
-    "contract:emit": "prisma contract emit"
+    "contract:emit": "prisma contract emit",
+    "db:init": "prisma db init",
+    "db:verify": "prisma db verify"
   },
   "dependencies": {
     "@clerk/nextjs": "^7.9.2",

@@ -16,19 +16,28 @@ SubTrack helps individuals see their recurring subscription costs, upcoming rene
 
 ## Local setup
 
-1. Install Node.js and PostgreSQL (version 15 or later).
-2. Create a PostgreSQL database and configure the tables described in `src/prisma/contract.prisma`.
-3. Create a Clerk application and copy `.env.example` to `.env`. Set `DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, and `CLERK_SECRET_KEY` to your local values.
-4. Install dependencies and start the development server:
+1. Install Node.js and create an empty PostgreSQL 15+ database. Neon works for a hosted development database.
+2. Copy `.env.example` to `.env` and set `DATABASE_URL` to the database connection string.
+3. Emit the Prisma ORM 8 contract and initialize the empty database:
 
    ```bash
    npm install
+   npm run contract:emit
+   npm run db:init
+   ```
+
+   The contract source of truth is `src/prisma/contract.prisma`; `prisma/schema.prisma` is not used by the current Prisma ORM 8 config. `db:init` creates tables and records the database contract. Only run it against a new, empty database. For an existing database, confirm its schema before using `npm run db:verify`.
+
+4. Create a Clerk application and set `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` in `.env` using its development keys.
+5. Start the development server:
+
+   ```bash
    npm run dev
    ```
 
-5. Open [http://localhost:3000](http://localhost:3000).
+6. Open [http://localhost:3000](http://localhost:3000).
 
-Never commit `.env` or real credentials. `npm run contract:emit` refreshes the generated database contract from the configured database; review the generated changes before committing them.
+Never commit `.env` or real credentials. `npm run contract:emit` compiles the contract source into the generated `contract.json` and `contract.d.ts` files; review generated changes before committing them.
 
 ## Main user flows
 
@@ -54,6 +63,7 @@ All API endpoints require an authenticated Clerk session. Responses use JSON.
 - **Production URL:** Add the public deployment URL here after deployment.
 - **Repository:** https://github.com/iketlenglesedi6-cmd/tangerine_SubTrack
 - **Authentication:** Clerk.
+- **Vercel environment:** Set `DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, and `CLERK_SECRET_KEY` in Project Settings. Use Clerk development keys for previews; production keys require a Clerk production instance configured for a domain you own.
 - **Demo credentials:** Create a dedicated grader account in the production Clerk instance and provide its credentials in the course submission. Do not commit credentials here.
 - **Grader steps:** Sign in, add a subscription, edit its status, remove it, and manage a category from the dashboard.
 
