@@ -1,14 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
 
 type Category = {
   id: string;
   name: string;
-  createdAt: string;
 };
 
-export function CategoryManager({ initialCategories }: { initialCategories: Category[] }) {
+export function CategoryManager({ categories: initialCategories }: { categories: Category[] }) {
   const [categories, setCategories] = useState(initialCategories);
   const [newName, setNewName] = useState("");
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -18,13 +17,18 @@ export function CategoryManager({ initialCategories }: { initialCategories: Cate
 
   async function getError(response: Response) {
     const payload: unknown = await response.json().catch(() => null);
-    if (typeof payload === "object" && payload !== null && "error" in payload && typeof payload.error === "string") {
+    if (
+      typeof payload === "object" &&
+      payload !== null &&
+      "error" in payload &&
+      typeof payload.error === "string"
+    ) {
       return payload.error;
     }
     return "Something went wrong. Please try again.";
   }
 
-  async function createCategory(event: React.FormEvent<HTMLFormElement>) {
+  async function createCategory(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const name = newName.trim();
     if (!name) {
@@ -42,7 +46,9 @@ export function CategoryManager({ initialCategories }: { initialCategories: Cate
       });
       if (!response.ok) throw new Error(await getError(response));
       const category = (await response.json()) as Category;
-      setCategories((current) => [...current, category].sort((left, right) => left.name.localeCompare(right.name)));
+      setCategories((current) =>
+        [...current, category].sort((left, right) => left.name.localeCompare(right.name)),
+      );
       setNewName("");
       setMessage("Category added.");
     } catch (error) {
@@ -70,8 +76,9 @@ export function CategoryManager({ initialCategories }: { initialCategories: Cate
       if (!response.ok) throw new Error(await getError(response));
       const updated = (await response.json()) as Category;
       setCategories((current) =>
-        current.map((category) => (category.id === id ? updated : category))
-          .sort((left, right) => left.name.localeCompare(right.name))
+        current
+          .map((category) => (category.id === id ? updated : category))
+          .sort((left, right) => left.name.localeCompare(right.name)),
       );
       setEditingId(null);
       setMessage("Category renamed.");
@@ -100,8 +107,17 @@ export function CategoryManager({ initialCategories }: { initialCategories: Cate
   }
 
   return (
-    <div>
-      <form onSubmit={createCategory} className="flex flex-col gap-3 border-b border-[#1C1917]/10 pb-6 sm:flex-row">
+    <section
+      aria-labelledby="category-heading"
+      className="rounded-2xl border border-[#1C1917]/8 bg-white p-5"
+    >
+      <h2 id="category-heading" className="text-lg font-semibold text-[#1C1917]">
+        Manage categories
+      </h2>
+      <form
+        onSubmit={createCategory}
+        className="mt-4 flex flex-col gap-3 border-b border-[#1C1917]/10 pb-6 sm:flex-row"
+      >
         <label className="sr-only" htmlFor="new-category">New category name</label>
         <input
           id="new-category"
@@ -113,81 +129,95 @@ export function CategoryManager({ initialCategories }: { initialCategories: Cate
         />
         <button
           type="submit"
-          disabled={isWorking}
+          disabled={isWorking || !newName.trim()}
           className="rounded-lg bg-[#F97316] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#EA580C] disabled:opacity-60"
         >
           Add category
         </button>
       </form>
 
-      <ul className="divide-y divide-[#1C1917]/10">
-        {categories.map((category) => (
-          <li key={category.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
-            {editingId === category.id ? (
-              <form
-                className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  void saveRename(category.id);
-                }}
-              >
-                <label className="sr-only" htmlFor={`rename-${category.id}`}>Category name</label>
-                <input
-                  id={`rename-${category.id}`}
-                  value={editingName}
-                  onChange={(event) => setEditingName(event.target.value)}
-                  maxLength={80}
-                  className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#F97316]"
-                />
-                <div className="flex gap-3">
-                  <button type="submit" disabled={isWorking} className="text-sm font-medium text-[#1C1917] underline disabled:opacity-50">
-                    Save
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setEditingId(null)}
-                    disabled={isWorking}
-                    className="text-sm text-[#78716C] underline disabled:opacity-50"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            ) : (
-              <p className="font-medium text-[#1C1917]">{category.name}</p>
-            )}
-            {editingId !== category.id && (
-              <div className="flex items-center gap-4">
-                <button
-                  type="button"
-                  disabled={isWorking}
-                  onClick={() => {
-                    setEditingId(category.id);
-                    setEditingName(category.name);
-                    setMessage("");
+      {categories.length === 0 ? (
+        <p className="border-b border-[#1C1917]/10 py-8 text-sm text-[#78716C]">
+          No categories yet.
+        </p>
+      ) : (
+        <ul className="divide-y divide-[#1C1917]/10">
+          {categories.map((category) => (
+            <li
+              key={category.id}
+              className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between"
+            >
+              {editingId === category.id ? (
+                <form
+                  className="flex min-w-0 flex-1 flex-col gap-2 sm:flex-row"
+                  onSubmit={(event) => {
+                    event.preventDefault();
+                    void saveRename(category.id);
                   }}
-                  className="text-sm text-[#78716C] underline decoration-dotted underline-offset-4 hover:text-[#1C1917] disabled:opacity-50"
                 >
-                  Rename
-                </button>
-                <button
-                  type="button"
-                  disabled={isWorking}
-                  onClick={() => void deleteCategory(category)}
-                  className="text-sm text-[#78716C] underline decoration-dotted underline-offset-4 hover:text-red-600 disabled:opacity-50"
-                >
-                  Delete
-                </button>
-              </div>
-            )}
-          </li>
-        ))}
-      </ul>
-
-      {categories.length === 0 && (
-        <p className="border-b border-[#1C1917]/10 py-8 text-sm text-[#78716C]">No categories yet.</p>
+                  <label className="sr-only" htmlFor={`rename-${category.id}`}>
+                    Rename {category.name}
+                  </label>
+                  <input
+                    id={`rename-${category.id}`}
+                    value={editingName}
+                    onChange={(event) => setEditingName(event.target.value)}
+                    maxLength={80}
+                    className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#F97316]"
+                  />
+                  <div className="flex gap-3">
+                    <button
+                      type="submit"
+                      disabled={isWorking || !editingName.trim()}
+                      className="text-sm font-medium text-[#1C1917] underline disabled:opacity-50"
+                    >
+                      Save
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setEditingId(null)}
+                      disabled={isWorking}
+                      className="text-sm text-[#78716C] underline disabled:opacity-50"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </form>
+              ) : (
+                <>
+                  <p className="font-medium text-[#1C1917]">{category.name}</p>
+                  <div className="flex items-center gap-4">
+                    <button
+                      type="button"
+                      disabled={isWorking}
+                      onClick={() => {
+                        setEditingId(category.id);
+                        setEditingName(category.name);
+                        setMessage("");
+                      }}
+                      className="text-sm text-[#78716C] underline decoration-dotted underline-offset-4 hover:text-[#1C1917] disabled:opacity-50"
+                    >
+                      Rename
+                    </button>
+                    <button
+                      type="button"
+                      disabled={isWorking}
+                      onClick={() => void deleteCategory(category)}
+                      className="text-sm text-[#78716C] underline decoration-dotted underline-offset-4 hover:text-red-600 disabled:opacity-50"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                </>
+              )}
+            </li>
+          ))}
+        </ul>
       )}
-      <p aria-live="polite" className="min-h-6 pt-3 text-sm text-[#78716C]">{message}</p>
-    </div>
+
+      <p aria-live="polite" className="min-h-6 pt-3 text-sm text-[#78716C]">
+        {message}
+      </p>
+    </section>
   );
 }

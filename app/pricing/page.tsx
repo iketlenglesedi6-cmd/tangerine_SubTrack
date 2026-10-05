@@ -1,3 +1,10 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Pricing | SubTrack",
+  description: "Simple, transparent pricing for tracking your subscriptions with SubTrack.",
+};
+
 const plans = [
   {
     name: "Starter",

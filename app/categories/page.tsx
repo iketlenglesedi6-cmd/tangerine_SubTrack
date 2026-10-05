@@ -23,7 +23,7 @@ export default async function CategoriesPage() {
         <p className="text-sm text-[#78716C]">Organize recurring expenses</p>
         <h1 className="mt-1 text-3xl font-semibold text-[#1C1917]">Categories</h1>
       </header>
-      <CategoryManager initialCategories={categories} />
+      <CategoryManager categories={categories} />
     </main>
   );
 }

@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Category {
-  id            String         @id @default(cuid())
+  id            Int            @id @default(autoincrement())
   name          String
   userId        String
   subscriptions Subscription[]
@@ -18,14 +18,14 @@ model Category {
 }
 
 model Subscription {
-  id           String   @id @default(cuid())
+  id           Int      @id @default(autoincrement())
   name         String
   cost         Float
   billingCycle String
   renewalDate  DateTime
   status       String   @default("active")
   userId       String
-  categoryId   String
+  categoryId   Int
   category     Category @relation(fields: [categoryId], references: [id])
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

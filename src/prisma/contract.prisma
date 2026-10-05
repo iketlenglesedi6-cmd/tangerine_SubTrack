@@ -1,3 +1,5 @@
+// use prisma-8
+
 model Category {
   id            Int            @id @default(autoincrement())
   name          String
@@ -6,6 +8,7 @@ model Category {
   createdAt     TimestamptzString @default(now())
 
   @@unique([userId, name])
+  @@map("category")
 }
 
 model Subscription {
@@ -20,4 +23,7 @@ model Subscription {
   categoryId   Int
   createdAt    TimestamptzString @default(now())
   updatedAt    temporal.updatedAtString()
+
+  @@index([categoryId])
+  @@map("subscription")
 }

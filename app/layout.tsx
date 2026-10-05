@@ -35,16 +35,6 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-[#FAFAF9]">
         <ClerkProvider
           appearance={{
-            variables: {
-              colorPrimary: "#F97316",
-              colorText: "#1C1917",
-              colorTextSecondary: "#78716C",
-              colorBackground: "#FFFFFF",
-              colorInputBackground: "#FAFAF9",
-              colorInputText: "#1C1917",
-              borderRadius: "0.5rem",
-              fontFamily: "var(--font-geist-sans)",
-            },
             elements: {
               userButtonAvatarBox: {
                 width: "2rem",

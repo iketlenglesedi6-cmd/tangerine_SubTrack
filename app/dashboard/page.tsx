@@ -1,8 +1,16 @@
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Dashboard | SubTrack",
+  description: "Track your active subscriptions, upcoming renewals, and monthly spend in one place.",
+};
+
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { SubscriptionForm } from "@/components/subscription-form";
 import { SubscriptionRowActions } from "@/components/subscription-row-actions";
+import { CategoryManager } from "@/components/category-manager";
 import { calculateDashboardSummary } from "@/src/lib/dashboard";
 import { db } from "@/src/prisma/db";
 
@@ -62,6 +70,7 @@ export default async function DashboardPage() {
     .where({ userId })
     .include("category", (category) => category.select("id", "name"))
     .all();
+  const categoryRows = await db.orm.public.Category.where({ userId }).all();
 
   const subscriptions = rows.map(normalizeSubscription);
   const summary = calculateDashboardSummary(subscriptions);
@@ -88,7 +97,7 @@ export default async function DashboardPage() {
     <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
       {/* Hero number — the one bold moment on this page */}
       <div className="mb-10">
-        <p className="text-sm text-[#78716C]">You're spending</p>
+        <p className="text-sm text-[#78716C]">You&apos;re spending</p>
         <p className="mt-1 text-6xl font-semibold tracking-tight text-[#1C1917]">
           {currency(summary.totalMonthlySpend)}
           <span className="ml-2 text-2xl font-normal text-[#78716C]">/ month</span>
@@ -122,7 +131,7 @@ export default async function DashboardPage() {
           ) : (
             <div className="divide-y divide-[#1C1917]/8 border-t border-[#1C1917]/8">
               {subscriptions.map((sub) => (
-                <div key={sub.id} className="flex items-center justify-between py-4">
+                <div key={sub.id} className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between py-4">
                   <div>
                     <p className="font-medium text-[#1C1917]">{sub.name}</p>
                     <p className="text-sm text-[#78716C]">
@@ -130,7 +139,7 @@ export default async function DashboardPage() {
                       {sub.status === "canceled" && " · canceled"}
                     </p>
                   </div>
-                  <div className="flex items-center gap-6">
+                  <div className="flex w-full items-center justify-between gap-4 sm:w-auto sm:gap-6">
                     <div className="text-right">
                       <p className="font-medium text-[#1C1917]">{currency(sub.cost)}</p>
                       <p className="text-sm text-[#78716C]">{formatDate(sub.renewalDate)}</p>
@@ -144,6 +153,12 @@ export default async function DashboardPage() {
 
           <div className="mt-10">
             <SubscriptionForm />
+          </div>
+          <div className="mt-6">
+            <CategoryManager categories={categoryRows.map((category) => ({
+              id: String(category.id),
+              name: category.name,
+            }))} />
           </div>
         </div>
 
