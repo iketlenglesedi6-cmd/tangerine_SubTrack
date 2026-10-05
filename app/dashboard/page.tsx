@@ -10,6 +10,7 @@ import { redirect } from "next/navigation";
 
 import { SubscriptionForm } from "@/components/subscription-form";
 import { SubscriptionRowActions } from "@/components/subscription-row-actions";
+import { CategoryManager } from "@/components/category-manager";
 import { calculateDashboardSummary } from "@/src/lib/dashboard";
 import { db } from "@/src/prisma/db";
 
@@ -69,6 +70,7 @@ export default async function DashboardPage() {
     .where({ userId })
     .include("category", (category) => category.select("id", "name"))
     .all();
+  const categoryRows = await db.orm.public.Category.where({ userId }).all();
 
   const subscriptions = rows.map(normalizeSubscription);
   const summary = calculateDashboardSummary(subscriptions);
@@ -95,7 +97,7 @@ export default async function DashboardPage() {
     <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
       {/* Hero number — the one bold moment on this page */}
       <div className="mb-10">
-        <p className="text-sm text-[#78716C]">You're spending</p>
+        <p className="text-sm text-[#78716C]">You&apos;re spending</p>
         <p className="mt-1 text-6xl font-semibold tracking-tight text-[#1C1917]">
           {currency(summary.totalMonthlySpend)}
           <span className="ml-2 text-2xl font-normal text-[#78716C]">/ month</span>
@@ -151,6 +153,12 @@ export default async function DashboardPage() {
 
           <div className="mt-10">
             <SubscriptionForm />
+          </div>
+          <div className="mt-6">
+            <CategoryManager categories={categoryRows.map((category) => ({
+              id: String(category.id),
+              name: category.name,
+            }))} />
           </div>
         </div>
 

@@ -53,17 +53,57 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await request.json();
+  let body: Record<string, unknown>;
+  try {
+    const parsed: unknown = await request.json();
+    if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+      return NextResponse.json({ error: "Request body must be a JSON object" }, { status: 400 });
+    }
+    body = parsed as Record<string, unknown>;
+  } catch {
+    return NextResponse.json({ error: "Request body must be valid JSON" }, { status: 400 });
+  }
   const name = String(body.name ?? "Untitled subscription").trim();
 
   if (!name) {
     return NextResponse.json({ error: "Subscription name is required" }, { status: 400 });
   }
 
+  const cost = Number(body.cost ?? 0);
+  if (!Number.isFinite(cost) || cost < 0) {
+    return NextResponse.json({ error: "Cost must be a non-negative number" }, { status: 400 });
+  }
+
+  const billingCycle = String(body.billingCycle ?? "monthly");
+  if (billingCycle !== "monthly" && billingCycle !== "yearly") {
+    return NextResponse.json({ error: "Billing cycle must be monthly or yearly" }, { status: 400 });
+  }
+
+  const status = String(body.status ?? "active");
+  if (status !== "active" && status !== "canceled") {
+    return NextResponse.json({ error: "Status must be active or canceled" }, { status: 400 });
+  }
+
+  const renewalDate = new Date(String(body.renewalDate ?? Date.now()));
+  if (Number.isNaN(renewalDate.getTime())) {
+    return NextResponse.json({ error: "Renewal date must be a valid date" }, { status: 400 });
+  }
+
   const categoryName = String(body.categoryName ?? body.category ?? "General").trim() || "General";
   const categoryValue = Number(body.categoryId ?? 0);
 
-  let categoryId = Number.isFinite(categoryValue) && categoryValue > 0 ? categoryValue : null;
+  if (body.categoryId !== undefined && (!Number.isSafeInteger(categoryValue) || categoryValue < 1)) {
+    return NextResponse.json({ error: "Category id must be a positive integer" }, { status: 400 });
+  }
+
+  let categoryId: number | null = body.categoryId === undefined ? null : categoryValue;
+
+  if (categoryId) {
+    const ownedCategory = await db.orm.public.Category.where({ id: categoryId, userId }).first();
+    if (!ownedCategory) {
+      return NextResponse.json({ error: "Category not found" }, { status: 404 });
+    }
+  }
 
   if (!categoryId) {
     const existingCategory = await db.orm.public.Category.where({ userId, name: categoryName }).first();
@@ -82,10 +122,10 @@ export async function POST(request: Request) {
 
   const record = await db.orm.public.Subscription.create({
     name,
-    cost: Number(body.cost ?? 0),
-    billingCycle: String(body.billingCycle ?? "monthly"),
-    renewalDate: new Date(body.renewalDate ?? Date.now()).toISOString(),
-    status: String(body.status ?? "active"),
+    cost,
+    billingCycle,
+    renewalDate: renewalDate.toISOString(),
+    status,
     userId,
     categoryId,
     createdAt: new Date().toISOString(),

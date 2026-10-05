@@ -12,18 +12,26 @@ export function SubscriptionRowActions({
 }) {
   const router = useRouter();
   const [isWorking, setIsWorking] = useState(false);
+  const [message, setMessage] = useState("");
 
   async function toggleStatus() {
     setIsWorking(true);
+    setMessage("");
     try {
-      await fetch(`/api/subscriptions/${id}`, {
+      const response = await fetch(`/api/subscriptions/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           status: currentStatus === "active" ? "canceled" : "active",
         }),
       });
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(payload.error || "Unable to update subscription.");
+      }
       router.refresh();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Something went wrong.");
     } finally {
       setIsWorking(false);
     }
@@ -32,16 +40,23 @@ export function SubscriptionRowActions({
   async function handleDelete() {
     if (!confirm("Delete this subscription? This can't be undone.")) return;
     setIsWorking(true);
+    setMessage("");
     try {
-      await fetch(`/api/subscriptions/${id}`, { method: "DELETE" });
+      const response = await fetch(`/api/subscriptions/${id}`, { method: "DELETE" });
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({}));
+        throw new Error(payload.error || "Unable to delete subscription.");
+      }
       router.refresh();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Something went wrong.");
     } finally {
       setIsWorking(false);
     }
   }
 
   return (
-    <div className="flex items-center gap-3 text-sm">
+    <div className="flex flex-wrap items-center gap-3 text-sm">
       <button
         onClick={toggleStatus}
         disabled={isWorking}
@@ -49,6 +64,7 @@ export function SubscriptionRowActions({
       >
         {currentStatus === "active" ? "Cancel" : "Reactivate"}
       </button>
+      {message ? <span role="status" className="basis-full text-xs text-red-700">{message}</span> : null}
       <button
         onClick={handleDelete}
         disabled={isWorking}
