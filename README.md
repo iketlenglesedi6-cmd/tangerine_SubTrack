@@ -1,96 +1,164 @@
-# SubTrack
+# Tangerine SubTrack
 
-SubTrack helps people find recurring charges, track subscriptions, and plan for upcoming renewals. Users can enter records themselves or import a bank statement CSV, review likely repeats, and choose which subscriptions to save.
+SubTrack helps people see recurring charges, organize subscriptions, and plan for upcoming renewals. Users can add subscriptions themselves or import a bank statement CSV, review likely recurring charges, and decide what to save. The app does not connect to a bank, contact subscription providers, cancel services, or make payments.
 
 ## Team
 
 - Lesedi Pride Iketleng
 - Farai Dale Rwambiwa
 
-## Stack
+## Live project
 
-- Next.js App Router and TypeScript
-- Clerk authentication
-- PostgreSQL with Prisma ORM Postgres
+- **Application:** [https://tangerine-sub-track.vercel.app](https://tangerine-sub-track.vercel.app)
+- **Repository:** [https://github.com/iketlenglesedi6-cmd/tangerine_SubTrack](https://github.com/iketlenglesedi6-cmd/tangerine_SubTrack)
+- **Authentication:** Clerk
+- **Hosting:** Vercel
+- **Database:** PostgreSQL on Neon
+
+The live app requires a Clerk account. For grading, provide a dedicated demo account and its sign-in details in Canvas; credentials and secrets do not belong in this repository.
+
+## Technology
+
+- Next.js App Router, React, and TypeScript
+- Clerk for sign-in, sign-up, protected pages, and user metadata
+- PostgreSQL with Prisma ORM Postgres runtime and a typed Prisma ORM 8 contract
 - Tailwind CSS
+- Frankfurter reference exchange rates
 
-## Local setup
+## Run locally
 
-1. Install Node.js and create an empty PostgreSQL 15+ database. Neon works for a hosted development database.
-2. Copy `.env.example` to `.env` and set `DATABASE_URL` to the database connection string.
-3. Emit the Prisma ORM 8 contract and initialize the empty database:
+### Requirements
+
+- Node.js and npm
+- A PostgreSQL 15 or newer database
+- A Clerk application
+
+### Setup
+
+1. Install dependencies:
 
    ```bash
    npm install
+   ```
+
+2. Copy `.env.example` to `.env` and set your local PostgreSQL URL and Clerk development keys:
+
+   ```dotenv
+   DATABASE_URL="postgresql://user:password@localhost:5432/subtrack"
+   NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY="pk_test_..."
+   CLERK_SECRET_KEY="sk_test_..."
+   ```
+
+3. For a **new, empty database only**, generate the Prisma ORM contract and initialize the schema:
+
+   ```bash
    npm run contract:emit
    npm run db:init
    ```
 
-   The contract source of truth is `src/prisma/contract.prisma`; `prisma/schema.prisma` is not used by the current Prisma ORM 8 config. `db:init` creates tables and records the database contract. Only run it against a new, empty database. For an existing database, confirm its schema before using `npm run db:verify`.
+   `src/prisma/contract.prisma` is the active schema source. Prisma's runtime client is configured in `src/prisma/db.ts` and generated contract files are in `src/prisma/`. The separate `prisma/schema.prisma` file is not used by the current Prisma ORM 8 configuration. Do not run `db:init` against a database that already contains app data.
 
-4. Create a Clerk application and set `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` in `.env` using its development keys.
-5. Start the development server:
+4. For an existing database, inspect the pending changes, apply migrations, and verify the result:
+
+   ```bash
+   npm run db:migrate
+   npm run db:verify
+   ```
+
+   The existing currency migration is in `migrations/app/20261005T1509_add_subscription_currency`. It adds a required currency value to existing subscriptions, defaulting those existing rows to USD. New manual form entries default to ZAR.
+
+5. Start the local app:
 
    ```bash
    npm run dev
    ```
 
-6. Open [http://localhost:3000](http://localhost:3000).
+6. Visit [http://localhost:3000](http://localhost:3000).
 
-Never commit `.env` or real credentials. `npm run contract:emit` compiles the contract source into the generated `contract.json` and `contract.d.ts` files; review generated changes before committing them.
+Never commit `.env`, `.env.local`, database URLs, or real Clerk keys. `npm run contract:emit` regenerates `contract.json` and `contract.d.ts`; review those files before committing generated changes.
 
-## Main user flows
+## Backend and data flow
 
-- Sign up or sign in using Clerk.
-- Open the dashboard to review monthly spend, active subscriptions, upcoming renewal dates, and category totals.
-- Choose a preferred display currency; SubTrack suggests one from your Vercel-detected country when deployed (or browser locale locally) and converts totals while retaining each original subscription currency.
-- Add, edit, cancel/reactivate, or delete subscriptions; search and filter the list, then export the visible results as CSV.
-- Import a bank CSV. The file is processed in the browser; only recurring-charge records the user approves are sent to the app.
-- Try the importer with the fictional sample at `/sample-bank-statement.csv`; it contains no personal or bank account data.
-- Review upcoming renewal dates and spending grouped by currency and category.
-- Add, rename, or delete categories. A category can only be deleted when it has no subscriptions.
+Clerk identifies the signed-in user. Each protected page and API route reads the Clerk session with `auth()` and uses the Clerk `userId` to scope database queries, so a user can only read or change their own subscription and category records.
 
-Changing a subscription's tracking status does not cancel or change the user's account with that service provider. SubTrack does not automatically connect to banks or service providers; the CSV import is a user-selected statement export.
+The database connection is created in `src/prisma/db.ts` using `DATABASE_URL` and the Prisma ORM Postgres runtime. The typed contract in `src/prisma/contract.prisma` defines two tables:
 
-## Product demo summary
+- **Category** stores a user's category names. Category names are unique per user.
+- **Subscription** stores its name, price, currency, billing cycle, next renewal date, active/canceled tracking status, owner, and category relation.
 
-SubTrack helps people who have recurring bills across several services understand what they are paying and when the next charges are expected. It is designed for individuals who want one place to review subscriptions, spot recurring charges in a bank CSV export, and organize expenses without giving the app access to their bank account.
+### Example: creating a subscription
 
-After signing in, a user can add subscriptions manually or import a CSV and review the likely recurring charges before saving them. The dashboard summarizes monthly spend and categories, while the renewal schedule shows upcoming charges. Users can edit, pause tracking, or delete records, manage categories, and choose a display currency; original amounts remain visible when conversions are shown. SubTrack tracks information for planning and does not cancel services or initiate payments.
+1. The dashboard's client-side `SubscriptionForm` sends a JSON `POST` to `/api/subscriptions`.
+2. The route handler checks the Clerk session, validates the fields and renewal date, and checks that a normalized subscription name is not already in the user's list.
+3. It finds or creates the user's category, then creates the subscription row in PostgreSQL with the Clerk `userId`.
+4. The handler returns the saved record as JSON. The client refreshes the dashboard so its server-rendered data reflects the database.
 
-## Updating an existing database
+Editing and deletion use the same client-to-route-handler pattern. The API checks record ownership before changing or deleting it. Marking a subscription canceled only changes its SubTrack status; it does not cancel the account with the provider. Category deletion is refused while subscriptions still use that category.
 
-Existing databases need the currency field before deploying a build that supports multiple currencies. The reviewable migration is in `migrations/app/20261005T1509_add_subscription_currency`; it adds a non-null `currency` column with a `USD` default for existing subscriptions. Apply pending migrations with `npm run db:migrate`, then run `npm run db:verify`. New manual entries default to `ZAR`, and users can choose another supported currency. Do not run `npm run db:init` on this existing database.
+### Bank statement import
 
-## API notes
+`components/statement-importer.tsx` reads the selected CSV in the browser. `src/lib/bank-statement.ts` parses comma-, semicolon-, and tab-separated rows; identifies likely date, description, debit/amount, and currency columns; groups similar merchant descriptions; then looks for monthly or yearly intervals with reasonably stable amounts. Detection is a heuristic, so the user reviews each suggestion. The original statement file is not uploaded or stored. Only the individual recurring charges the user selects are sent to `POST /api/subscriptions`.
 
-All API endpoints require an authenticated Clerk session. Responses use JSON.
+The downloadable demo at `/sample-bank-statement.csv` is fictional South African data in ZAR. It has bank-style debit and credit columns, a running balance, masked references, regular subscription charges, and unrelated transactions. For this sample, choose **day/month/year** dates and **positive** expenses if the importer asks.
+
+### Currency selection and conversion
+
+The app suggests a display currency from Vercel's country header, then the browser's locale when that header is unavailable. Users can change it. The selection is validated by `POST /api/currency-preference` and saved in a one-year, HTTP-only cookie in that browser. It does not replace the original currency stored on each subscription.
+
+`src/lib/exchange-rates.ts` requests reference rates from Frankfurter and caches them for six hours. Dashboard and renewal pages use those rates to convert displayed totals. If rates are unavailable, the app leaves amounts in their original currencies instead of guessing. These are reference conversions, not a promise of the amount a bank or card provider will settle.
+
+### First-time introduction
+
+After Clerk sign-in or sign-up, Clerk redirects to `/dashboard`. Users who have not completed or skipped the Tangerine onboarding montage see it there. `POST /api/onboarding/complete` records the completion flag in the signed-in user's Clerk public metadata, so the montage is shown only once per account.
+
+## API route handlers
+
+All listed routes require an authenticated Clerk session and return JSON. Data routes are implemented under `app/api/`.
 
 | Method | Endpoint | Purpose |
 | --- | --- | --- |
-| `GET`, `POST` | `/api/subscriptions` | List or create the signed-in user's subscriptions |
-| `PATCH`, `DELETE` | `/api/subscriptions/[id]` | Update status/details or delete an owned subscription |
-| `GET`, `POST` | `/api/categories` | List or create the signed-in user's categories |
-| `PATCH`, `DELETE` | `/api/categories/[id]` | Rename or delete an owned category |
-| `GET` | `/api/dashboard/summary` | Return summary totals for the signed-in user's subscriptions |
+| `GET`, `POST` | `/api/subscriptions` | List the signed-in user's subscriptions or create one. |
+| `PATCH`, `DELETE` | `/api/subscriptions/[id]` | Update an owned subscription or delete it. PATCH validates fields and blocks duplicate names. |
+| `GET`, `POST` | `/api/categories` | List or create the signed-in user's categories. |
+| `PATCH`, `DELETE` | `/api/categories/[id]` | Rename an owned category or delete it if it has no subscriptions. |
+| `GET` | `/api/dashboard/summary` | Return calculated summary data for the signed-in user's subscriptions. |
+| `POST` | `/api/currency-preference` | Validate and save a display-currency preference cookie. |
+| `POST` | `/api/onboarding/complete` | Save the current user's onboarding completion flag in Clerk metadata. |
 
-## Deployment and grading access
+## Deploy to Vercel
 
-- **Production URL:** Add the public deployment URL here after deployment.
-- **Repository:** https://github.com/iketlenglesedi6-cmd/tangerine_SubTrack
-- **Authentication:** Clerk.
-- **Vercel environment:** Set `DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, and `CLERK_SECRET_KEY` in Project Settings. Use Clerk development keys for previews; production keys require a Clerk production instance configured for a domain you own.
-- **Demo credentials:** Create a dedicated grader account in the production Clerk instance and provide its credentials in the course submission. Do not commit credentials here.
-- **Grader steps:** Sign in with the dedicated Clerk grader account, download the fictional sample CSV from `/import`, import it using ZAR and positive expense amounts, review and save the detected charges, then edit/search/filter/export subscriptions and visit **Renewal schedule**.
-- **CSV format:** The importer accepts comma-, semicolon-, or tab-separated files and tries to detect date, description, amount, and currency columns. Users can map columns, choose date order and expense sign, and set a fallback currency for rows without currency information. It detects likely monthly/yearly repeats; users confirm each record before import.
+The GitHub repository is connected to Vercel. The production build uses the Next.js defaults and `npm run build`.
 
-## Known limitations and opportunities
+1. Create or select a Neon PostgreSQL database and copy its connection string into the Vercel project's `DATABASE_URL` variable.
+2. Add `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` in Vercel Project Settings. Configure Clerk for the deployment domain and use the matching Clerk instance's keys in each Vercel environment.
+3. Apply the required database contract/migrations and verify the schema before serving the deployment. Do not initialize an existing database with `db:init`.
+4. Deploy from the intended Git branch and open the deployment URL to verify sign-in, dashboard data, and statement import.
 
-- The production URL and grader account need to be supplied with the final Canvas submission.
-- The app does not sync with banks or service-provider accounts and does not send email or push reminders.
-- The importer accepts CSV, not PDF. Some banks offer CSV or Excel exports; the included fictional CSV is available to demonstrate the flow without a bank login.
-- Recurring-charge detection is heuristic and can miss variable charges or misidentify repeated merchants; users review all matches before import.
-- When a CSV includes a currency column, imports retain currency per transaction group; otherwise the user chooses a fallback currency.
-- Display-currency conversion uses daily reference rates from [Frankfurter](https://frankfurter.dev/) and is an estimate; card-network rates, bank fees, and the exact settlement amount may differ. The chosen display currency is saved in a browser cookie.
-- Lighthouse mobile scores and WCAG contrast results still need to be measured against the deployed app and recorded in the Canvas submission.
+Do not put secrets in this README or in Git. For the course submission, provide the repository URL, live URL, demo credentials, and access steps in Canvas.
+
+## Product demo summary
+
+SubTrack helps people with recurring bills understand what they are paying and when the next charges are expected. It is intended for individuals who want one place to review subscriptions, spot recurring charges in a bank CSV export, and organize expenses without giving an app access to their bank account.
+
+After signing in, a user can add subscriptions manually or import a CSV and review likely recurring charges before saving them. The dashboard summarizes monthly spend and categories, while the renewal schedule shows upcoming charges. Users can edit, mark entries canceled, or delete records, manage categories, and choose a display currency while retaining each subscription's original amount. SubTrack is a planning tool; it does not cancel services or initiate payments.
+
+## Lighthouse results supplied for the production dashboard
+
+The report supplied on October 7, 2026 showed:
+
+| Device | Performance | Accessibility | Best Practices | SEO |
+| --- | ---: | ---: | ---: | ---: |
+| Desktop | 99 | 96 | 100 | 100 |
+| Mobile (Moto G Power, slow 4G) | 76 | 96 | 100 | 100 |
+
+The report flagged a color-contrast opportunity. Muted text colors were darkened in a later feature-branch update; rerun Lighthouse against the deployed merged build before using these scores as the final submission results. The mobile run also reported 3.4 s Largest Contentful Paint and 620 ms Total Blocking Time.
+
+## Known limitations and next steps
+
+- SubTrack does not connect to banks or service providers and does not send email or push renewal reminders.
+- The statement importer accepts CSV, not PDF. Some banks offer CSV or spreadsheet exports alongside PDF statements.
+- Recurring-charge detection is heuristic. It can miss variable charges or group unrelated charges; users should review matches before saving them.
+- When the statement has no currency column or currency code, the user must choose the correct fallback currency.
+- Exchange rates are reference rates and may differ from bank/card conversion rates, fees, and final settlement amounts.
+- The latest supplied Lighthouse report found a contrast issue, and the dashboard mobile performance score was 76. Rerun the audit after the latest branch changes are merged and deployed.
 - Category deletion is blocked while subscriptions still reference that category.
