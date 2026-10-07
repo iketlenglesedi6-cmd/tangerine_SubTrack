@@ -39,6 +39,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               userButtonAvatarBox: {
                 width: "2rem",
                 height: "2rem",
+                backgroundColor: "#ea580c",
+                color: "#ffffff",
+                border: "2px solid #ffedd5",
+                boxShadow: "0 1px 3px rgb(124 45 18 / 20%)",
               },
               userButtonPopoverCard: {
                 borderRadius: "0.75rem",
