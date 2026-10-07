@@ -51,3 +51,45 @@ body {
 .float-delay {
   animation: float 8s ease-in-out infinite 0.6s;
 }
+
+.tangerine-loading-orbit {
+  display: grid;
+  width: 7rem;
+  height: 7rem;
+  place-items: center;
+  border: 1px solid rgb(234 117 48 / 18%);
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgb(255 220 174 / 42%), transparent 72%);
+  animation: tangerine-loading-glow 2.4s ease-in-out infinite;
+}
+
+.tangerine-loading-mascot {
+  animation: tangerine-loading-bob 1.8s ease-in-out infinite;
+}
+
+@keyframes tangerine-loading-bob {
+  0%,
+  100% {
+    transform: translateY(2px) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(4deg);
+  }
+}
+
+@keyframes tangerine-loading-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(234 117 48 / 0%);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgb(234 117 48 / 7%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tangerine-loading-orbit,
+  .tangerine-loading-mascot {
+    animation: none;
+  }
+}
