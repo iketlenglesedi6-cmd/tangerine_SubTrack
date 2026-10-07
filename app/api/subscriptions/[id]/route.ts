@@ -7,7 +7,7 @@ import {
   isDateInputInPast,
   isValidDateInput,
   PAST_RENEWAL_DATE_MESSAGE,
-} from "@/src/lib/renewals";
+} from "@/src/lib/date-input";
 
 export async function PATCH(
   request: Request,

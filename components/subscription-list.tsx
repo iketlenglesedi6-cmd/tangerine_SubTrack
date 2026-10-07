@@ -8,7 +8,8 @@ import { EmptyState } from "@/components/ui/empty-state";
 import { InlineFeedback } from "@/components/ui/inline-feedback";
 import { formatCurrency, SUPPORTED_CURRENCIES } from "@/src/lib/currency";
 import { convertCurrencyAmount, type ExchangeRates, type SupportedCurrency } from "@/src/lib/currency";
-import { getDateInputToday, getNextRenewalDate, isDateInputInPast, PAST_RENEWAL_DATE_MESSAGE } from "@/src/lib/renewals";
+import { getDateInputToday, isDateInputInPast, PAST_RENEWAL_DATE_MESSAGE } from "@/src/lib/date-input";
+import { getNextRenewalDate } from "@/src/lib/renewals";
 
 export type DashboardSubscription = {
   id: string;

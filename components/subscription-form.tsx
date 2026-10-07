@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { InlineFeedback } from "@/components/ui/inline-feedback";
-import { getDateInputToday, isDateInputInPast, PAST_RENEWAL_DATE_MESSAGE } from "@/src/lib/renewals";
+import { getDateInputToday, isDateInputInPast, PAST_RENEWAL_DATE_MESSAGE } from "@/src/lib/date-input";
 
 export function SubscriptionForm({ categories }: { categories: Array<{ id: string; name: string }> }) {
   const router = useRouter();
