@@ -175,12 +175,22 @@ export default async function DashboardPage() {
           </div>
 
           <SubscriptionList subscriptions={subscriptions} displayCurrency={displayCurrency} exchangeRates={exchangeRates} />
-          <div className="mt-10">
-            <SubscriptionForm categories={categories} />
-          </div>
-          <div className="mt-6">
-            <CategoryManager categories={categories} />
-          </div>
+          <details className="group mt-8">
+            <summary className="w-fit cursor-pointer list-none text-sm font-medium text-[#9A3412] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9A3412]">
+              Add a subscription manually
+            </summary>
+            <div className="mt-4">
+              <SubscriptionForm categories={categories} />
+            </div>
+          </details>
+          <details className="group mt-5">
+            <summary className="w-fit cursor-pointer list-none text-sm font-medium text-[#57534E] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9A3412]">
+              Manage categories ({categories.length})
+            </summary>
+            <div className="mt-4">
+              <CategoryManager categories={categories} />
+            </div>
+          </details>
         </div>
 
         {/* Sidebar: filled background instead of another white bordered card */}
