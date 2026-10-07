@@ -81,7 +81,7 @@ export function OnboardingMontage() {
               <path d="m217 253-15 12 18 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
             <Image
-              src="/tangerine-icon.png"
+              src="/tangerine-icon.webp"
               alt="Tangerine, your SubTrack sidekick"
               width={470}
               height={360}
