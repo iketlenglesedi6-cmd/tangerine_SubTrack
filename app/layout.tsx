@@ -36,22 +36,12 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ClerkProvider
           appearance={{
             elements: {
-              userButtonTrigger: {
-                padding: "0.25rem 0.65rem 0.25rem 0.3rem",
-                gap: "0.55rem",
-                border: "1px solid #fdba74",
-                borderRadius: "9999px",
-                backgroundColor: "#fff7ed",
-                boxShadow: "0 3px 10px rgb(154 52 18 / 14%)",
-                transition: "transform 160ms ease, box-shadow 160ms ease",
-              },
               userButtonAvatarBox: {
-                width: "2.5rem",
-                height: "2.5rem",
-                backgroundColor: "#c2410c",
+                width: "2.25rem",
+                height: "2.25rem",
+                backgroundColor: "#ea580c",
                 color: "#ffffff",
-                border: "2px solid #ffffff",
-                boxShadow: "0 2px 6px rgb(124 45 18 / 25%)",
+                border: "2px solid #ffedd5",
               },
               userButtonPopoverCard: {
                 borderRadius: "0.75rem",
@@ -104,7 +94,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                   >
                     Dashboard
                   </Link>
-                  <UserButton showName />
+                  <UserButton />
                 </div>
               </Show>
             </nav>
