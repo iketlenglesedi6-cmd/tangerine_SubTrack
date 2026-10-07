@@ -55,7 +55,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <Link href="/" className="flex items-center gap-2">
               <Image
                 src="/tangerine-icon.png"
-                alt="SubTrack"
+                alt=""
                 width={28}
                 height={28}
                 priority

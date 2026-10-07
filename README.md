@@ -1,47 +1,109 @@
 # Tangerine SubTrack
 
-SubTrack helps people see recurring charges, organize subscriptions, and plan for upcoming renewals. Users can add subscriptions themselves or import a bank statement CSV, review likely recurring charges, and decide what to save. The app does not connect to a bank, contact subscription providers, cancel services, or make payments.
+- **Team:** Lesedi Pride Iketleng and Farai Dale Rwambiwa
+- **Live app:** [tangerine-sub-track.vercel.app](https://tangerine-sub-track.vercel.app)
+- **Repository:** [iketlenglesedi6-cmd/tangerine_SubTrack](https://github.com/iketlenglesedi6-cmd/tangerine_SubTrack)
 
-## Team
+SubTrack helps people keep track of recurring subscriptions and see what is coming up before the next charge. Add subscriptions manually or import a bank statement CSV, review the recurring charges SubTrack finds, and choose which ones to save.
 
-- Lesedi Pride Iketleng
-- Farai Dale Rwambiwa
+SubTrack is a tracking tool. It does not connect to a bank, cancel a service with a provider, or make payments.
 
-## Live project
+## Project links
 
-- **Application:** [https://tangerine-sub-track.vercel.app](https://tangerine-sub-track.vercel.app)
-- **Repository:** [https://github.com/iketlenglesedi6-cmd/tangerine_SubTrack](https://github.com/iketlenglesedi6-cmd/tangerine_SubTrack)
-- **Authentication:** Clerk
+- **Authentication:** Clerk (not Auth.js v5)
 - **Hosting:** Vercel
-- **Database:** PostgreSQL on Neon
+- **Database:** Neon PostgreSQL
 
-The live app requires a Clerk account. For grading, provide a dedicated demo account and its sign-in details in Canvas; credentials and secrets do not belong in this repository.
+## What you can do in the app
 
-## Technology
+- **Dashboard (`/dashboard`):** See your monthly subscription spend, saved subscriptions, category totals, and upcoming renewals. Search and filter the list, export it as CSV, change the display currency, and add or update entries.
+- **Renewals (`/renewals`):** Review the renewal schedule by date.
+- **Import (`/import`):** Choose a CSV from your device, match its columns, review recurring-charge suggestions, and save the ones you want to track.
+- **Categories (`/categories`):** Add and rename categories. A category can be deleted once no subscriptions use it.
+- **Landing, features, and pricing (`/`, `/features`, `/pricing`):** Read about SubTrack and sign in or create an account.
 
-- Next.js App Router, React, and TypeScript
-- Clerk for sign-in, sign-up, protected pages, and user metadata
-- PostgreSQL with Prisma ORM Postgres runtime and a typed Prisma ORM 8 contract
-- Tailwind CSS
-- Frankfurter reference exchange rates
+The dashboard and schedule use the signed-in user's saved data. New accounts start with helpful empty states and an animated Tangerine introduction.
 
-## Run locally
+## How we built it
 
-### Requirements
+The app uses Next.js App Router, React, and TypeScript. Clerk handles sign-up, sign-in, sessions, and the onboarding completion flag. PostgreSQL stores subscriptions and categories. We use Prisma ORM's Postgres runtime and the typed schema at `src/prisma/contract.prisma`. Tailwind CSS is used for styling; ESLint and Prettier configs are in the repo.
 
-- Node.js and npm
-- A PostgreSQL 15 or newer database
-- A Clerk application
+The main data flow is:
 
-### Setup
+1. A signed-in user fills in the subscription form or chooses rows from the CSV import.
+2. The client sends the selected information to an App Router handler such as `POST /api/subscriptions`.
+3. The handler checks the Clerk session, validates the fields, and uses the signed-in user's Clerk ID when reading or writing database rows.
+4. The route returns JSON. The page refreshes and reads the updated records from PostgreSQL.
 
-1. Install dependencies:
+The same ownership check is used for edits and deletes, so a user cannot use an API request to change another user's records. Page reads and dashboard calculations are done on the server; forms, filters, import review, and row actions run in client components.
+
+### Data we store
+
+- **Category:** The category name, its owner (`userId`), and its subscriptions. Names are unique for each user.
+- **Subscription:** Name, cost, original currency, billing cycle, renewal date, status, owner, and category.
+
+Both models support create, read, update, and delete. Deleting a subscription removes it from SubTrack; marking it canceled only changes its SubTrack status. Neither action contacts the subscription provider. We block duplicate subscription names and reject renewal dates in the past. Before canceling or deleting, the app asks the user to confirm.
+
+## Bank statement CSV import
+
+The selected file is read in the browser; the original statement is not uploaded or stored. `src/lib/bank-statement.ts` handles comma-, semicolon-, and tab-separated CSVs. It looks for date, description, amount/debit, and currency columns, groups similar merchant names, and suggests charges with monthly or yearly patterns and fairly consistent amounts. This is a best-effort match, so the user reviews suggestions before saving them.
+
+The sample at [`public/sample-bank-statement.csv`](public/sample-bank-statement.csv) is fictional South African bank-style data in ZAR. It includes regular subscription charges and unrelated transactions. When importing the sample, choose **day/month/year** dates and **positive** expenses if those options appear.
+
+## Currency and renewal dates
+
+New manual subscriptions default to ZAR, while each saved subscription keeps its original currency. The app suggests a display currency using Vercel's country information or the browser locale; users can change it from the dashboard. That choice is stored in a one-year HTTP-only cookie.
+
+`src/lib/exchange-rates.ts` gets reference rates from Frankfurter and caches them for six hours. If rates cannot be fetched, SubTrack shows the original currencies separately instead of guessing. These are reference conversions; a bank or card provider may use a different rate or charge fees.
+
+Renewal dates must be today or later. The date input and the API both check this, so manually entering an old date is rejected. Duplicate subscription names are also checked in the form and API.
+
+## Authentication and trying the app
+
+The app uses **Clerk** for authentication (not Auth.js v5). `proxy.ts` installs Clerk middleware. Protected pages and API handlers use Clerk's server-side `auth()` helper, and database queries are scoped to the current user's Clerk ID. Signing up or signing in returns the user to the dashboard. The Clerk account menu includes sign-out.
+
+### Grader walkthrough
+
+Follow these steps with a **new account** so the first-time onboarding is included in the demo. Use an email address you can access to complete Clerk verification.
+
+1. Open the [live app](https://tangerine-sub-track.vercel.app) and choose **Start tracking**. Create a new Clerk account and complete email verification if prompted. Do not sign in to an account that has already completed onboarding.
+2. On the dashboard, go through the three onboarding slides with **Next little tip**, then choose **Let's go to the dashboard**. The intro can also be dismissed with **Skip intro**.
+3. From the dashboard, choose **Import a bank statement**. On the import page, click **Download sample bank CSV**. Save the downloaded `sample-bank-statement.csv` file somewhere you can find it.
+4. On that same page, use the **CSV statement** file picker to select the downloaded file. SubTrack reads the file in your browser; it does not upload the original statement.
+5. Review the **Match your statement columns** controls. For the supplied sample, use **Transaction Date** for the date, **Description** for the description, and **Debit** for the amount. Leave the currency column unset, use **ZAR** as the fallback currency, choose **Expenses are positive amounts**, and choose **Day / month / year** for the date format. The app may fill in some of these choices automatically.
+6. Review the recurring-charge suggestions. Select the suggestions you want to track, or choose **Select all new**, then click **Import N selected**. Wait for the import confirmation.
+7. Return to the dashboard. Review monthly spend, category totals, upcoming renewals, and the imported subscriptions. Try searching, filtering, changing the display currency, and exporting the list as CSV.
+8. To demonstrate manual creation and subscription updates, expand **Add a subscription**. Enter a distinct name such as **Demo service**, a price and currency, choose a billing cycle and category, set a renewal date today or later, and click **Save subscription**. Use **Edit** on a row to change and save a value. Use **Mark canceled** and confirm; this changes the SubTrack record only and does not contact the provider. To demonstrate deletion, choose **Delete** on a test subscription and confirm **Yes, remove it**; this removes the record from SubTrack only.
+9. Choose **View schedule** to review active upcoming renewals. On the dashboard, expand **Manage categories** to add a category, rename it, and delete it while it has no linked subscriptions.
+10. Use the Clerk account menu to sign out when finished.
+
+The intro is shown until an account completes or skips it; completion is stored in that user's Clerk public metadata. An existing Canvas demo account can be used to test the app, but may not show onboarding. For repeat onboarding tests, use a separate fresh account or, from the Clerk Dashboard, remove `subtrackOnboardingComplete` from the test user's public metadata. The deployed course demo uses Clerk development keys and displays Clerk's development-instance warning. Development and production Clerk instances have separate user lists, so any fallback demo credentials shared through Canvas must belong to the instance configured for the live deployment. For wider public use, configure a Clerk production instance and its production keys.
+
+## API routes
+
+All the routes below check for a signed-in Clerk user and return JSON.
+
+| Method | Route | What it does / who calls it |
+| --- | --- | --- |
+| `GET`, `POST` | `/api/subscriptions` | Lists the user's subscriptions or creates one. The manual form and CSV importer use `POST`. |
+| `PATCH`, `DELETE` | `/api/subscriptions/[id]` | Updates or deletes an owned subscription. The editor and row actions use these methods. |
+| `GET`, `POST` | `/api/categories` | Lists or creates the user's categories. The category manager uses `POST`. |
+| `PATCH`, `DELETE` | `/api/categories/[id]` | Renames an owned category or deletes it if unused. The category manager calls these methods. |
+| `GET` | `/api/dashboard/summary` | Returns a calculated summary for the signed-in user. The dashboard currently calculates its initial summary in the server page. |
+| `POST` | `/api/currency-preference` | Checks and stores the selected display currency. |
+| `POST` | `/api/onboarding/complete` | Saves completion of the intro montage in the user's Clerk public metadata. |
+
+## Run it locally
+
+You need Node.js/npm, PostgreSQL 15 or later, and a Clerk application. For local work, use Clerk's development keys.
+
+1. Install packages:
 
    ```bash
    npm install
    ```
 
-2. Copy `.env.example` to `.env` and set your local PostgreSQL URL and Clerk development keys:
+2. Copy `.env.example` to `.env` and fill in your local database URL and Clerk development keys:
 
    ```dotenv
    DATABASE_URL="postgresql://user:password@localhost:5432/subtrack"
@@ -49,117 +111,76 @@ The live app requires a Clerk account. For grading, provide a dedicated demo acc
    CLERK_SECRET_KEY="sk_test_..."
    ```
 
-3. For a **new, empty database only**, generate the Prisma ORM contract and initialize the schema:
+3. If you are using a **new, empty database**, create the contract and initialize the schema:
 
    ```bash
    npm run contract:emit
    npm run db:init
    ```
 
-   `src/prisma/contract.prisma` is the active schema source. Prisma's runtime client is configured in `src/prisma/db.ts` and generated contract files are in `src/prisma/`. The separate `prisma/schema.prisma` file is not used by the current Prisma ORM 8 configuration. Do not run `db:init` against a database that already contains app data.
+   Do not run `db:init` against a database that already has app data. `src/prisma/contract.prisma` is the active schema source, `src/prisma/db.ts` configures the database client, and `prisma/schema.prisma` is not used by the current Prisma ORM 8 setup.
 
-4. For an existing database, inspect the pending changes, apply migrations, and verify the result:
+4. For an existing database, apply outstanding migrations and verify the schema:
 
    ```bash
    npm run db:migrate
    npm run db:verify
    ```
 
-   The existing currency migration is in `migrations/app/20261005T1509_add_subscription_currency`. It adds a required currency value to existing subscriptions, defaulting those existing rows to USD. New manual form entries default to ZAR.
+   The currency migration is `migrations/app/20261005T1509_add_subscription_currency`. Existing rows receive USD as their migration default; new manual entries default to ZAR.
 
-5. Start the local app:
+5. Start the development server and open [http://localhost:3000](http://localhost:3000):
 
    ```bash
    npm run dev
    ```
 
-6. Visit [http://localhost:3000](http://localhost:3000).
+### Environment variables
 
-Never commit `.env`, `.env.local`, database URLs, or real Clerk keys. `npm run contract:emit` regenerates `contract.json` and `contract.d.ts`; review those files before committing generated changes.
-
-## Backend and data flow
-
-Clerk identifies the signed-in user. Each protected page and API route reads the Clerk session with `auth()` and uses the Clerk `userId` to scope database queries, so a user can only read or change their own subscription and category records.
-
-The database connection is created in `src/prisma/db.ts` using `DATABASE_URL` and the Prisma ORM Postgres runtime. The typed contract in `src/prisma/contract.prisma` defines two tables:
-
-- **Category** stores a user's category names. Category names are unique per user.
-- **Subscription** stores its name, price, currency, billing cycle, next renewal date, active/canceled tracking status, owner, and category relation.
-
-### Example: creating a subscription
-
-1. The dashboard's client-side `SubscriptionForm` sends a JSON `POST` to `/api/subscriptions`.
-2. The route handler checks the Clerk session, validates the fields and renewal date, and checks that a normalized subscription name is not already in the user's list.
-3. It finds or creates the user's category, then creates the subscription row in PostgreSQL with the Clerk `userId`.
-4. The handler returns the saved record as JSON. The client refreshes the dashboard so its server-rendered data reflects the database.
-
-Editing and deletion use the same client-to-route-handler pattern. The API checks record ownership before changing or deleting it. Marking a subscription canceled only changes its SubTrack status; it does not cancel the account with the provider. Category deletion is refused while subscriptions still use that category.
-
-### Bank statement import
-
-`components/statement-importer.tsx` reads the selected CSV in the browser. `src/lib/bank-statement.ts` parses comma-, semicolon-, and tab-separated rows; identifies likely date, description, debit/amount, and currency columns; groups similar merchant descriptions; then looks for monthly or yearly intervals with reasonably stable amounts. Detection is a heuristic, so the user reviews each suggestion. The original statement file is not uploaded or stored. Only the individual recurring charges the user selects are sent to `POST /api/subscriptions`.
-
-The downloadable demo at `/sample-bank-statement.csv` is fictional South African data in ZAR. It has bank-style debit and credit columns, a running balance, masked references, regular subscription charges, and unrelated transactions. For this sample, choose **day/month/year** dates and **positive** expenses if the importer asks.
-
-### Currency selection and conversion
-
-The app suggests a display currency from Vercel's country header, then the browser's locale when that header is unavailable. Users can change it. The selection is validated by `POST /api/currency-preference` and saved in a one-year, HTTP-only cookie in that browser. It does not replace the original currency stored on each subscription.
-
-`src/lib/exchange-rates.ts` requests reference rates from Frankfurter and caches them for six hours. Dashboard and renewal pages use those rates to convert displayed totals. If rates are unavailable, the app leaves amounts in their original currencies instead of guessing. These are reference conversions, not a promise of the amount a bank or card provider will settle.
-
-### First-time introduction
-
-After Clerk sign-in or sign-up, Clerk redirects to `/dashboard`. Users who have not completed or skipped the Tangerine onboarding montage see it there. `POST /api/onboarding/complete` records the completion flag in the signed-in user's Clerk public metadata, so the montage is shown only once per account.
-
-## API route handlers
-
-All listed routes require an authenticated Clerk session and return JSON. Data routes are implemented under `app/api/`.
-
-| Method | Endpoint | Purpose |
+| Name | Used for | Keep it safe? |
 | --- | --- | --- |
-| `GET`, `POST` | `/api/subscriptions` | List the signed-in user's subscriptions or create one. |
-| `PATCH`, `DELETE` | `/api/subscriptions/[id]` | Update an owned subscription or delete it. PATCH validates fields and blocks duplicate names. |
-| `GET`, `POST` | `/api/categories` | List or create the signed-in user's categories. |
-| `PATCH`, `DELETE` | `/api/categories/[id]` | Rename an owned category or delete it if it has no subscriptions. |
-| `GET` | `/api/dashboard/summary` | Return calculated summary data for the signed-in user's subscriptions. |
-| `POST` | `/api/currency-preference` | Validate and save a display-currency preference cookie. |
-| `POST` | `/api/onboarding/complete` | Save the current user's onboarding completion flag in Clerk metadata. |
+| `DATABASE_URL` | PostgreSQL connection string used by the server. | Yes. Do not commit or expose it. |
+| `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` | Clerk browser setup. | It is public configuration; use the key paired with the right Clerk instance. |
+| `CLERK_SECRET_KEY` | Clerk server-side operations. | Yes. Never expose it in browser code or commit it. |
 
-## Deploy to Vercel
+Never commit `.env`, `.env.local`, database URLs, or real Clerk keys. `npm run contract:emit` regenerates `contract.json` and `contract.d.ts`; review generated changes before committing.
 
-The GitHub repository is connected to Vercel. The production build uses the Next.js defaults and `npm run build`.
+## Deploying on Vercel
 
-1. Create or select a Neon PostgreSQL database and copy its connection string into the Vercel project's `DATABASE_URL` variable.
-2. Add `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` and `CLERK_SECRET_KEY` in Vercel Project Settings. Configure Clerk for the deployment domain and use the matching Clerk instance's keys in each Vercel environment.
-3. Apply the required database contract/migrations and verify the schema before serving the deployment. Do not initialize an existing database with `db:init`.
-4. Deploy from the intended Git branch and open the deployment URL to verify sign-in, dashboard data, and statement import.
+The GitHub repo is connected to Vercel, which runs the normal Next.js production build (`npm run build`). The live app uses Neon PostgreSQL and Clerk.
 
-Do not put secrets in this README or in Git. For the course submission, provide the repository URL, live URL, demo credentials, and access steps in Canvas.
+1. Set `DATABASE_URL` in Vercel to the Neon connection string.
+2. Set both Clerk variables in Vercel and make sure they come from the same Clerk instance. The current course demo uses development keys, which trigger the browser warning above. For a public production launch, use a Clerk production instance, its matching `pk_live_...` and `sk_live_...` keys, and a production domain configured in Clerk.
+3. Apply/verify database migrations before using a new database. Do not initialize a database that already contains user data.
+4. Deploy from the intended branch, then check sign-in, dashboard data, and CSV import on the deployed URL. Vercel environment-variable changes take effect on a new deployment.
+
+Keep demo credentials in Canvas, not in this file. Never commit the Clerk secret key or database URL.
 
 ## Product demo summary
 
-SubTrack helps people with recurring bills understand what they are paying and when the next charges are expected. It is intended for individuals who want one place to review subscriptions, spot recurring charges in a bank CSV export, and organize expenses without giving an app access to their bank account.
+SubTrack gives people a clear view of the recurring services they pay for and when the next charges are expected. It is designed for anyone who wants to organize subscriptions without connecting a bank account or giving another app control of their service accounts.
 
-After signing in, a user can add subscriptions manually or import a CSV and review likely recurring charges before saving them. The dashboard summarizes monthly spend and categories, while the renewal schedule shows upcoming charges. Users can edit, mark entries canceled, or delete records, manage categories, and choose a display currency while retaining each subscription's original amount. SubTrack is a planning tool; it does not cancel services or initiate payments.
+After signing in, add subscriptions one at a time or import a CSV and review likely recurring charges before saving them. The dashboard summarizes monthly spend and category totals, while the renewal schedule shows upcoming charges. Users can edit or remove entries, mark tracking as canceled, and choose a display currency while each saved amount retains its original currency.
 
-## Lighthouse results supplied for the production dashboard
+## Lighthouse scores
 
-The reports were captured on October 7, 2026 using Lighthouse 13.4.1:
+Lighthouse 13.4.1 scores for the production app, captured October 7, 2026, using Chromium 154. Both reports cover a single initial page load. The desktop run used custom throttling; the mobile run emulated a Moto G Power on slow 4G.
 
-| Device and time (GMT+2) | Performance | Accessibility | Best Practices | SEO |
-| --- | ---: | ---: | ---: | ---: |
-| Desktop, 5:24 PM | 99 | 96 | 100 | 100 |
-| Mobile (Moto G Power, 5:26 PM) | 76 | 96 | 100 | 100 |
-| Mobile (Moto G Power, 5:54 PM, latest) | 75 | 100 | 100 | 100 |
+| Run | Performance | Accessibility | Best Practices | SEO | FCP | LCP | TBT | CLS | Speed Index |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Desktop | 97 | 100 | 100 | 100 | 0.3 s | 0.8 s | 110 ms | 0.002 | 1.4 s |
+| Mobile (Moto G Power, slow 4G) | 76 | 100 | 100 | 100 | 2.1 s | 2.7 s | 760 ms | 0.001 | 2.6 s |
 
-The latest mobile report no longer shows a color-contrast warning. Its metrics were FCP 1.0 s, LCP 3.6 s, TBT 550 ms, CLS 0.001, and Speed Index 3.2 s. Lighthouse also reported 3.7 s of main-thread work, 1.8 s JavaScript execution, an estimated 214 KiB of unused JavaScript, and 18 long tasks. Mobile performance is the main remaining Lighthouse opportunity; measure any future optimizations against the same device and throttling settings.
+Accessibility, Best Practices, and SEO tied as the strongest categories at 100; Performance was weakest at 76 on mobile. Lighthouse scores are estimates and can shift with the browser, device, cache, network conditions, and page activity, so compare runs using the same page and settings. The full reports also flag unused JavaScript and long main-thread tasks for follow-up. Lighthouse's automated accessibility score does not replace manual accessibility checks.
 
-## Known limitations and next steps
+The supplied WAVE reports for the pages scanned each showed 0 errors and 0 contrast errors. One report listed a redundant alternative-text alert; another listed four alerts, including redundant alternative text, an orphaned form label, a missing first-level heading, and a possible heading. Source changes now make the logo images decorative, give the dashboard a first-level heading, and explicitly associate the display-currency label with its control. These supplied counts are from before those changes were deployed; re-scan the landing page and signed-in dashboard, renewal schedule, import, and category pages after deployment. Review any remaining alerts manually. Zero automated contrast errors is useful evidence for the pages scanned, but does not establish full WCAG AA or AAA conformance.
 
-- SubTrack does not connect to banks or service providers and does not send email or push renewal reminders.
-- The statement importer accepts CSV, not PDF. Some banks offer CSV or spreadsheet exports alongside PDF statements.
-- Recurring-charge detection is heuristic. It can miss variable charges or group unrelated charges; users should review matches before saving them.
-- When the statement has no currency column or currency code, the user must choose the correct fallback currency.
-- Exchange rates are reference rates and may differ from bank/card conversion rates, fees, and final settlement amounts.
-- The latest supplied Lighthouse mobile performance score is 75. The most recent mobile report scored accessibility 100 and did not show the earlier contrast warning.
-- Category deletion is blocked while subscriptions still reference that category.
+## What we still want to improve
+
+- **More statement formats:** Import currently supports CSV, not PDF. Bank CSV formats also differ, so users may need to select the right date, amount, or currency column.
+- **Recurring-charge suggestions:** Detection is a heuristic. It can miss variable charges or suggest unrelated transactions, which is why users review the results before saving.
+- **Reminders:** The app shows the renewal schedule, but it does not send email or push reminders yet.
+- **Currency rates:** Frankfurter rates are references. They may not match a bank/card conversion or include provider fees.
+- **Clerk deployment:** The Vercel app uses Clerk development keys for the course demo. Configure a production Clerk instance and keys before a wider public launch.
+
+Bank linking, automatic cancellation, and payments are outside what we set out to build: SubTrack only helps users track and plan.

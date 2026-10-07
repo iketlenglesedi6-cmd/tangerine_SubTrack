@@ -9,7 +9,7 @@ export default function Home() {
       <PageShell className="flex max-w-2xl flex-col items-center justify-center px-6 py-24 text-center">
         <Image
           src="/tangerine-subtrack-logo.png"
-          alt="Tangerine SubTrack"
+          alt=""
           width={628}
           height={434}
           priority
