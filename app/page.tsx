@@ -1,11 +1,12 @@
 import { Show, SignInButton, SignUpButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
+import { PageShell } from "@/components/ui/page-shell";
 
 export default function Home() {
   return (
     <div className="flex flex-1 flex-col bg-[#FAFAF9] font-sans">
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center px-6 py-24 text-center">
+      <PageShell className="flex max-w-2xl flex-col items-center justify-center px-6 py-24 text-center">
         <Image
           src="/tangerine-subtrack-logo.png"
           alt="Tangerine SubTrack"
@@ -31,7 +32,7 @@ export default function Home() {
           <Show when="signed-out">
             <div className="flex items-center gap-3">
               <SignUpButton>
-                <button className="rounded-lg bg-[#F97316] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#EA580C]">
+                <button className="rounded-lg bg-[#C2410C] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#9A3412]">
                   Start tracking
                 </button>
               </SignUpButton>
@@ -46,13 +47,13 @@ export default function Home() {
           <Show when="signed-in">
             <Link
               href="/dashboard"
-              className="inline-block rounded-lg bg-[#F97316] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#EA580C]"
+              className="inline-block rounded-lg bg-[#C2410C] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#9A3412]"
             >
               Go to your dashboard
             </Link>
           </Show>
         </div>
-      </main>
+      </PageShell>
     </div>
   );
 }

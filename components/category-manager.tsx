@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { EmptyState } from "@/components/ui/empty-state";
+import { InlineFeedback } from "@/components/ui/inline-feedback";
+import { SectionHeading } from "@/components/ui/section-heading";
 
 type Category = {
   id: string;
@@ -111,9 +114,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
       aria-labelledby="category-heading"
       className="rounded-2xl border border-[#1C1917]/8 bg-white p-5"
     >
-      <h2 id="category-heading" className="text-lg font-semibold text-[#1C1917]">
-        Manage categories
-      </h2>
+      <SectionHeading id="category-heading" title="Manage categories" variant="card" />
       <form
         onSubmit={createCategory}
         className="mt-4 flex flex-col gap-3 border-b border-[#1C1917]/10 pb-6 sm:flex-row"
@@ -125,21 +126,19 @@ export function CategoryManager({ categories: initialCategories }: { categories:
           onChange={(event) => setNewName(event.target.value)}
           maxLength={80}
           placeholder="Add a category"
-          className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none focus:border-[#F97316]"
+          className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none focus:border-[#C2410C]"
         />
         <button
           type="submit"
           disabled={isWorking || !newName.trim()}
-          className="rounded-lg bg-[#F97316] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#EA580C] disabled:opacity-60"
+          className="rounded-lg bg-[#C2410C] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#9A3412] disabled:opacity-60"
         >
           Add category
         </button>
       </form>
 
       {categories.length === 0 ? (
-        <p className="border-b border-[#1C1917]/10 py-8 text-sm text-[#78716C]">
-          No categories yet.
-        </p>
+        <EmptyState title="No categories yet" compact className="border-b border-[#1C1917]/10 text-sm text-[#78716C]" />
       ) : (
         <ul className="divide-y divide-[#1C1917]/10">
           {categories.map((category) => (
@@ -163,7 +162,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
                     value={editingName}
                     onChange={(event) => setEditingName(event.target.value)}
                     maxLength={80}
-                    className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#F97316]"
+                    className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#C2410C]"
                   />
                   <div className="flex gap-3">
                     <button
@@ -215,9 +214,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
         </ul>
       )}
 
-      <p aria-live="polite" className="min-h-6 pt-3 text-sm text-[#78716C]">
-        {message}
-      </p>
+      <InlineFeedback message={message} className="min-h-6 pt-3 text-[#78716C]" />
     </section>
   );
 }

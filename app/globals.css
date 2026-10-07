@@ -51,3 +51,145 @@ body {
 .float-delay {
   animation: float 8s ease-in-out infinite 0.6s;
 }
+
+.onboarding-card {
+  animation: onboarding-card-in 550ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.onboarding-slide {
+  animation: onboarding-slide-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.onboarding-mascot {
+  animation: onboarding-mascot-float 3.2s ease-in-out infinite;
+}
+
+.onboarding-spark {
+  animation: onboarding-sparkle 2.4s ease-in-out infinite;
+}
+
+.onboarding-spark-late {
+  animation-delay: 700ms;
+}
+
+.onboarding-arrow {
+  color: #c2410c;
+  animation: onboarding-arrow-nudge 2.8s ease-in-out infinite;
+}
+
+.onboarding-speech {
+  animation: onboarding-speech-pop 3.4s ease-in-out infinite;
+}
+
+@keyframes onboarding-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes onboarding-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(9px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes onboarding-mascot-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-1deg);
+  }
+  50% {
+    transform: translateY(-9px) rotate(1deg);
+  }
+}
+
+@keyframes onboarding-sparkle {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(0.8) rotate(-12deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.15) rotate(12deg);
+  }
+}
+
+@keyframes onboarding-arrow-nudge {
+  0%,
+  100% {
+    transform: rotate(-2deg) scale(0.98);
+  }
+  50% {
+    transform: rotate(2deg) scale(1.02);
+  }
+}
+
+@keyframes onboarding-speech-pop {
+  0%,
+  88%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  93% {
+    transform: translateY(-4px) rotate(2deg);
+  }
+}
+
+.tangerine-loading-orbit {
+  display: grid;
+  width: 7rem;
+  height: 7rem;
+  place-items: center;
+  border: 1px solid rgb(234 117 48 / 18%);
+  border-radius: 9999px;
+  background: radial-gradient(circle, rgb(255 220 174 / 42%), transparent 72%);
+  animation: tangerine-loading-glow 2.4s ease-in-out infinite;
+}
+
+.tangerine-loading-mascot {
+  animation: tangerine-loading-bob 1.8s ease-in-out infinite;
+}
+
+@keyframes tangerine-loading-bob {
+  0%,
+  100% {
+    transform: translateY(2px) rotate(-4deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(4deg);
+  }
+}
+
+@keyframes tangerine-loading-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgb(234 117 48 / 0%);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgb(234 117 48 / 7%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tangerine-loading-orbit,
+  .tangerine-loading-mascot,
+  .onboarding-card,
+  .onboarding-slide,
+  .onboarding-mascot,
+  .onboarding-spark,
+  .onboarding-arrow,
+  .onboarding-speech {
+    animation: none;
+  }
+}

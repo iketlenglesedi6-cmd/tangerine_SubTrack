@@ -3,6 +3,12 @@ import { NextResponse } from "next/server";
 
 import { db } from "@/src/prisma/db";
 import { isSupportedCurrency } from "@/src/lib/currency";
+import { duplicateSubscriptionMessage, normalizeSubscriptionName } from "@/src/lib/subscription-name";
+import {
+  isDateInputInPast,
+  isValidDateInput,
+  PAST_RENEWAL_DATE_MESSAGE,
+} from "@/src/lib/date-input";
 
 export async function PATCH(
   request: Request,
@@ -37,7 +43,17 @@ export async function PATCH(
   const updates: Record<string, unknown> = { updatedAt: new Date().toISOString() };
 
   if (typeof body.name === "string" && body.name.trim()) {
-    updates.name = body.name.trim();
+    const nextName = body.name.trim();
+    const userSubscriptions = await db.orm.public.Subscription.where({ userId }).all();
+    const duplicate = userSubscriptions.find(
+      (subscription) =>
+        subscription.id !== numericId &&
+        normalizeSubscriptionName(subscription.name) === normalizeSubscriptionName(nextName),
+    );
+    if (duplicate) {
+      return NextResponse.json({ error: duplicateSubscriptionMessage(duplicate.name) }, { status: 409 });
+    }
+    updates.name = nextName;
   }
   if (body.cost !== undefined) {
     const cost = Number(body.cost);
@@ -60,11 +76,14 @@ export async function PATCH(
     updates.billingCycle = body.billingCycle;
   }
   if (body.renewalDate) {
-    const renewalDate = new Date(String(body.renewalDate));
-    if (Number.isNaN(renewalDate.getTime())) {
-      return NextResponse.json({ error: "Renewal date must be a valid date" }, { status: 400 });
+    const renewalDateInput = String(body.renewalDate).slice(0, 10);
+    if (!isValidDateInput(renewalDateInput)) {
+      return NextResponse.json({ error: "Choose a valid renewal date." }, { status: 400 });
     }
-    updates.renewalDate = renewalDate.toISOString();
+    if (isDateInputInPast(renewalDateInput)) {
+      return NextResponse.json({ error: PAST_RENEWAL_DATE_MESSAGE }, { status: 400 });
+    }
+    updates.renewalDate = new Date(`${renewalDateInput}T12:00:00.000Z`).toISOString();
   }
   if (typeof body.status === "string") {
     if (body.status !== "active" && body.status !== "canceled") {

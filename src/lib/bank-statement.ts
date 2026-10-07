@@ -1,4 +1,5 @@
 import { getNextRenewalDate } from "./renewals";
+import { isSupportedCurrency } from "./currency";
 
 export type StatementRow = Record<string, string>;
 
@@ -64,11 +65,12 @@ export function parseCsv(text: string) {
   return rows;
 }
 
-export function guessColumn(headers: string[], role: "date" | "description" | "amount") {
+export function guessColumn(headers: string[], role: "date" | "description" | "amount" | "currency") {
   const aliases = {
     date: ["date", "transaction date", "posted date", "posting date", "trans date"],
     description: ["description", "merchant", "details", "payee", "transaction description", "narrative"],
     amount: ["amount", "transaction amount", "value", "debit", "withdrawal"],
+    currency: ["currency", "currency code", "currencycode", "ccy"],
   }[role];
   const normalizedHeaders = headers.map((header) => header.trim().toLowerCase().replace(/[_-]+/g, " "));
   const exact = normalizedHeaders.findIndex((header) => aliases.includes(header));
@@ -130,6 +132,19 @@ function parseAmount(value: string) {
   return isParenthesizedNegative ? -Math.abs(amount) : amount;
 }
 
+function transactionCurrency(currencyValue: string, amountValue: string, fallback: string) {
+  const explicit = currencyValue.trim().toUpperCase();
+  if (isSupportedCurrency(explicit)) return explicit;
+  const rawAmount = amountValue.trim().toUpperCase();
+  const code = /\b(AUD|CAD|EUR|GBP|JPY|NZD|USD|ZAR)\b/.exec(rawAmount)?.[1];
+  if (code && isSupportedCurrency(code)) return code;
+  if (rawAmount.includes("€")) return "EUR";
+  if (rawAmount.includes("£")) return "GBP";
+  if (/^\s*R\s*\d/.test(rawAmount)) return "ZAR";
+  if (rawAmount.includes("$") && ["USD", "CAD", "AUD", "NZD"].includes(fallback)) return fallback;
+  return fallback;
+}
+
 function merchantKey(value: string) {
   return value
     .toLocaleLowerCase()
@@ -159,6 +174,7 @@ export function findRecurringCharges({
   dateColumn,
   descriptionColumn,
   amountColumn,
+  currencyColumn,
   currency,
   expenseSign,
   dateOrder,
@@ -167,6 +183,7 @@ export function findRecurringCharges({
   dateColumn: string;
   descriptionColumn: string;
   amountColumn: string;
+  currencyColumn?: string;
   currency: string;
   expenseSign: "positive" | "negative";
   dateOrder: "DMY" | "MDY";
@@ -180,8 +197,10 @@ export function findRecurringCharges({
     if (!date || amount === null || !description) continue;
     if (expenseSign === "positive" ? amount <= 0 : amount >= 0) continue;
 
-    const key = merchantKey(description);
-    if (key.length < 2) continue;
+    const sourceCurrency = transactionCurrency(row[currencyColumn ?? ""] ?? "", row[amountColumn] ?? "", currency);
+    const merchant = merchantKey(description);
+    if (merchant.length < 2) continue;
+    const key = `${merchant}\u0000${sourceCurrency}`;
     const transactions = groups.get(key) ?? [];
     transactions.push({ date, amount: Math.abs(amount), description });
     groups.set(key, transactions);
@@ -212,7 +231,7 @@ export function findRecurringCharges({
       key,
       name: latest.description,
       cost: Number(latest.amount.toFixed(2)),
-      currency,
+      currency: key.slice(key.lastIndexOf("\u0000") + 1),
       billingCycle,
       lastChargedAt: latest.date.toISOString(),
       renewalDate,

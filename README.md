@@ -43,12 +43,20 @@ Never commit `.env` or real credentials. `npm run contract:emit` compiles the co
 
 - Sign up or sign in using Clerk.
 - Open the dashboard to review monthly spend, active subscriptions, upcoming renewal dates, and category totals.
-- Add, cancel/reactivate, or delete subscriptions.
+- Choose a preferred display currency; SubTrack suggests one from your Vercel-detected country when deployed (or browser locale locally) and converts totals while retaining each original subscription currency.
+- Add, edit, cancel/reactivate, or delete subscriptions; search and filter the list, then export the visible results as CSV.
 - Import a bank CSV. The file is processed in the browser; only recurring-charge records the user approves are sent to the app.
+- Try the importer with the fictional sample at `/sample-bank-statement.csv`; it contains no personal or bank account data.
 - Review upcoming renewal dates and spending grouped by currency and category.
 - Add, rename, or delete categories. A category can only be deleted when it has no subscriptions.
 
 Changing a subscription's tracking status does not cancel or change the user's account with that service provider. SubTrack does not automatically connect to banks or service providers; the CSV import is a user-selected statement export.
+
+## Product demo summary
+
+SubTrack helps people who have recurring bills across several services understand what they are paying and when the next charges are expected. It is designed for individuals who want one place to review subscriptions, spot recurring charges in a bank CSV export, and organize expenses without giving the app access to their bank account.
+
+After signing in, a user can add subscriptions manually or import a CSV and review the likely recurring charges before saving them. The dashboard summarizes monthly spend and categories, while the renewal schedule shows upcoming charges. Users can edit, pause tracking, or delete records, manage categories, and choose a display currency; original amounts remain visible when conversions are shown. SubTrack tracks information for planning and does not cancel services or initiate payments.
 
 ## Updating an existing database
 
@@ -73,14 +81,16 @@ All API endpoints require an authenticated Clerk session. Responses use JSON.
 - **Authentication:** Clerk.
 - **Vercel environment:** Set `DATABASE_URL`, `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`, and `CLERK_SECRET_KEY` in Project Settings. Use Clerk development keys for previews; production keys require a Clerk production instance configured for a domain you own.
 - **Demo credentials:** Create a dedicated grader account in the production Clerk instance and provide its credentials in the course submission. Do not commit credentials here.
-- **Grader steps:** Sign in, add a subscription with its currency, open **Renewal schedule**, import a CSV statement and review the detected charges, then manage categories from the dashboard.
-- **CSV format:** The importer accepts comma-, semicolon-, or tab-separated files and tries to detect date, description, and amount columns. Users can map columns, choose date order, expense sign, and one currency per file. It detects likely monthly/yearly repeats; users confirm each record before import.
+- **Grader steps:** Sign in with the dedicated Clerk grader account, download the fictional sample CSV from `/import`, import it using ZAR and positive expense amounts, review and save the detected charges, then edit/search/filter/export subscriptions and visit **Renewal schedule**.
+- **CSV format:** The importer accepts comma-, semicolon-, or tab-separated files and tries to detect date, description, amount, and currency columns. Users can map columns, choose date order and expense sign, and set a fallback currency for rows without currency information. It detects likely monthly/yearly repeats; users confirm each record before import.
 
 ## Known limitations and opportunities
 
 - The production URL and grader account need to be supplied with the final Canvas submission.
 - The app does not sync with banks or service-provider accounts and does not send email or push reminders.
+- The importer accepts CSV, not PDF. Some banks offer CSV or Excel exports; the included fictional CSV is available to demonstrate the flow without a bank login.
 - Recurring-charge detection is heuristic and can miss variable charges or misidentify repeated merchants; users review all matches before import.
-- CSV imports use one currency per file. Monthly totals are kept separate by currency; the app does not convert foreign exchange.
+- When a CSV includes a currency column, imports retain currency per transaction group; otherwise the user chooses a fallback currency.
+- Display-currency conversion uses daily reference rates from [Frankfurter](https://frankfurter.dev/) and is an estimate; card-network rates, bank fees, and the exact settlement amount may differ. The chosen display currency is saved in a browser cookie.
 - Lighthouse mobile scores and WCAG contrast results still need to be measured against the deployed app and recorded in the Canvas submission.
 - Category deletion is blocked while subscriptions still reference that category.

@@ -1,5 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import Image from "next/image";
+
+import { ActionLink } from "@/components/ui/action-link";
+import { PageShell } from "@/components/ui/page-shell";
+import { SectionHeading } from "@/components/ui/section-heading";
 
 export const metadata: Metadata = {
   title: "Features | SubTrack",
@@ -8,87 +12,88 @@ export const metadata: Metadata = {
 
 const featureGroups = [
   {
-    title: "See what renews next",
-    text: "Keep each subscription’s next expected charge date in one schedule. SubTrack advances past dates by the billing cycle you choose.",
+    label: "FIND THE REPEATS",
+    title: "Spot the repeat",
+    text: "Import a bank CSV, review likely recurring charges, and pick the ones you want to track.",
   },
   {
-    title: "Compare spending by currency",
-    text: "View monthly equivalents and category totals without adding different currencies into a misleading single number.",
+    label: "PLAN AHEAD",
+    title: "Know what's next",
+    text: "See expected charge dates and billing cycles together in one renewal schedule.",
   },
   {
-    title: "Find recurring charges",
-    text: "Import a bank statement CSV, review possible monthly or yearly charges, and choose which ones to track.",
+    label: "MAKE IT ADD UP",
+    title: "Compare your costs",
+    text: "Group spending by category and display currency while keeping original amounts close by.",
   },
 ];
 
 const workflow = [
-  "Enter subscriptions yourself or import a statement exported by your bank",
-  "Review detected recurring charges before adding them to your tracker",
-  "Check upcoming renewals and review spending by category and currency",
+  "Add your subscriptions or bring in a CSV your bank exported.",
+  "Check the possible repeats. You decide what gets saved.",
+  "See what's coming up and where your monthly spend goes.",
 ];
 
 export default function FeaturesPage() {
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 py-12 md:px-8 md:py-16">
-      <section className="rounded-[2rem] border border-[#e7ddd2] bg-[#fbf8f4] p-8 shadow-[0_20px_50px_rgba(33,26,20,0.05)] md:p-12">
-        <p className="text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-[#7a5b3a]">
-          Features
-        </p>
-        <h1 className="mt-4 max-w-2xl text-4xl font-black tracking-[-0.07em] text-zinc-900 md:text-5xl">
-          Built to surface the subscriptions you actually need to watch.
-        </h1>
-        <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-600">
-          SubTrack focuses on clarity, not clutter. It turns a stream of recurring charges into useful signals you can act on.
-        </p>
-      </section>
-
-      <section className="mt-8 grid gap-5 md:grid-cols-3">
-        {featureGroups.map((feature) => (
-          <div
-            key={feature.title}
-            className="rounded-[1.75rem] border border-[#e7ddd2] bg-white p-6 shadow-[0_16px_32px_rgba(38,28,21,0.04)]"
-          >
-            <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-2xl bg-[#f0dfbf] text-lg font-black text-[#3d2c20]">
-              +
-            </div>
-            <h2 className="text-xl font-bold tracking-[-0.05em] text-zinc-900">{feature.title}</h2>
-            <p className="mt-3 text-sm leading-6 text-zinc-600">{feature.text}</p>
-          </div>
-        ))}
-      </section>
-
-      <div className="mt-8 flex flex-wrap gap-3">
-        <Link href="/pricing" className="rounded-lg border border-[#d9c5af] px-5 py-3 text-sm font-medium text-zinc-800 hover:bg-[#f7f3ee]">
-          See what’s included
-        </Link>
-        <Link href="/import" className="rounded-lg bg-[#9A3412] px-5 py-3 text-sm font-medium text-white hover:bg-[#7C2D12]">
-          Import a statement
-        </Link>
-      </div>
-
-      <section className="mt-10 rounded-[2rem] border border-[#e7ddd2] bg-[#f6f1ea] p-8 md:p-10">
-        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center">
-          <div>
-            <p className="text-[0.68rem] font-semibold uppercase tracking-[0.26em] text-[#7a5b3a]">
-              Product flow
+    <PageShell className="max-w-5xl px-6 py-12">
+      <section className="relative overflow-hidden rounded-2xl border border-[#f1d2bd] bg-[#fff1e6] px-6 py-8 sm:px-9 sm:py-10">
+        <div className="grid items-center gap-6 sm:grid-cols-[1fr_auto]">
+          <div className="max-w-2xl">
+            <p className="text-sm font-semibold text-[#9A3412]">A little less subscription surprise</p>
+            <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#1C1917] sm:text-4xl">
+              Keep your recurring costs zipped up in one place.
+            </h1>
+            <p className="mt-4 max-w-xl text-base leading-7 text-[#57534E]">
+              Find likely repeats, see what renews next, and get a clearer picture of your monthly spend.
             </p>
-            <h2 className="mt-3 text-3xl font-black tracking-[-0.06em] text-zinc-900">
-              Stay ahead without checking every bill manually.
-            </h2>
+            <div className="mt-6 flex flex-wrap gap-3">
+              <ActionLink href="/import" variant="primary">Try the statement importer</ActionLink>
+              <ActionLink href="/pricing" variant="secondary">See the demo details</ActionLink>
+            </div>
           </div>
-
-          <div className="space-y-4">
-            {workflow.map((step, index) => (
-              <div key={step} className="flex items-start gap-4 rounded-2xl border border-[#e9dccd] bg-white p-4">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1d1a17] text-xs font-bold text-[#f7f1ea]">
-                  {index + 1}
-                </div>
-                <p className="text-sm leading-6 text-zinc-700">{step}</p>
-              </div>
-            ))}
+          <div className="mx-auto w-fit rounded-full bg-[#ffe0c4] p-2 sm:mr-2">
+            <Image
+              src="/tangerine-icon.png"
+              alt=""
+              width={160}
+              height={160}
+              className="h-32 w-32 object-contain sm:h-40 sm:w-40"
+            />
           </div>
         </div>
+        <p className="mt-7 w-fit rounded-lg bg-white/80 px-3 py-2 text-sm text-[#7C2D12]">
+          No bank connection. No cancel button. Just your own subscription list, neatly zipped.
+        </p>
       </section>
-    </main>
+
+      <section aria-labelledby="features-heading" className="mt-10">
+        <SectionHeading id="features-heading" title="A few handy things" />
+        <div className="mt-4 grid gap-4 md:grid-cols-3">
+          {featureGroups.map((feature) => (
+            <article key={feature.title} className="rounded-xl border border-[#e7ddd2] bg-white p-5">
+              <p className="text-xs font-semibold tracking-wide text-[#9A3412]">{feature.label}</p>
+              <h3 className="mt-2 font-semibold text-[#1C1917]">{feature.title}</h3>
+              <p className="mt-2 text-sm leading-6 text-[#57534E]">{feature.text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section aria-labelledby="workflow-heading" className="mt-10 rounded-2xl bg-[#f0e7de] px-6 py-6 sm:px-8">
+        <SectionHeading id="workflow-heading" title="Three quick steps" />
+        <ol className="mt-4 grid gap-x-8 sm:grid-cols-3">
+          {workflow.map((step, index) => (
+            <li key={step} className="flex gap-3 border-t border-[#1C1917]/10 py-4">
+              <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-[#9A3412] text-xs font-semibold text-white">
+                {index + 1}
+              </span>
+              <p className="text-sm leading-6 text-[#1C1917]">{step}</p>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+    </PageShell>
   );
 }
