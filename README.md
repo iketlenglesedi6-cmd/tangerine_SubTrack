@@ -52,6 +52,12 @@ Never commit `.env` or real credentials. `npm run contract:emit` compiles the co
 
 Changing a subscription's tracking status does not cancel or change the user's account with that service provider. SubTrack does not automatically connect to banks or service providers; the CSV import is a user-selected statement export.
 
+## Product demo summary
+
+SubTrack helps people who have recurring bills across several services understand what they are paying and when the next charges are expected. It is designed for individuals who want one place to review subscriptions, spot recurring charges in a bank CSV export, and organize expenses without giving the app access to their bank account.
+
+After signing in, a user can add subscriptions manually or import a CSV and review the likely recurring charges before saving them. The dashboard summarizes monthly spend and categories, while the renewal schedule shows upcoming charges. Users can edit, pause tracking, or delete records, manage categories, and choose a display currency; original amounts remain visible when conversions are shown. SubTrack tracks information for planning and does not cancel services or initiate payments.
+
 ## Updating an existing database
 
 Existing databases need the currency field before deploying a build that supports multiple currencies. The reviewable migration is in `migrations/app/20261005T1509_add_subscription_currency`; it adds a non-null `currency` column with a `USD` default for existing subscriptions. Apply pending migrations with `npm run db:migrate`, then run `npm run db:verify`. New manual entries default to `ZAR`, and users can choose another supported currency. Do not run `npm run db:init` on this existing database.
