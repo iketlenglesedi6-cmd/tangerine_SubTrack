@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { SubscriptionEditor, type DashboardSubscription } from "@/components/subscription-list";
+import type { DashboardSubscription } from "@/components/subscription-list";
+import { SubscriptionEditor } from "@/components/subscription-editor";
 import { InlineFeedback } from "@/components/ui/inline-feedback";
 
 export function SubscriptionRowActions({
