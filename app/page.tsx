@@ -23,7 +23,7 @@ export default function Home() {
           forgotten subscription again
         </h1>
 
-        <p className="mt-5 max-w-md text-lg leading-relaxed text-[#78716C]">
+        <p className="mt-5 max-w-md text-lg leading-relaxed text-[#57534E]">
           Add what you&apos;re paying for, see it all in one place, and know
           exactly when the next charge is coming.
         </p>

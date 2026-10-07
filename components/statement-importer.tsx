@@ -205,7 +205,7 @@ export function StatementImporter({
             <div className="overflow-x-auto px-4 py-2">
               <table className="w-full min-w-[470px] border-collapse text-left text-xs">
                 <thead>
-                  <tr className="border-b border-[#1C1917]/10 text-[10px] uppercase tracking-wider text-[#78716C]">
+                  <tr className="border-b border-[#1C1917]/10 text-[10px] uppercase tracking-wider text-[#57534E]">
                     <th className="py-2 pr-3 font-semibold">Date</th>
                     <th className="py-2 pr-3 font-semibold">Description</th>
                     <th className="py-2 pr-3 text-right font-semibold">Debit</th>

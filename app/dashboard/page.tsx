@@ -206,8 +206,15 @@ export default async function DashboardPage() {
         <div className="space-y-8">
           <div className="rounded-xl bg-[#1C1917] p-5 text-white">
             <SectionHeading title="Upcoming renewals" variant="inverse">
-              <Link href="/renewals" className="text-xs font-medium text-white underline decoration-white/50 underline-offset-4 hover:text-white/80">
-                View schedule
+              <Link
+                href="/renewals"
+                className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-lg bg-white px-3 py-2 text-xs font-semibold text-[#7C2D12] shadow-sm transition hover:bg-[#FFF1E6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+              >
+                <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-4 w-4">
+                  <path d="M6 2.75v2.5m8-2.5v2.5M3.5 7.25h13M4.5 4.75h11a1 1 0 0 1 1 1v9.75a1 1 0 0 1-1 1h-11a1 1 0 0 1-1-1V5.75a1 1 0 0 1 1-1Z" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span>View schedule</span>
+                <span aria-hidden="true" className="text-sm">→</span>
               </Link>
             </SectionHeading>
             <div className="mt-4 space-y-3">

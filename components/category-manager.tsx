@@ -138,7 +138,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
       </form>
 
       {categories.length === 0 ? (
-        <EmptyState title="No categories yet" compact className="border-b border-[#1C1917]/10 text-sm text-[#78716C]" />
+        <EmptyState title="No categories yet" compact className="border-b border-[#1C1917]/10 text-sm text-[#57534E]" />
       ) : (
         <ul className="divide-y divide-[#1C1917]/10">
           {categories.map((category) => (
@@ -176,7 +176,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
                       type="button"
                       onClick={() => setEditingId(null)}
                       disabled={isWorking}
-                      className="text-sm text-[#78716C] underline disabled:opacity-50"
+                      className="text-sm text-[#57534E] underline disabled:opacity-50"
                     >
                       Cancel
                     </button>
@@ -194,7 +194,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
                         setEditingName(category.name);
                         setMessage("");
                       }}
-                      className="text-sm text-[#78716C] underline decoration-dotted underline-offset-4 hover:text-[#1C1917] disabled:opacity-50"
+                      className="text-sm text-[#57534E] underline decoration-dotted underline-offset-4 hover:text-[#1C1917] disabled:opacity-50"
                     >
                       Rename
                     </button>
@@ -202,7 +202,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
                       type="button"
                       disabled={isWorking}
                       onClick={() => void deleteCategory(category)}
-                      className="text-sm text-[#78716C] underline decoration-dotted underline-offset-4 hover:text-red-600 disabled:opacity-50"
+                      className="text-sm text-[#57534E] underline decoration-dotted underline-offset-4 hover:text-red-600 disabled:opacity-50"
                     >
                       Delete
                     </button>
@@ -214,7 +214,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
         </ul>
       )}
 
-      <InlineFeedback message={message} className="min-h-6 pt-3 text-[#78716C]" />
+      <InlineFeedback message={message} className="min-h-6 pt-3 text-[#57534E]" />
     </section>
   );
 }

@@ -66,7 +66,7 @@ export function OnboardingMontage() {
           type="button"
           onClick={() => void finish()}
           disabled={isFinishing}
-          className="absolute right-5 top-5 z-10 rounded-full px-3 py-2 text-sm font-medium text-[#78716c] transition hover:bg-[#f4ece3] hover:text-[#1c1917] disabled:opacity-50"
+          className="absolute right-5 top-5 z-10 rounded-full px-3 py-2 text-sm font-medium text-[#57534E] transition hover:bg-[#f4ece3] hover:text-[#1c1917] disabled:opacity-50"
         >
           Skip intro
         </button>
