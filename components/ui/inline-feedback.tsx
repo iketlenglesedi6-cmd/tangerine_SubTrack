@@ -9,7 +9,7 @@ export function InlineFeedback({
 }) {
   const toneClassName = {
     neutral: "text-[#57534E]",
-    error: "text-red-800",
+    error: "rounded-md border border-[#f1d2bd] bg-[#fff1e6] px-3 py-2 text-[#7C2D12]",
     success: "text-emerald-900",
   }[tone];
 

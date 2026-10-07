@@ -3,6 +3,12 @@ import { NextResponse } from "next/server";
 
 import { db } from "@/src/prisma/db";
 import { isSupportedCurrency } from "@/src/lib/currency";
+import {
+  getDateInputToday,
+  isDateInputInPast,
+  isValidDateInput,
+  PAST_RENEWAL_DATE_MESSAGE,
+} from "@/src/lib/renewals";
 
 function serializeSubscription(record: {
   id: number;
@@ -92,10 +98,14 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Status must be active or canceled" }, { status: 400 });
   }
 
-  const renewalDate = new Date(String(body.renewalDate ?? Date.now()));
-  if (Number.isNaN(renewalDate.getTime())) {
-    return NextResponse.json({ error: "Renewal date must be a valid date" }, { status: 400 });
+  const renewalDateInput = String(body.renewalDate ?? getDateInputToday()).slice(0, 10);
+  if (!isValidDateInput(renewalDateInput)) {
+    return NextResponse.json({ error: "Choose a valid renewal date." }, { status: 400 });
   }
+  if (isDateInputInPast(renewalDateInput)) {
+    return NextResponse.json({ error: PAST_RENEWAL_DATE_MESSAGE }, { status: 400 });
+  }
+  const renewalDate = new Date(`${renewalDateInput}T12:00:00.000Z`);
 
   const categoryName = String(body.categoryName ?? body.category ?? "General").trim() || "General";
   const categoryValue = Number(body.categoryId ?? 0);

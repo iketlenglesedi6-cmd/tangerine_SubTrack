@@ -3,6 +3,11 @@ import { NextResponse } from "next/server";
 
 import { db } from "@/src/prisma/db";
 import { isSupportedCurrency } from "@/src/lib/currency";
+import {
+  isDateInputInPast,
+  isValidDateInput,
+  PAST_RENEWAL_DATE_MESSAGE,
+} from "@/src/lib/renewals";
 
 export async function PATCH(
   request: Request,
@@ -60,11 +65,14 @@ export async function PATCH(
     updates.billingCycle = body.billingCycle;
   }
   if (body.renewalDate) {
-    const renewalDate = new Date(String(body.renewalDate));
-    if (Number.isNaN(renewalDate.getTime())) {
-      return NextResponse.json({ error: "Renewal date must be a valid date" }, { status: 400 });
+    const renewalDateInput = String(body.renewalDate).slice(0, 10);
+    if (!isValidDateInput(renewalDateInput)) {
+      return NextResponse.json({ error: "Choose a valid renewal date." }, { status: 400 });
     }
-    updates.renewalDate = renewalDate.toISOString();
+    if (isDateInputInPast(renewalDateInput)) {
+      return NextResponse.json({ error: PAST_RENEWAL_DATE_MESSAGE }, { status: 400 });
+    }
+    updates.renewalDate = new Date(`${renewalDateInput}T12:00:00.000Z`).toISOString();
   }
   if (typeof body.status === "string") {
     if (body.status !== "active" && body.status !== "canceled") {
