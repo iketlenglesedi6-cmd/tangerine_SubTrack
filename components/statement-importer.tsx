@@ -187,15 +187,46 @@ export function StatementImporter({
             Download the column template
           </a>
           <a href="/sample-bank-statement.csv" download className="font-medium text-[#9A3412] underline underline-offset-2">
-            Download fictional sample statement
+            Download sample bank CSV
           </a>
         </div>
+        <details className="mt-4 max-w-2xl overflow-hidden rounded-xl border border-[#1C1917]/10 bg-[#fffaf5]">
+          <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-[#9A3412] marker:text-[#9A3412]">
+            Peek at the fictional statement
+          </summary>
+          <div className="border-t border-[#1C1917]/10">
+            <div className="flex flex-wrap items-center justify-between gap-3 bg-[#9A3412] px-4 py-3 text-white">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-orange-100">SubTrack demo file</p>
+                <p className="mt-0.5 text-sm font-semibold">Everyday account · South Africa</p>
+              </div>
+              <span className="rounded-full border border-white/30 px-2.5 py-1 text-xs font-medium">ZAR · Apr–Oct</span>
+            </div>
+            <div className="overflow-x-auto px-4 py-2">
+              <table className="w-full min-w-[470px] border-collapse text-left text-xs">
+                <thead>
+                  <tr className="border-b border-[#1C1917]/10 text-[10px] uppercase tracking-wider text-[#78716C]">
+                    <th className="py-2 pr-3 font-semibold">Date</th>
+                    <th className="py-2 pr-3 font-semibold">Description</th>
+                    <th className="py-2 pr-3 text-right font-semibold">Debit</th>
+                    <th className="py-2 text-right font-semibold">Balance</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#1C1917]/[0.06] text-[#44403C]">
+                  <tr><td className="py-2.5 pr-3 tabular-nums">03/04/2026</td><td className="py-2.5 pr-3">CARD PURCHASE NETFLIX.COM</td><td className="py-2.5 pr-3 text-right tabular-nums">R 199.00</td><td className="py-2.5 text-right tabular-nums">R 9,801.00</td></tr>
+                  <tr><td className="py-2.5 pr-3 tabular-nums">12/04/2026</td><td className="py-2.5 pr-3">DEBIT ORDER SPOTIFY PREMIUM</td><td className="py-2.5 pr-3 text-right tabular-nums">R 69.99</td><td className="py-2.5 text-right tabular-nums">R 9,731.01</td></tr>
+                  <tr><td className="py-2.5 pr-3 tabular-nums">15/04/2026</td><td className="py-2.5 pr-3">CARD PURCHASE CHECKERS HYPER</td><td className="py-2.5 pr-3 text-right tabular-nums">R 1,435.80</td><td className="py-2.5 text-right tabular-nums">R 8,295.21</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </details>
         <p className="mt-4 rounded-lg bg-[#FAFAF9] p-3 text-xs leading-5 text-[#57534E]">
           Your statement is read in this browser and is never uploaded. Only the recurring charges you approve are
           sent to SubTrack. Don’t upload a statement you don’t want processed.
         </p>
         <p className="mt-2 text-xs leading-5 text-[#57534E]">
-          The sample uses fictional transactions in ZAR and contains no bank account details.
+          The sample has fictional South African transactions through this month, masked references, and no real account details. Its debit column is positive, and its dates use day/month/year format.
         </p>
       </section>
 

@@ -10,18 +10,21 @@ const slides = [
     title: "Meet your subscription sidekick.",
     copy: "SubTrack brings your recurring payments into one calm, clear place, so renewals don't catch you off guard.",
     note: "Your money, neatly unzipped.",
+    bubble: "Psst! I’ve got your back.",
   },
   {
     eyebrow: "See the whole picture",
     title: "Know what’s coming up.",
     copy: "See what you spend each month, what renews soon, and how your subscriptions add up across currencies.",
     note: "No more mental maths in the checkout queue.",
+    bubble: "See that? Nice and tidy!",
   },
   {
     eyebrow: "You’re in charge",
     title: "Start with the list you have.",
     copy: "Add subscriptions yourself or import a bank CSV. We’ll help spot recurring charges; you choose what to keep track of.",
     note: "SubTrack never cancels a service for you.",
+    bubble: "Your call, always.",
   },
 ];
 
@@ -71,6 +74,12 @@ export function OnboardingMontage() {
         <div key={step} className="onboarding-slide grid items-center gap-5 px-6 pb-7 pt-16 sm:grid-cols-[0.9fr_1.1fr] sm:gap-8 sm:px-10 sm:pb-9 sm:pt-14">
           <div className="relative mx-auto flex aspect-square w-full max-w-[250px] items-center justify-center rounded-full bg-[radial-gradient(circle_at_50%_45%,#fff1d6_0%,#ffe0b5_56%,#ffd09b_100%)] sm:max-w-none">
             <span className="absolute h-[78%] w-[78%] rounded-full border border-white/70" />
+            <svg className="onboarding-arrow absolute inset-0 h-full w-full" viewBox="0 0 300 300" fill="none" aria-hidden="true">
+              <path d="M44 106C20 58 71 28 116 42" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="7 8" />
+              <path d="m104 31 16 12-18 7" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M253 191c18 39-10 75-48 74" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeDasharray="7 8" />
+              <path d="m217 253-15 12 18 6" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
             <Image
               src="/tangerine-icon.png"
               alt="Tangerine, your SubTrack sidekick"
@@ -79,6 +88,9 @@ export function OnboardingMontage() {
               priority
               className="onboarding-mascot relative z-10 h-[78%] w-[78%] object-contain drop-shadow-[0_16px_14px_rgba(154,52,18,0.16)]"
             />
+            <span className="onboarding-speech absolute -right-1 top-3 z-20 max-w-[145px] rounded-2xl rounded-bl-sm border border-[#f6c49d] bg-[#fffaf4] px-3 py-2 text-center text-xs font-semibold text-[#8a3a18] shadow-md sm:-right-3 sm:top-5">
+              {slide.bubble}
+            </span>
             <span className="onboarding-spark absolute right-[13%] top-[18%] text-2xl text-[#ea7530]" aria-hidden="true">✦</span>
             <span className="onboarding-spark onboarding-spark-late absolute bottom-[19%] left-[12%] text-lg text-[#c2410c]" aria-hidden="true">✦</span>
           </div>

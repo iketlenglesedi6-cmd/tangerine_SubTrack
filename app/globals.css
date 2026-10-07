@@ -72,6 +72,15 @@ body {
   animation-delay: 700ms;
 }
 
+.onboarding-arrow {
+  color: #c2410c;
+  animation: onboarding-arrow-nudge 2.8s ease-in-out infinite;
+}
+
+.onboarding-speech {
+  animation: onboarding-speech-pop 3.4s ease-in-out infinite;
+}
+
 @keyframes onboarding-card-in {
   from {
     opacity: 0;
@@ -116,6 +125,27 @@ body {
   }
 }
 
+@keyframes onboarding-arrow-nudge {
+  0%,
+  100% {
+    transform: rotate(-2deg) scale(0.98);
+  }
+  50% {
+    transform: rotate(2deg) scale(1.02);
+  }
+}
+
+@keyframes onboarding-speech-pop {
+  0%,
+  88%,
+  100% {
+    transform: translateY(0) rotate(0);
+  }
+  93% {
+    transform: translateY(-4px) rotate(2deg);
+  }
+}
+
 .tangerine-loading-orbit {
   display: grid;
   width: 7rem;
@@ -157,7 +187,9 @@ body {
   .onboarding-card,
   .onboarding-slide,
   .onboarding-mascot,
-  .onboarding-spark {
+  .onboarding-spark,
+  .onboarding-arrow,
+  .onboarding-speech {
     animation: none;
   }
 }

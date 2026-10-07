@@ -77,10 +77,8 @@ export default async function DashboardPage() {
   const { userId } = await auth();
   if (!userId) redirect("/");
   const clerkUser = await currentUser();
-  const onboardingReleaseDate = new Date("2026-10-07T14:38:14.000Z");
   const showOnboarding = Boolean(
     clerkUser &&
-    new Date(clerkUser.createdAt) >= onboardingReleaseDate &&
     clerkUser.publicMetadata.subtrackOnboardingComplete !== true,
   );
 
