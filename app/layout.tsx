@@ -22,7 +22,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SubTrack",
+  title: "Tangerine SubTrack",
   description: "Track your subscriptions and recurring expenses",
 };
 
@@ -34,6 +34,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col bg-[#FAFAF9]">
         <ClerkProvider
+          signUpFallbackRedirectUrl="/dashboard"
+          signInFallbackRedirectUrl="/dashboard"
           appearance={{
             elements: {
               userButtonAvatarBox: {

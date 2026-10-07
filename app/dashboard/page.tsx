@@ -5,7 +5,7 @@ export const metadata: Metadata = {
   description: "Track your active subscriptions, upcoming renewals, and monthly spend in one place.",
 };
 
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { SubscriptionForm } from "@/components/subscription-form";
@@ -19,6 +19,7 @@ import { CurrencyPreferenceSelect } from "@/components/currency-preference-selec
 import { ActionLink } from "@/components/ui/action-link";
 import { PageShell } from "@/components/ui/page-shell";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { OnboardingMontage } from "@/components/onboarding-montage";
 import type { ExchangeRates, SupportedCurrency } from "@/src/lib/currency";
 import { getDaysUntil } from "@/src/lib/renewals";
 import { db } from "@/src/prisma/db";
@@ -75,6 +76,13 @@ function displayAmount(cost: number, currency: string, preferred: SupportedCurre
 export default async function DashboardPage() {
   const { userId } = await auth();
   if (!userId) redirect("/");
+  const clerkUser = await currentUser();
+  const onboardingReleaseDate = new Date("2026-10-07T14:38:14.000Z");
+  const showOnboarding = Boolean(
+    clerkUser &&
+    new Date(clerkUser.createdAt) >= onboardingReleaseDate &&
+    clerkUser.publicMetadata.subtrackOnboardingComplete !== true,
+  );
 
   const rows = await db.orm.public.Subscription
     .where({ userId })
@@ -129,6 +137,7 @@ export default async function DashboardPage() {
 
   return (
     <PageShell className="max-w-5xl px-6 py-12">
+      {showOnboarding && <OnboardingMontage />}
       <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-sm text-[#57534E]">Monthly recurring spend</p>
