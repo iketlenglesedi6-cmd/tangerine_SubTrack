@@ -4,6 +4,8 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { SubscriptionRowActions } from "@/components/subscription-row-actions";
+import { EmptyState } from "@/components/ui/empty-state";
+import { InlineFeedback } from "@/components/ui/inline-feedback";
 import { formatCurrency, SUPPORTED_CURRENCIES } from "@/src/lib/currency";
 import { convertCurrencyAmount, type ExchangeRates, type SupportedCurrency } from "@/src/lib/currency";
 
@@ -108,9 +110,12 @@ export function SubscriptionList({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="border-t border-[#1C1917]/10 py-8 text-sm text-[#57534E]">
-          {subscriptions.length === 0 ? "Nothing added yet — use the form to track your first subscription." : "No subscriptions match these filters."}
-        </p>
+        <EmptyState
+          compact
+          className="border-t border-[#1C1917]/10"
+          title={subscriptions.length === 0 ? "Nothing added yet" : "No matching subscriptions"}
+          description={subscriptions.length === 0 ? "Use the form below to track your first subscription." : "Try changing your search or filters."}
+        />
       ) : (
         <div className="divide-y divide-[#1C1917]/10 border-t border-[#1C1917]/10">
           {filtered.map((subscription) => (
@@ -194,7 +199,7 @@ export function SubscriptionEditor({
           <label className="text-sm font-medium text-[#1C1917] sm:col-span-2">Next renewal<input required type="date" value={renewalDate} onChange={(event) => setRenewalDate(event.target.value)} className="mt-1 block w-full rounded-lg border border-[#1C1917]/20 px-3 py-2" /></label>
           <div className="flex items-center gap-3 sm:col-span-2">
             <button type="submit" disabled={isSaving} className="rounded-lg bg-[#9A3412] px-4 py-2 text-sm font-medium text-white hover:bg-[#7C2D12] disabled:opacity-60">{isSaving ? "Saving…" : "Save changes"}</button>
-            {message && <span role="status" className="text-sm text-[#57534E]">{message}</span>}
+            {message && <InlineFeedback message={message} />}
           </div>
         </form>
       )}

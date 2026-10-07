@@ -2,6 +2,8 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { CategoryManager } from "@/components/category-manager";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
 import { db } from "@/src/prisma/db";
 
 export default async function CategoriesPage() {
@@ -18,12 +20,9 @@ export default async function CategoriesPage() {
     .sort((left, right) => left.name.localeCompare(right.name));
 
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-6 py-12">
-      <header className="mb-8 border-b border-[#1C1917]/10 pb-5">
-        <p className="text-sm text-[#78716C]">Organize recurring expenses</p>
-        <h1 className="mt-1 text-3xl font-semibold text-[#1C1917]">Categories</h1>
-      </header>
+    <PageShell className="max-w-3xl px-6 py-12">
+      <PageHeader eyebrow="Organize recurring expenses" title="Categories" className="sm:items-start" />
       <CategoryManager categories={categories} />
-    </main>
+    </PageShell>
   );
 }

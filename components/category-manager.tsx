@@ -1,6 +1,9 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
+import { EmptyState } from "@/components/ui/empty-state";
+import { InlineFeedback } from "@/components/ui/inline-feedback";
+import { SectionHeading } from "@/components/ui/section-heading";
 
 type Category = {
   id: string;
@@ -111,9 +114,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
       aria-labelledby="category-heading"
       className="rounded-2xl border border-[#1C1917]/8 bg-white p-5"
     >
-      <h2 id="category-heading" className="text-lg font-semibold text-[#1C1917]">
-        Manage categories
-      </h2>
+      <SectionHeading id="category-heading" title="Manage categories" variant="card" />
       <form
         onSubmit={createCategory}
         className="mt-4 flex flex-col gap-3 border-b border-[#1C1917]/10 pb-6 sm:flex-row"
@@ -137,9 +138,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
       </form>
 
       {categories.length === 0 ? (
-        <p className="border-b border-[#1C1917]/10 py-8 text-sm text-[#78716C]">
-          No categories yet.
-        </p>
+        <EmptyState title="No categories yet" compact className="border-b border-[#1C1917]/10 text-sm text-[#78716C]" />
       ) : (
         <ul className="divide-y divide-[#1C1917]/10">
           {categories.map((category) => (
@@ -215,9 +214,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
         </ul>
       )}
 
-      <p aria-live="polite" className="min-h-6 pt-3 text-sm text-[#78716C]">
-        {message}
-      </p>
+      <InlineFeedback message={message} className="min-h-6 pt-3 text-[#78716C]" />
     </section>
   );
 }

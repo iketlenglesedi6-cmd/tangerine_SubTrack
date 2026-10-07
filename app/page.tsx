@@ -1,11 +1,12 @@
 import { Show, SignInButton, SignUpButton } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
+import { PageShell } from "@/components/ui/page-shell";
 
 export default function Home() {
   return (
     <div className="flex flex-1 flex-col bg-[#FAFAF9] font-sans">
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col items-center justify-center px-6 py-24 text-center">
+      <PageShell className="flex max-w-2xl flex-col items-center justify-center px-6 py-24 text-center">
         <Image
           src="/tangerine-subtrack-logo.png"
           alt="Tangerine SubTrack"
@@ -52,7 +53,7 @@ export default function Home() {
             </Link>
           </Show>
         </div>
-      </main>
+      </PageShell>
     </div>
   );
 }

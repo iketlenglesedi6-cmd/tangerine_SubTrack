@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { SUPPORTED_CURRENCIES, type SupportedCurrency } from "@/src/lib/currency";
+import { InlineFeedback } from "@/components/ui/inline-feedback";
 
 export function CurrencyPreferenceSelect({
   currency,
@@ -53,7 +54,7 @@ export function CurrencyPreferenceSelect({
           </select>
         </label>
         <p className="mt-2 text-xs leading-5 text-[#57534E]">Suggested from your region; change it any time.</p>
-        {error && <p role="status" className="mt-2 text-xs text-red-800">{error}</p>}
+        {error && <InlineFeedback message={error} tone="error" className="mt-2 text-xs" />}
       </div>
     </details>
   );

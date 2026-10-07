@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { SubscriptionEditor, type DashboardSubscription } from "@/components/subscription-list";
+import { InlineFeedback } from "@/components/ui/inline-feedback";
 
 export function SubscriptionRowActions({
   subscription,
@@ -65,7 +66,7 @@ export function SubscriptionRowActions({
       >
         {currentStatus === "active" ? "Mark canceled" : "Reactivate tracking"}
       </button>
-      {message ? <span role="status" className="basis-full text-xs text-red-700">{message}</span> : null}
+      {message ? <InlineFeedback message={message} tone="error" className="basis-full text-xs" /> : null}
       <button
         onClick={handleDelete}
         disabled={isWorking}

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
@@ -9,6 +8,11 @@ import type { ExchangeRates, SupportedCurrency } from "@/src/lib/currency";
 import { getExchangeRates } from "@/src/lib/exchange-rates";
 import { getDisplayCurrency } from "@/src/lib/display-currency";
 import { CurrencyPreferenceSelect } from "@/components/currency-preference-select";
+import { ActionLink } from "@/components/ui/action-link";
+import { EmptyState } from "@/components/ui/empty-state";
+import { PageHeader } from "@/components/ui/page-header";
+import { PageShell } from "@/components/ui/page-shell";
+import { SectionHeading } from "@/components/ui/section-heading";
 import { getDaysUntil, getNextRenewalDate } from "@/src/lib/renewals";
 import { db } from "@/src/prisma/db";
 
@@ -61,22 +65,18 @@ export default async function RenewalsPage() {
   const dueSoon = renewals.filter((renewal) => renewal.daysUntil !== null && renewal.daysUntil <= 30);
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-5 py-10 sm:px-6 sm:py-12">
-      <header className="mb-8 flex flex-col gap-4 border-b border-[#1C1917]/10 pb-6 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-sm text-[#57534E]">Your tracked subscriptions</p>
-          <h1 className="mt-1 text-3xl font-semibold text-[#1C1917]">Renewal schedule</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-[#57534E]">
-            See the next expected charge for each active subscription. Dates are based on the billing cycle you track.
-          </p>
-        </div>
-        <div className="flex flex-wrap items-center gap-4">
+    <PageShell className="max-w-5xl px-5 py-10 sm:px-6 sm:py-12">
+      <PageHeader
+        eyebrow="Your tracked subscriptions"
+        title="Renewal schedule"
+        description="See the next expected charge for each active subscription. Dates are based on the billing cycle you track."
+        actions={
+          <>
           <CurrencyPreferenceSelect currency={displayCurrency} />
-          <Link href="/dashboard" className="w-fit text-sm font-medium text-[#9A3412] underline underline-offset-2">
-            Back to dashboard
-          </Link>
-        </div>
-      </header>
+            <ActionLink href="/dashboard">Back to dashboard</ActionLink>
+          </>
+        }
+      />
 
       <section aria-label="Renewal overview" className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl bg-[#1C1917] p-5 text-white">
@@ -99,17 +99,13 @@ export default async function RenewalsPage() {
       </section>
 
       <section className="mt-8" aria-labelledby="renewal-list-heading">
-        <h2 id="renewal-list-heading" className="text-sm font-semibold uppercase tracking-[0.14em] text-[#57534E]">
-          Upcoming charges
-        </h2>
+        <SectionHeading id="renewal-list-heading" title="Upcoming charges" className="mb-4" />
         {renewals.length === 0 ? (
-          <div className="mt-4 rounded-2xl border border-dashed border-[#1C1917]/15 p-8 text-center">
-            <p className="font-medium text-[#1C1917]">Nothing scheduled yet</p>
-            <p className="mt-2 text-sm text-[#57534E]">Add a subscription or import a bank statement to see upcoming renewals.</p>
-            <Link href="/import" className="mt-4 inline-flex rounded-lg bg-[#9A3412] px-4 py-2.5 text-sm font-medium text-white hover:bg-[#7C2D12]">
-              Import a bank statement
-            </Link>
-          </div>
+          <EmptyState
+            title="Nothing scheduled yet"
+            description="Add a subscription or import a bank statement to see upcoming renewals."
+            action={<ActionLink href="/import" variant="primary">Import a bank statement</ActionLink>}
+          />
         ) : (
           <ul className="mt-4 divide-y divide-[#1C1917]/10 border-t border-[#1C1917]/10">
             {renewals.map((renewal) => (
@@ -132,6 +128,6 @@ export default async function RenewalsPage() {
           </ul>
         )}
       </section>
-    </main>
+    </PageShell>
   );
 }

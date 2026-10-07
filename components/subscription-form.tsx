@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { InlineFeedback } from "@/components/ui/inline-feedback";
 
 export function SubscriptionForm({ categories }: { categories: Array<{ id: string; name: string }> }) {
   const router = useRouter();
@@ -181,7 +182,7 @@ export function SubscriptionForm({ categories }: { categories: Array<{ id: strin
           {isSubmitting ? "Saving..." : "Save subscription"}
         </button>
 
-        {message ? <p className="text-sm text-[#57534E]">{message}</p> : null}
+        {message && <InlineFeedback message={message} />}
       </div>
       <p className="text-xs text-[#57534E]">
         SubTrack tracks the subscription and its next renewal; it does not cancel or change your provider account.

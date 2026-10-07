@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+import { ActionLink } from "@/components/ui/action-link";
+import { PageShell } from "@/components/ui/page-shell";
 
 export const metadata: Metadata = {
   title: "Features | SubTrack",
@@ -29,7 +30,7 @@ const workflow = [
 
 export default function FeaturesPage() {
   return (
-    <main className="mx-auto w-full max-w-6xl px-5 py-12 md:px-8 md:py-16">
+    <PageShell className="max-w-6xl px-5 py-12 md:px-8 md:py-16">
       <section className="rounded-[2rem] border border-[#e7ddd2] bg-[#fbf8f4] p-8 shadow-[0_20px_50px_rgba(33,26,20,0.05)] md:p-12">
         <p className="text-[0.7rem] font-semibold uppercase tracking-[0.28em] text-[#7a5b3a]">
           Features
@@ -58,12 +59,12 @@ export default function FeaturesPage() {
       </section>
 
       <div className="mt-8 flex flex-wrap gap-3">
-        <Link href="/pricing" className="rounded-lg border border-[#d9c5af] px-5 py-3 text-sm font-medium text-zinc-800 hover:bg-[#f7f3ee]">
+        <ActionLink href="/pricing" variant="secondary" className="px-5 py-3 text-zinc-800">
           See what’s included
-        </Link>
-        <Link href="/import" className="rounded-lg bg-[#9A3412] px-5 py-3 text-sm font-medium text-white hover:bg-[#7C2D12]">
+        </ActionLink>
+        <ActionLink href="/import" variant="primary" className="px-5 py-3">
           Import a statement
-        </Link>
+        </ActionLink>
       </div>
 
       <section className="mt-10 rounded-[2rem] border border-[#e7ddd2] bg-[#f6f1ea] p-8 md:p-10">
@@ -89,6 +90,6 @@ export default function FeaturesPage() {
           </div>
         </div>
       </section>
-    </main>
+    </PageShell>
   );
 }

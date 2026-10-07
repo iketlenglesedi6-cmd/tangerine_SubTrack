@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Show, SignUpButton } from "@clerk/nextjs";
+import { ActionLink } from "@/components/ui/action-link";
+import { PageShell } from "@/components/ui/page-shell";
 
 export const metadata: Metadata = {
   title: "Pricing | SubTrack",
@@ -15,7 +16,7 @@ const includedFeatures = [
 
 export default function PricingPage() {
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 items-center px-5 py-12 sm:px-6 md:py-16">
+    <PageShell className="flex max-w-5xl items-center px-5 py-12 sm:px-6 md:py-16">
       <section className="mx-auto w-full max-w-2xl rounded-[1.75rem] border border-[#e7ddd2] bg-white p-7 shadow-[0_18px_40px_rgba(38,28,21,0.04)] sm:p-10">
         <p className="text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-[#7a5b3a]">
           Pricing
@@ -46,15 +47,15 @@ export default function PricingPage() {
             </SignUpButton>
           </Show>
           <Show when="signed-in">
-            <Link href="/dashboard" className="rounded-lg bg-[#9A3412] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#7C2D12]">
+            <ActionLink href="/dashboard" variant="primary" className="px-5 py-3">
               Open dashboard
-            </Link>
+            </ActionLink>
           </Show>
-          <Link href="/features" className="rounded-lg border border-[#d9c5af] px-5 py-3 text-sm font-medium text-zinc-800 hover:bg-[#f7f3ee]">
+          <ActionLink href="/features" variant="secondary" className="px-5 py-3 text-zinc-800">
             Explore features
-          </Link>
+          </ActionLink>
         </div>
       </section>
-    </main>
+    </PageShell>
   );
 }

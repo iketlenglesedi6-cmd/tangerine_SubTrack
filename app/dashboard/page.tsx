@@ -16,6 +16,9 @@ import { convertCurrencyAmount, formatCurrency } from "@/src/lib/currency";
 import { getExchangeRates } from "@/src/lib/exchange-rates";
 import { getDisplayCurrency } from "@/src/lib/display-currency";
 import { CurrencyPreferenceSelect } from "@/components/currency-preference-select";
+import { ActionLink } from "@/components/ui/action-link";
+import { PageShell } from "@/components/ui/page-shell";
+import { SectionHeading } from "@/components/ui/section-heading";
 import type { ExchangeRates, SupportedCurrency } from "@/src/lib/currency";
 import { getDaysUntil } from "@/src/lib/renewals";
 import { db } from "@/src/prisma/db";
@@ -125,7 +128,7 @@ export default async function DashboardPage() {
   }).length;
 
   return (
-    <main className="mx-auto w-full max-w-5xl flex-1 px-6 py-12">
+    <PageShell className="max-w-5xl px-6 py-12">
       <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-sm text-[#57534E]">Monthly recurring spend</p>
@@ -158,21 +161,20 @@ export default async function DashboardPage() {
         </div>
         <div className="flex flex-wrap items-center gap-3">
           <CurrencyPreferenceSelect currency={displayCurrency} />
-          <Link href="/import" className="inline-flex w-fit items-center rounded-lg bg-[#9A3412] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#7C2D12]">
+          <ActionLink href="/import" variant="primary">
             Import a bank statement
-          </Link>
+          </ActionLink>
         </div>
       </div>
 
       <div className="grid gap-8 lg:grid-cols-[1.6fr_1fr]">
         {/* Main content: the subscriptions list itself, no card wrapper */}
         <div>
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-[#57534E]">
-              Subscriptions
-            </h2>
-            <span className="text-sm text-[#57534E]">{subscriptions.length} saved</span>
-          </div>
+          <SectionHeading title="Subscriptions" className="mb-4">
+              <span className="text-sm font-normal normal-case tracking-normal text-[#57534E]">
+                {subscriptions.length} saved
+              </span>
+          </SectionHeading>
 
           <SubscriptionList subscriptions={subscriptions} displayCurrency={displayCurrency} exchangeRates={exchangeRates} />
           <details className="group mt-8">
@@ -196,14 +198,11 @@ export default async function DashboardPage() {
         {/* Sidebar: filled background instead of another white bordered card */}
         <div className="space-y-8">
           <div className="rounded-xl bg-[#1C1917] p-5 text-white">
-            <div className="flex items-center justify-between gap-3">
-              <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-white/80">
-                Upcoming renewals
-              </h2>
+            <SectionHeading title="Upcoming renewals" variant="inverse">
               <Link href="/renewals" className="text-xs font-medium text-white underline decoration-white/50 underline-offset-4 hover:text-white/80">
                 View schedule
               </Link>
-            </div>
+            </SectionHeading>
             <div className="mt-4 space-y-3">
               {summary.upcomingRenewals.length === 0 ? (
               <p className="text-sm text-white/90">No renewals on your list yet.</p>
@@ -223,9 +222,7 @@ export default async function DashboardPage() {
 
           {categoryBreakdown.length > 0 && (
             <div>
-              <h2 className="text-sm font-semibold uppercase tracking-[0.14em] text-[#57534E]">
-                By category
-              </h2>
+              <SectionHeading title="By category" />
               <div className="mt-4 space-y-3">
                 {categoryBreakdown.map((item) => (
                   <div key={`${item.currency}:${item.name}`}>
@@ -248,6 +245,6 @@ export default async function DashboardPage() {
           )}
         </div>
       </div>
-    </main>
+    </PageShell>
   );
 }

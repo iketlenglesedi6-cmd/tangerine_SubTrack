@@ -2,6 +2,10 @@
 
 import { useMemo, useState, type ChangeEvent } from "react";
 import { useRouter } from "next/navigation";
+import { ActionLink } from "@/components/ui/action-link";
+import { EmptyState } from "@/components/ui/empty-state";
+import { InlineFeedback } from "@/components/ui/inline-feedback";
+import { SectionHeading } from "@/components/ui/section-heading";
 
 import { findRecurringCharges, guessColumn, parseCsv, type StatementRow } from "@/src/lib/bank-statement";
 import { formatCurrency, SUPPORTED_CURRENCIES } from "@/src/lib/currency";
@@ -155,7 +159,7 @@ export function StatementImporter({
   return (
     <div className="space-y-6">
       <section className="rounded-2xl border border-[#1C1917]/10 bg-white p-5 sm:p-7">
-        <h2 className="text-lg font-semibold text-[#1C1917]">Choose a bank statement</h2>
+        <SectionHeading title="Choose a bank statement" variant="card" />
         <p className="mt-2 max-w-2xl text-sm leading-6 text-[#57534E]">
           Upload a CSV export with transaction dates, descriptions, and amounts. SubTrack looks for repeated charges
           on monthly or yearly cycles, then lets you review each one before saving it. Imported charges keep their
@@ -196,7 +200,7 @@ export function StatementImporter({
 
       {headers.length > 0 && (
         <section className="rounded-2xl border border-[#1C1917]/10 bg-white p-5 sm:p-7">
-          <h2 className="text-lg font-semibold text-[#1C1917]">Match your statement columns</h2>
+          <SectionHeading title="Match your statement columns" variant="card" />
           <div className="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             <ColumnPicker label="Date column" value={dateColumn} headers={headers} onChange={setDateColumn} />
             <ColumnPicker label="Description column" value={descriptionColumn} headers={headers} onChange={setDescriptionColumn} />
@@ -225,7 +229,7 @@ export function StatementImporter({
 
           <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h3 className="font-semibold text-[#1C1917]">Detected recurring charges</h3>
+            <SectionHeading title="Detected recurring charges" variant="card" />
               <p className="mt-1 text-sm text-[#57534E]">
                 Found {candidates.length} possible {candidates.length === 1 ? "subscription" : "subscriptions"}. Currency codes are detected when available; otherwise the fallback is used.
               </p>
@@ -238,10 +242,11 @@ export function StatementImporter({
           </div>
 
           {candidates.length === 0 ? (
-            <p className="mt-4 rounded-lg border border-dashed border-[#1C1917]/15 p-5 text-sm leading-6 text-[#57534E]">
-              No monthly or yearly repeats found yet. Detection needs at least two similar charges, 25–40 days apart
-              or 330–400 days apart. You can adjust the columns, currency, date format, or expense sign above.
-            </p>
+            <EmptyState
+              title="No monthly or yearly repeats found yet"
+              description="Detection needs at least two similar charges, 25–40 days apart or 330–400 days apart. You can adjust the columns, currency, date format, or expense sign above."
+              className="text-sm leading-6"
+            />
           ) : (
             <div className="mt-4 space-y-3">
               {candidates.map((candidate) => {
@@ -284,14 +289,14 @@ export function StatementImporter({
             >
               {isImporting ? "Importing…" : `Import ${selected.size} selected`}
             </button>
-            <a href="/dashboard" className="text-sm font-medium text-[#9A3412] underline underline-offset-2">
+            <ActionLink href="/dashboard">
               Return to dashboard
-            </a>
+            </ActionLink>
           </div>
         </section>
       )}
 
-      {message && <p role="status" aria-live="polite" className="rounded-lg bg-[#FAFAF9] p-3 text-sm text-[#57534E]">{message}</p>}
+      {message && <InlineFeedback message={message} className="rounded-lg bg-[#FAFAF9] p-3" />}
     </div>
   );
 }
