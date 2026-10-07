@@ -66,7 +66,7 @@ export function SubscriptionRowActions({
       <button
         onClick={() => currentStatus === "active" ? setConfirmation("cancel") : void toggleStatus()}
         disabled={isWorking}
-        className="text-[#78716C] underline decoration-dotted underline-offset-4 hover:text-[#1C1917] disabled:opacity-50"
+        className="text-[#57534E] underline decoration-dotted underline-offset-4 hover:text-[#1C1917] disabled:opacity-50"
       >
         {currentStatus === "active" ? "Mark canceled" : "Reactivate tracking"}
       </button>
@@ -74,7 +74,7 @@ export function SubscriptionRowActions({
       <button
         onClick={() => setConfirmation("delete")}
         disabled={isWorking}
-        className="text-[#78716C] underline decoration-dotted underline-offset-4 hover:text-red-600 disabled:opacity-50"
+        className="text-[#57534E] underline decoration-dotted underline-offset-4 hover:text-red-600 disabled:opacity-50"
       >
         Delete
       </button>
