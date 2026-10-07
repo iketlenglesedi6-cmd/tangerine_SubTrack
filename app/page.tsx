@@ -32,7 +32,7 @@ export default function Home() {
           <Show when="signed-out">
             <div className="flex items-center gap-3">
               <SignUpButton>
-                <button className="rounded-lg bg-[#F97316] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#EA580C]">
+                <button className="rounded-lg bg-[#C2410C] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#9A3412]">
                   Start tracking
                 </button>
               </SignUpButton>
@@ -47,7 +47,7 @@ export default function Home() {
           <Show when="signed-in">
             <Link
               href="/dashboard"
-              className="inline-block rounded-lg bg-[#F97316] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#EA580C]"
+              className="inline-block rounded-lg bg-[#C2410C] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#9A3412]"
             >
               Go to your dashboard
             </Link>

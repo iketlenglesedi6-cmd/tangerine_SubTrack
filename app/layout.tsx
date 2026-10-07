@@ -39,7 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               userButtonAvatarBox: {
                 width: "2.25rem",
                 height: "2.25rem",
-                backgroundColor: "#ea580c",
+                backgroundColor: "#c2410c",
                 color: "#ffffff",
                 border: "2px solid #ffedd5",
               },

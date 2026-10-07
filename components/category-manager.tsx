@@ -126,12 +126,12 @@ export function CategoryManager({ categories: initialCategories }: { categories:
           onChange={(event) => setNewName(event.target.value)}
           maxLength={80}
           placeholder="Add a category"
-          className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none focus:border-[#F97316]"
+          className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none focus:border-[#C2410C]"
         />
         <button
           type="submit"
           disabled={isWorking || !newName.trim()}
-          className="rounded-lg bg-[#F97316] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#EA580C] disabled:opacity-60"
+          className="rounded-lg bg-[#C2410C] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#9A3412] disabled:opacity-60"
         >
           Add category
         </button>
@@ -162,7 +162,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
                     value={editingName}
                     onChange={(event) => setEditingName(event.target.value)}
                     maxLength={80}
-                    className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#F97316]"
+                    className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#C2410C]"
                   />
                   <div className="flex gap-3">
                     <button
