@@ -203,7 +203,8 @@ export default async function DashboardPage() {
                     <span className="min-w-0 truncate">{r.name}</span>
                     <span className="shrink-0 text-white/90">
                       {formatDate(r.renewalDate)} · {displayAmount(r.cost, r.currency, displayCurrency, exchangeRates)}
-                    </span>
+                    {r.currency !== displayCurrency && <span className="block text-xs text-white/80">Original: {formatCurrency(r.cost, r.currency)}</span>}
+                      </span>
                   </div>
                 ))
               )}
