@@ -54,7 +54,7 @@ export default function FeaturesPage() {
           </div>
           <div className="mx-auto w-fit rounded-full bg-[#ffe0c4] p-2 sm:mr-2">
             <Image
-              src="/tangerine-icon.webp"
+              src="/tangerine-icon.png"
               alt=""
               width={160}
               height={160}

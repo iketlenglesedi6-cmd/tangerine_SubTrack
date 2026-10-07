@@ -8,7 +8,7 @@ export default function Home() {
     <div className="flex flex-1 flex-col bg-[#FAFAF9] font-sans">
       <PageShell className="flex max-w-2xl flex-col items-center justify-center px-6 py-24 text-center">
         <Image
-          src="/tangerine-subtrack-logo.webp"
+          src="/tangerine-subtrack-logo.png"
           alt="Tangerine SubTrack"
           width={628}
           height={434}

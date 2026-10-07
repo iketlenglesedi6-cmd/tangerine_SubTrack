@@ -10,7 +10,7 @@ export default function Loading() {
       <div className="flex flex-col items-center gap-4 text-center">
         <div className="tangerine-loading-orbit">
           <Image
-            src="/tangerine-icon.webp"
+            src="/tangerine-icon.png"
             alt=""
             width={96}
             height={96}

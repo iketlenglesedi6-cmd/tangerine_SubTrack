@@ -5,9 +5,8 @@ export const metadata: Metadata = {
   description: "Track your active subscriptions, upcoming renewals, and monthly spend in one place.",
 };
 
-import { auth } from "@clerk/nextjs/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import { cookies } from "next/headers";
 
 import { SubscriptionList } from "@/components/subscription-list";
 import { DashboardTools } from "@/components/dashboard-tools";
@@ -76,8 +75,8 @@ function displayAmount(cost: number, currency: string, preferred: SupportedCurre
 export default async function DashboardPage() {
   const { userId } = await auth();
   if (!userId) redirect("/");
-  const [cookieStore, rows, categoryRows, displayCurrency, exchangeRates] = await Promise.all([
-    cookies(),
+  const [clerkUser, rows, categoryRows, displayCurrency, exchangeRates] = await Promise.all([
+    currentUser(),
     db.orm.public.Subscription
       .where({ userId })
       .include("category", (category) => category.select("id", "name"))
@@ -86,7 +85,10 @@ export default async function DashboardPage() {
     getDisplayCurrency(),
     getExchangeRates(),
   ]);
-  const showOnboarding = cookieStore.get("subtrack-onboarding-complete")?.value !== userId;
+  const showOnboarding = Boolean(
+    clerkUser &&
+    clerkUser.publicMetadata.subtrackOnboardingComplete !== true,
+  );
   const categories = categoryRows.map((category) => ({
     id: String(category.id),
     name: category.name,
