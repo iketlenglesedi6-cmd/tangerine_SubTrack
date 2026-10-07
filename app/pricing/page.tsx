@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
 import { Show, SignUpButton } from "@clerk/nextjs";
+
 import { ActionLink } from "@/components/ui/action-link";
+import { PageHeader } from "@/components/ui/page-header";
 import { PageShell } from "@/components/ui/page-shell";
+import { SectionHeading } from "@/components/ui/section-heading";
 
 export const metadata: Metadata = {
   title: "Pricing | SubTrack",
@@ -9,51 +12,42 @@ export const metadata: Metadata = {
 };
 
 const includedFeatures = [
-  "Track subscriptions entered by you",
-  "Import recurring charges from a bank statement CSV",
+  "Track subscriptions you add yourself",
+  "Import and review recurring charges from a bank CSV",
   "See renewal dates, category totals, and multiple currencies",
 ];
 
 export default function PricingPage() {
   return (
-    <PageShell className="flex max-w-5xl items-center px-5 py-12 sm:px-6 md:py-16">
-      <section className="mx-auto w-full max-w-2xl rounded-[1.75rem] border border-[#e7ddd2] bg-white p-7 shadow-[0_18px_40px_rgba(38,28,21,0.04)] sm:p-10">
-        <p className="text-[0.68rem] font-semibold uppercase tracking-[0.28em] text-[#7a5b3a]">
-          Pricing
-        </p>
-        <h1 className="mt-4 text-4xl font-black tracking-[-0.07em] text-zinc-900">
-          Free to use for this project demo.
-        </h1>
-        <p className="mt-4 text-base leading-7 text-zinc-600">
-          SubTrack has no paid tiers or checkout yet. The prices below belong to the subscriptions you track, not a
-          SubTrack plan.
-        </p>
+    <PageShell className="max-w-5xl px-6 py-12">
+      <PageHeader
+        eyebrow="Pricing"
+        title="Free during the project demo"
+        description="SubTrack has no paid plans or checkout. The prices shown in your account are for the subscriptions you track."
+      />
 
-        <ul className="mt-7 space-y-3 text-sm text-zinc-700">
+      <section aria-labelledby="included-heading" className="max-w-2xl border-t border-[#1C1917]/10 pt-6">
+        <SectionHeading id="included-heading" title="Included" />
+        <ul className="mt-4 divide-y divide-[#1C1917]/10">
           {includedFeatures.map((feature) => (
-            <li key={feature} className="flex items-start gap-3">
-              <span aria-hidden="true" className="mt-0.5 font-bold text-[#7a5b3a]">✓</span>
-              <span>{feature}</span>
+            <li key={feature} className="py-3 text-sm leading-6 text-[#1C1917]">
+              {feature}
             </li>
           ))}
         </ul>
 
-        <div className="mt-8 flex flex-wrap gap-3">
+        <div className="mt-6 flex flex-wrap gap-3">
           <Show when="signed-out">
             <SignUpButton>
-              <button className="rounded-lg bg-[#9A3412] px-5 py-3 text-sm font-medium text-white transition-colors hover:bg-[#7C2D12]">
+              <button className="rounded-lg bg-[#9A3412] px-4 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#7C2D12] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9A3412]">
                 Start tracking
               </button>
             </SignUpButton>
           </Show>
           <Show when="signed-in">
-            <ActionLink href="/dashboard" variant="primary" className="px-5 py-3">
-              Open dashboard
-            </ActionLink>
+            <ActionLink href="/dashboard" variant="primary">Open dashboard</ActionLink>
           </Show>
-          <ActionLink href="/features" variant="secondary" className="px-5 py-3 text-zinc-800">
-            Explore features
-          </ActionLink>
+          <ActionLink href="/features" variant="secondary">Explore features</ActionLink>
         </div>
       </section>
     </PageShell>
