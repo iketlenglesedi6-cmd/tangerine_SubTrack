@@ -8,9 +8,8 @@ export const metadata: Metadata = {
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
-import { SubscriptionForm } from "@/components/subscription-form";
 import { SubscriptionList } from "@/components/subscription-list";
-import { CategoryManager } from "@/components/category-manager";
+import { DashboardTools } from "@/components/dashboard-tools";
 import { calculateDashboardSummary } from "@/src/lib/dashboard";
 import { convertCurrencyAmount, formatCurrency } from "@/src/lib/currency";
 import { getExchangeRates } from "@/src/lib/exchange-rates";
@@ -19,7 +18,7 @@ import { CurrencyPreferenceSelect } from "@/components/currency-preference-selec
 import { ActionLink } from "@/components/ui/action-link";
 import { PageShell } from "@/components/ui/page-shell";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { OnboardingMontage } from "@/components/onboarding-montage";
+import { OnboardingGate } from "@/components/onboarding-gate";
 import type { ExchangeRates, SupportedCurrency } from "@/src/lib/currency";
 import { getDaysUntil } from "@/src/lib/renewals";
 import { db } from "@/src/prisma/db";
@@ -76,17 +75,20 @@ function displayAmount(cost: number, currency: string, preferred: SupportedCurre
 export default async function DashboardPage() {
   const { userId } = await auth();
   if (!userId) redirect("/");
-  const clerkUser = await currentUser();
+  const [clerkUser, rows, categoryRows, displayCurrency, exchangeRates] = await Promise.all([
+    currentUser(),
+    db.orm.public.Subscription
+      .where({ userId })
+      .include("category", (category) => category.select("id", "name"))
+      .all(),
+    db.orm.public.Category.where({ userId }).all(),
+    getDisplayCurrency(),
+    getExchangeRates(),
+  ]);
   const showOnboarding = Boolean(
     clerkUser &&
     clerkUser.publicMetadata.subtrackOnboardingComplete !== true,
   );
-
-  const rows = await db.orm.public.Subscription
-    .where({ userId })
-    .include("category", (category) => category.select("id", "name"))
-    .all();
-  const categoryRows = await db.orm.public.Category.where({ userId }).all();
   const categories = categoryRows.map((category) => ({
     id: String(category.id),
     name: category.name,
@@ -94,7 +96,6 @@ export default async function DashboardPage() {
 
   const subscriptions = rows.map(normalizeSubscription);
   const summary = calculateDashboardSummary(subscriptions);
-  const [displayCurrency, exchangeRates] = await Promise.all([getDisplayCurrency(), getExchangeRates()]);
   const convertedMonthlyTotals = summary.monthlySpendByCurrency.map((item) =>
     convertCurrencyAmount(item.monthlySpend, item.currency, displayCurrency, exchangeRates),
   );
@@ -135,7 +136,7 @@ export default async function DashboardPage() {
 
   return (
     <PageShell className="max-w-5xl px-6 py-12">
-      {showOnboarding && <OnboardingMontage />}
+      {showOnboarding && <OnboardingGate />}
       <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-sm text-[#57534E]">Monthly recurring spend</p>
@@ -184,22 +185,7 @@ export default async function DashboardPage() {
           </SectionHeading>
 
           <SubscriptionList subscriptions={subscriptions} displayCurrency={displayCurrency} exchangeRates={exchangeRates} />
-          <details className="group mt-8">
-            <summary className="w-fit cursor-pointer list-none text-sm font-medium text-[#9A3412] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9A3412]">
-              Add a subscription manually
-            </summary>
-            <div className="mt-4">
-              <SubscriptionForm categories={categories} existingSubscriptions={subscriptions} />
-            </div>
-          </details>
-          <details className="group mt-5">
-            <summary className="w-fit cursor-pointer list-none text-sm font-medium text-[#57534E] underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-[#9A3412]">
-              Manage categories ({categories.length})
-            </summary>
-            <div className="mt-4">
-              <CategoryManager categories={categories} />
-            </div>
-          </details>
+          <DashboardTools categories={categories} existingSubscriptions={subscriptions} />
         </div>
 
         {/* Sidebar: filled background instead of another white bordered card */}

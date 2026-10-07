@@ -7,7 +7,7 @@ export async function getExchangeRates(): Promise<ExchangeRates | null> {
   try {
     const response = await fetch(
       `https://api.frankfurter.dev/v2/rates?base=EUR&quotes=${quotes}`,
-      { next: { revalidate: 21_600 } },
+      { next: { revalidate: 21_600 }, signal: AbortSignal.timeout(1_500) },
     );
     if (!response.ok) return null;
     const result: unknown = await response.json();
