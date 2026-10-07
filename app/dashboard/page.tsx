@@ -139,7 +139,7 @@ export default async function DashboardPage() {
       {showOnboarding && <OnboardingGate />}
       <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-sm text-[#57534E]">Monthly recurring spend</p>
+          <h1 className="text-sm font-medium text-[#57534E]">Monthly recurring spend</h1>
           {summary.monthlySpendByCurrency.length === 0 ? (
             <p className="mt-2 text-lg font-medium text-[#1C1917]">
               Add a subscription to see your totals.

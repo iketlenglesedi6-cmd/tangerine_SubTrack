@@ -42,9 +42,10 @@ export function CurrencyPreferenceSelect({
         Currency <span className="text-[#57534E]">{value}</span><span aria-hidden="true" className="text-xs">⌄</span>
       </summary>
       <div className="absolute right-0 z-20 mt-2 w-64 rounded-xl border border-[#1C1917]/15 bg-white p-4 shadow-lg">
-        <label className="block text-sm font-medium text-[#1C1917]">
+        <label className="block text-sm font-medium text-[#1C1917]" htmlFor="display-currency-preference">
           Display currency
           <select
+            id="display-currency-preference"
             value={value}
             disabled={isSaving}
             onChange={(event) => updateCurrency(event.target.value as SupportedCurrency)}

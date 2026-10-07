@@ -1,14 +1,16 @@
 # Tangerine SubTrack
 
-We are Lesedi Pride Iketleng and Farai Dale Rwambiwa. We built SubTrack for people who want to keep track of recurring subscriptions and see what is coming up before the next charge. You can add subscriptions yourself or import a bank statement CSV, check the charges SubTrack finds, and choose what to save.
+- **Team:** Lesedi Pride Iketleng and Farai Dale Rwambiwa
+- **Live app:** [tangerine-sub-track.vercel.app](https://tangerine-sub-track.vercel.app)
+- **Repository:** [iketlenglesedi6-cmd/tangerine_SubTrack](https://github.com/iketlenglesedi6-cmd/tangerine_SubTrack)
+
+SubTrack helps people keep track of recurring subscriptions and see what is coming up before the next charge. Add subscriptions manually or import a bank statement CSV, review the recurring charges SubTrack finds, and choose which ones to save.
 
 SubTrack is a tracking tool. It does not connect to a bank, cancel a service with a provider, or make payments.
 
 ## Project links
 
-- **Live app:** [tangerine-sub-track.vercel.app](https://tangerine-sub-track.vercel.app)
-- **GitHub repository:** [iketlenglesedi6-cmd/tangerine_SubTrack](https://github.com/iketlenglesedi6-cmd/tangerine_SubTrack)
-- **Authentication:** Clerk
+- **Authentication:** Clerk (not Auth.js v5)
 - **Hosting:** Vercel
 - **Database:** Neon PostgreSQL
 
@@ -58,17 +60,24 @@ Renewal dates must be today or later. The date input and the API both check this
 
 ## Authentication and trying the app
 
-`proxy.ts` installs Clerk middleware. Protected pages and API handlers use Clerk's server-side `auth()` helper, and queries are scoped to the current user's Clerk ID. Signing up or signing in returns the user to the dashboard. The Clerk account menu includes sign-out.
+The app uses **Clerk** for authentication (not Auth.js v5). `proxy.ts` installs Clerk middleware. Protected pages and API handlers use Clerk's server-side `auth()` helper, and database queries are scoped to the current user's Clerk ID. Signing up or signing in returns the user to the dashboard. The Clerk account menu includes sign-out.
 
-To try the main flow:
+### Grader walkthrough
 
-1. Open the [live app](https://tangerine-sub-track.vercel.app).
-2. Choose **Start tracking** to create an account, or **Sign in** with demo details shared through Canvas.
-3. Complete Clerk's email verification if requested.
-4. Add a subscription manually, or go to **Import a bank statement** and select the sample CSV. Review suggestions before saving.
-5. Try search and filters, edit a subscription, mark one canceled, and select **View schedule** to see its renewal date.
+Follow these steps with a **new account** so the first-time onboarding is included in the demo. Use an email address you can access to complete Clerk verification.
 
-The deployed app currently shows Clerk's development-key warning. Clerk development instances allow up to 100 user accounts and up to 100 real emails per month. One grader account should be fine while the instance is below those limits; a demo login can be shared in Canvas as a backup. Development and production instances keep separate user lists.
+1. Open the [live app](https://tangerine-sub-track.vercel.app) and choose **Start tracking**. Create a new Clerk account and complete email verification if prompted. Do not sign in to an account that has already completed onboarding.
+2. On the dashboard, go through the three onboarding slides with **Next little tip**, then choose **Let's go to the dashboard**. The intro can also be dismissed with **Skip intro**.
+3. From the dashboard, choose **Import a bank statement**. On the import page, click **Download sample bank CSV**. Save the downloaded `sample-bank-statement.csv` file somewhere you can find it.
+4. On that same page, use the **CSV statement** file picker to select the downloaded file. SubTrack reads the file in your browser; it does not upload the original statement.
+5. Review the **Match your statement columns** controls. For the supplied sample, use **Transaction Date** for the date, **Description** for the description, and **Debit** for the amount. Leave the currency column unset, use **ZAR** as the fallback currency, choose **Expenses are positive amounts**, and choose **Day / month / year** for the date format. The app may fill in some of these choices automatically.
+6. Review the recurring-charge suggestions. Select the suggestions you want to track, or choose **Select all new**, then click **Import N selected**. Wait for the import confirmation.
+7. Return to the dashboard. Review monthly spend, category totals, upcoming renewals, and the imported subscriptions. Try searching, filtering, changing the display currency, and exporting the list as CSV.
+8. To demonstrate manual creation and subscription updates, expand **Add a subscription**. Enter a distinct name such as **Demo service**, a price and currency, choose a billing cycle and category, set a renewal date today or later, and click **Save subscription**. Use **Edit** on a row to change and save a value. Use **Mark canceled** and confirm; this changes the SubTrack record only and does not contact the provider. To demonstrate deletion, choose **Delete** on a test subscription and confirm **Yes, remove it**; this removes the record from SubTrack only.
+9. Choose **View schedule** to review active upcoming renewals. On the dashboard, expand **Manage categories** to add a category, rename it, and delete it while it has no linked subscriptions.
+10. Use the Clerk account menu to sign out when finished.
+
+The intro is shown until an account completes or skips it; completion is stored in that user's Clerk public metadata. An existing Canvas demo account can be used to test the app, but may not show onboarding. For repeat onboarding tests, use a separate fresh account or, from the Clerk Dashboard, remove `subtrackOnboardingComplete` from the test user's public metadata. The deployed course demo uses Clerk development keys and displays Clerk's development-instance warning. Development and production Clerk instances have separate user lists, so any fallback demo credentials shared through Canvas must belong to the instance configured for the live deployment. For wider public use, configure a Clerk production instance and its production keys.
 
 ## API routes
 
@@ -111,7 +120,7 @@ You need Node.js/npm, PostgreSQL 15 or later, and a Clerk application. For local
 
    Do not run `db:init` against a database that already has app data. `src/prisma/contract.prisma` is the active schema source, `src/prisma/db.ts` configures the database client, and `prisma/schema.prisma` is not used by the current Prisma ORM 8 setup.
 
-4. For an existing database, inspect and apply migrations, then verify the schema:
+4. For an existing database, apply outstanding migrations and verify the schema:
 
    ```bash
    npm run db:migrate
@@ -147,22 +156,24 @@ The GitHub repo is connected to Vercel, which runs the normal Next.js production
 
 Keep demo credentials in Canvas, not in this file. Never commit the Clerk secret key or database URL.
 
-## Short product demo
+## Product demo summary
 
-We made SubTrack for people who want to know what recurring services they are paying for and when those charges are due. It is for anyone who wants to organize subscriptions without connecting a bank account or handing control of services to another app.
+SubTrack gives people a clear view of the recurring services they pay for and when the next charges are expected. It is designed for anyone who wants to organize subscriptions without connecting a bank account or giving another app control of their service accounts.
 
-After signing in, add subscriptions one at a time or import a CSV and review the possible recurring charges before saving them. The dashboard shows monthly spend and categories; the renewal schedule shows what's coming up. A user can change an entry, mark it canceled, or remove it, and can choose a display currency while the saved amount keeps its original currency.
+After signing in, add subscriptions one at a time or import a CSV and review likely recurring charges before saving them. The dashboard summarizes monthly spend and category totals, while the renewal schedule shows upcoming charges. Users can edit or remove entries, mark tracking as canceled, and choose a display currency while each saved amount retains its original currency.
 
 ## Lighthouse scores
 
-Latest scores shared for the production dashboard:
+Lighthouse 13.4.1 scores for the production app, captured October 7, 2026, using Chromium 154. Both reports cover a single initial page load. The desktop run used custom throttling; the mobile run emulated a Moto G Power on slow 4G.
 
-| Run | Performance | Accessibility | Best Practices | SEO |
-| --- | ---: | ---: | ---: | ---: |
-| Desktop | 99 | 100 | 100 | 100 |
-| Mobile | 80 | 100 | 100 | 100 |
+| Run | Performance | Accessibility | Best Practices | SEO | FCP | LCP | TBT | CLS | Speed Index |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Desktop | 97 | 100 | 100 | 100 | 0.3 s | 0.8 s | 110 ms | 0.002 | 1.4 s |
+| Mobile (Moto G Power, slow 4G) | 76 | 100 | 100 | 100 | 2.1 s | 2.7 s | 760 ms | 0.001 | 2.6 s |
 
-These are Lighthouse scores, not fixed app settings; results can shift with the browser, device, cache, and network throttling. When we compare another run, we should use the same page and test settings and keep the full Lighthouse report with the scores.
+Accessibility, Best Practices, and SEO tied as the strongest categories at 100; Performance was weakest at 76 on mobile. Lighthouse scores are estimates and can shift with the browser, device, cache, network conditions, and page activity, so compare runs using the same page and settings. The full reports also flag unused JavaScript and long main-thread tasks for follow-up. Lighthouse's automated accessibility score does not replace manual accessibility checks.
+
+The supplied WAVE reports for the pages scanned each showed 0 errors and 0 contrast errors. One report listed a redundant alternative-text alert; another listed four alerts, including redundant alternative text, an orphaned form label, a missing first-level heading, and a possible heading. Source changes now make the logo images decorative, give the dashboard a first-level heading, and explicitly associate the display-currency label with its control. These supplied counts are from before those changes were deployed; re-scan the landing page and signed-in dashboard, renewal schedule, import, and category pages after deployment. Review any remaining alerts manually. Zero automated contrast errors is useful evidence for the pages scanned, but does not establish full WCAG AA or AAA conformance.
 
 ## What we still want to improve
 
@@ -170,6 +181,6 @@ These are Lighthouse scores, not fixed app settings; results can shift with the 
 - **Recurring-charge suggestions:** Detection is a heuristic. It can miss variable charges or suggest unrelated transactions, which is why users review the results before saving.
 - **Reminders:** The app shows the renewal schedule, but it does not send email or push reminders yet.
 - **Currency rates:** Frankfurter rates are references. They may not match a bank/card conversion or include provider fees.
-- **Clerk deployment:** The Vercel app currently uses Clerk development keys. This is enough for a small class demo, but the warning and development limits should be addressed before a wider public launch.
+- **Clerk deployment:** The Vercel app uses Clerk development keys for the course demo. Configure a production Clerk instance and keys before a wider public launch.
 
 Bank linking, automatic cancellation, and payments are outside what we set out to build: SubTrack only helps users track and plan.
