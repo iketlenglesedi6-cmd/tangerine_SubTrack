@@ -182,7 +182,7 @@ export default async function DashboardPage() {
               Add a subscription manually
             </summary>
             <div className="mt-4">
-              <SubscriptionForm categories={categories} />
+              <SubscriptionForm categories={categories} existingSubscriptions={subscriptions} />
             </div>
           </details>
           <details className="group mt-5">

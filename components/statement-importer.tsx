@@ -9,8 +9,9 @@ import { SectionHeading } from "@/components/ui/section-heading";
 
 import { findRecurringCharges, guessColumn, parseCsv, type StatementRow } from "@/src/lib/bank-statement";
 import { formatCurrency, SUPPORTED_CURRENCIES } from "@/src/lib/currency";
+import { normalizeSubscriptionName } from "@/src/lib/subscription-name";
 
-type TrackedSubscription = { name: string; currency: string };
+type TrackedSubscription = { name: string };
 
 const DATE_ORDER_OPTIONS = [
   { value: "DMY", label: "Day / month / year" },
@@ -43,7 +44,7 @@ export function StatementImporter({
     [rows, dateColumn, descriptionColumn, amountColumn, currencyColumn, currency, expenseSign, dateOrder],
   );
   const trackedKeys = new Set(
-    alreadyTracked.map((subscription) => `${subscription.currency}:${subscription.name.trim().toLowerCase()}`),
+    alreadyTracked.map((subscription) => normalizeSubscriptionName(subscription.name)),
   );
 
   async function readFile(event: ChangeEvent<HTMLInputElement>) {
@@ -103,7 +104,7 @@ export function StatementImporter({
 
   function selectNewCandidates() {
     setSelected(new Set(candidates.filter((candidate) => {
-      const trackedKey = `${candidate.currency}:${candidate.name.trim().toLowerCase()}`;
+      const trackedKey = normalizeSubscriptionName(candidate.name);
       return !trackedKeys.has(trackedKey) && !saved.has(candidate.key);
     }).map((candidate) => candidate.key)));
   }
@@ -250,7 +251,7 @@ export function StatementImporter({
           ) : (
             <div className="mt-4 space-y-3">
               {candidates.map((candidate) => {
-                const trackedKey = `${candidate.currency}:${candidate.name.trim().toLowerCase()}`;
+                const trackedKey = normalizeSubscriptionName(candidate.name);
                 const isTracked = trackedKeys.has(trackedKey);
                 const isSaved = saved.has(candidate.key);
                 return (

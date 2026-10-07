@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { db } from "@/src/prisma/db";
 import { isSupportedCurrency } from "@/src/lib/currency";
+import { duplicateSubscriptionMessage, normalizeSubscriptionName } from "@/src/lib/subscription-name";
 import {
   getDateInputToday,
   isDateInputInPast,
@@ -76,6 +77,14 @@ export async function POST(request: Request) {
 
   if (!name) {
     return NextResponse.json({ error: "Subscription name is required" }, { status: 400 });
+  }
+
+  const userSubscriptions = await db.orm.public.Subscription.where({ userId }).all();
+  const duplicate = userSubscriptions.find(
+    (subscription) => normalizeSubscriptionName(subscription.name) === normalizeSubscriptionName(name),
+  );
+  if (duplicate) {
+    return NextResponse.json({ error: duplicateSubscriptionMessage(duplicate.name) }, { status: 409 });
   }
 
   const cost = Number(body.cost ?? 0);

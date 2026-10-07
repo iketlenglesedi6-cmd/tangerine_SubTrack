@@ -7,8 +7,10 @@ import { InlineFeedback } from "@/components/ui/inline-feedback";
 
 export function SubscriptionRowActions({
   subscription,
+  existingSubscriptions,
 }: {
   subscription: DashboardSubscription;
+  existingSubscriptions: DashboardSubscription[];
 }) {
   const { id, status: currentStatus } = subscription;
   const router = useRouter();
@@ -58,7 +60,7 @@ export function SubscriptionRowActions({
 
   return (
     <div className="flex flex-wrap items-center gap-3 text-sm">
-      <SubscriptionEditor subscription={subscription} />
+      <SubscriptionEditor subscription={subscription} existingSubscriptions={existingSubscriptions} />
       <button
         onClick={toggleStatus}
         disabled={isWorking}

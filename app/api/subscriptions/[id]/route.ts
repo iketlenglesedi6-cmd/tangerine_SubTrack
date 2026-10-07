@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import { db } from "@/src/prisma/db";
 import { isSupportedCurrency } from "@/src/lib/currency";
+import { duplicateSubscriptionMessage, normalizeSubscriptionName } from "@/src/lib/subscription-name";
 import {
   isDateInputInPast,
   isValidDateInput,
@@ -42,7 +43,17 @@ export async function PATCH(
   const updates: Record<string, unknown> = { updatedAt: new Date().toISOString() };
 
   if (typeof body.name === "string" && body.name.trim()) {
-    updates.name = body.name.trim();
+    const nextName = body.name.trim();
+    const userSubscriptions = await db.orm.public.Subscription.where({ userId }).all();
+    const duplicate = userSubscriptions.find(
+      (subscription) =>
+        subscription.id !== numericId &&
+        normalizeSubscriptionName(subscription.name) === normalizeSubscriptionName(nextName),
+    );
+    if (duplicate) {
+      return NextResponse.json({ error: duplicateSubscriptionMessage(duplicate.name) }, { status: 409 });
+    }
+    updates.name = nextName;
   }
   if (body.cost !== undefined) {
     const cost = Number(body.cost);

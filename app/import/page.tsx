@@ -32,7 +32,6 @@ export default async function ImportPage() {
       <StatementImporter
         alreadyTracked={subscriptions.map((subscription) => ({
           name: subscription.name,
-          currency: subscription.currency,
         }))}
       />
     </PageShell>

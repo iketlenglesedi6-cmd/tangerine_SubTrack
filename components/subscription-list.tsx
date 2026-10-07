@@ -10,6 +10,7 @@ import { formatCurrency, SUPPORTED_CURRENCIES } from "@/src/lib/currency";
 import { convertCurrencyAmount, type ExchangeRates, type SupportedCurrency } from "@/src/lib/currency";
 import { getDateInputToday, isDateInputInPast, PAST_RENEWAL_DATE_MESSAGE } from "@/src/lib/date-input";
 import { getNextRenewalDate } from "@/src/lib/renewals";
+import { duplicateSubscriptionMessage, normalizeSubscriptionName } from "@/src/lib/subscription-name";
 
 export type DashboardSubscription = {
   id: string;
@@ -140,7 +141,7 @@ export function SubscriptionList({
                   })()}
                   <p className="text-sm text-[#57534E]">{new Date(subscription.renewalDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</p>
                 </div>
-                <SubscriptionRowActions subscription={subscription} />
+                <SubscriptionRowActions subscription={subscription} existingSubscriptions={subscriptions} />
               </div>
             </div>
           ))}
@@ -152,8 +153,10 @@ export function SubscriptionList({
 
 export function SubscriptionEditor({
   subscription,
+  existingSubscriptions,
 }: {
   subscription: DashboardSubscription;
+  existingSubscriptions: DashboardSubscription[];
 }) {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
@@ -167,12 +170,21 @@ export function SubscriptionEditor({
   const [renewalDate, setRenewalDate] = useState(
     getNextRenewalDate(subscription.renewalDate, subscription.billingCycle).slice(0, 10),
   );
+  const duplicate = existingSubscriptions.find(
+    (item) => item.id !== subscription.id && normalizeSubscriptionName(item.name) === normalizeSubscriptionName(name),
+  );
 
   async function save(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     setIsSaving(true);
     setMessage("");
     setMessageTone("neutral");
+    if (duplicate) {
+      setMessageTone("error");
+      setMessage(duplicateSubscriptionMessage(duplicate.name));
+      setIsSaving(false);
+      return;
+    }
     if (isDateInputInPast(renewalDate)) {
       setMessageTone("error");
       setMessage(PAST_RENEWAL_DATE_MESSAGE);
@@ -207,6 +219,11 @@ export function SubscriptionEditor({
       {isOpen && (
         <form onSubmit={save} className="mt-3 grid gap-3 rounded-xl border border-[#1C1917]/15 bg-white p-4 sm:grid-cols-2">
           <label className="text-sm font-medium text-[#1C1917]">Name<input required maxLength={120} value={name} onChange={(event) => setName(event.target.value)} className="mt-1 block w-full rounded-lg border border-[#1C1917]/20 px-3 py-2" /></label>
+          {duplicate && (
+            <div className="sm:col-span-2">
+              <InlineFeedback message={duplicateSubscriptionMessage(duplicate.name)} tone="error" />
+            </div>
+          )}
           <label className="text-sm font-medium text-[#1C1917]">Price<input required type="number" min="0" step="0.01" value={cost} onChange={(event) => setCost(event.target.value)} className="mt-1 block w-full rounded-lg border border-[#1C1917]/20 px-3 py-2" /></label>
           <label className="text-sm font-medium text-[#1C1917]">Currency<select value={currency} onChange={(event) => setCurrency(event.target.value)} className="mt-1 block w-full rounded-lg border border-[#1C1917]/20 px-3 py-2">{SUPPORTED_CURRENCIES.map((code) => <option key={code} value={code}>{code}</option>)}</select></label>
           <label className="text-sm font-medium text-[#1C1917]">Billing cycle<select value={billingCycle} onChange={(event) => setBillingCycle(event.target.value)} className="mt-1 block w-full rounded-lg border border-[#1C1917]/20 px-3 py-2"><option value="monthly">Monthly</option><option value="yearly">Yearly</option></select></label>
@@ -234,7 +251,7 @@ export function SubscriptionEditor({
             />
           </label>
           <div className="flex items-center gap-3 sm:col-span-2">
-            <button type="submit" disabled={isSaving} className="rounded-lg bg-[#9A3412] px-4 py-2 text-sm font-medium text-white hover:bg-[#7C2D12] disabled:opacity-60">{isSaving ? "Saving…" : "Save changes"}</button>
+            <button type="submit" disabled={isSaving || Boolean(duplicate)} className="rounded-lg bg-[#9A3412] px-4 py-2 text-sm font-medium text-white hover:bg-[#7C2D12] disabled:opacity-60">{duplicate ? "Already on your list" : isSaving ? "Saving..." : "Save changes"}</button>
             {message && <InlineFeedback message={message} tone={messageTone} />}
           </div>
         </form>

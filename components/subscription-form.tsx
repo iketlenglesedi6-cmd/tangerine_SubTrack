@@ -4,8 +4,15 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { InlineFeedback } from "@/components/ui/inline-feedback";
 import { getDateInputToday, isDateInputInPast, PAST_RENEWAL_DATE_MESSAGE } from "@/src/lib/date-input";
+import { duplicateSubscriptionMessage, normalizeSubscriptionName } from "@/src/lib/subscription-name";
 
-export function SubscriptionForm({ categories }: { categories: Array<{ id: string; name: string }> }) {
+export function SubscriptionForm({
+  categories,
+  existingSubscriptions,
+}: {
+  categories: Array<{ id: string; name: string }>;
+  existingSubscriptions: Array<{ name: string }>;
+}) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [cost, setCost] = useState("");
@@ -17,6 +24,9 @@ export function SubscriptionForm({ categories }: { categories: Array<{ id: strin
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState("");
   const [messageTone, setMessageTone] = useState<"neutral" | "error" | "success">("neutral");
+  const duplicate = existingSubscriptions.find(
+    (subscription) => normalizeSubscriptionName(subscription.name) === normalizeSubscriptionName(name),
+  );
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -26,6 +36,11 @@ export function SubscriptionForm({ categories }: { categories: Array<{ id: strin
     if (!name.trim()) {
       setMessageTone("error");
       setMessage("Please enter a subscription name.");
+      return;
+    }
+    if (duplicate) {
+      setMessageTone("error");
+      setMessage(duplicateSubscriptionMessage(duplicate.name));
       return;
     }
     if (!renewalDate) {
@@ -103,6 +118,12 @@ export function SubscriptionForm({ categories }: { categories: Array<{ id: strin
             className="mt-1.5 w-full rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none transition focus:border-[#9A3412]"
           />
         </label>
+
+        {duplicate && (
+          <div className="md:col-span-2">
+            <InlineFeedback message={duplicateSubscriptionMessage(duplicate.name)} tone="error" />
+          </div>
+        )}
 
         <label className="block text-sm font-medium text-[#1C1917]">
           Price
@@ -201,10 +222,10 @@ export function SubscriptionForm({ categories }: { categories: Array<{ id: strin
       <div className="flex items-center justify-between">
         <button
           type="submit"
-          disabled={isSubmitting}
+          disabled={isSubmitting || Boolean(duplicate)}
           className="rounded-lg bg-[#9A3412] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#7C2D12] disabled:cursor-not-allowed disabled:opacity-60"
         >
-          {isSubmitting ? "Saving..." : "Save subscription"}
+          {duplicate ? "Already on your list" : isSubmitting ? "Saving..." : "Save subscription"}
         </button>
 
         {message && <InlineFeedback message={message} tone={messageTone} />}
