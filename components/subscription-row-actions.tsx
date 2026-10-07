@@ -2,14 +2,14 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { SubscriptionEditor, type DashboardSubscription } from "@/components/subscription-list";
 
 export function SubscriptionRowActions({
-  id,
-  currentStatus,
+  subscription,
 }: {
-  id: string;
-  currentStatus: string;
+  subscription: DashboardSubscription;
 }) {
+  const { id, status: currentStatus } = subscription;
   const router = useRouter();
   const [isWorking, setIsWorking] = useState(false);
   const [message, setMessage] = useState("");
@@ -57,6 +57,7 @@ export function SubscriptionRowActions({
 
   return (
     <div className="flex flex-wrap items-center gap-3 text-sm">
+      <SubscriptionEditor subscription={subscription} />
       <button
         onClick={toggleStatus}
         disabled={isWorking}

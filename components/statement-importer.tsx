@@ -25,6 +25,7 @@ export function StatementImporter({
   const [dateColumn, setDateColumn] = useState("");
   const [descriptionColumn, setDescriptionColumn] = useState("");
   const [amountColumn, setAmountColumn] = useState("");
+  const [currencyColumn, setCurrencyColumn] = useState("");
   const [currency, setCurrency] = useState("ZAR");
   const [expenseSign, setExpenseSign] = useState<"positive" | "negative">("positive");
   const [dateOrder, setDateOrder] = useState<"DMY" | "MDY">("DMY");
@@ -34,8 +35,8 @@ export function StatementImporter({
   const [message, setMessage] = useState("");
 
   const candidates = useMemo(
-    () => findRecurringCharges({ rows, dateColumn, descriptionColumn, amountColumn, currency, expenseSign, dateOrder }),
-    [rows, dateColumn, descriptionColumn, amountColumn, currency, expenseSign, dateOrder],
+    () => findRecurringCharges({ rows, dateColumn, descriptionColumn, amountColumn, currencyColumn, currency, expenseSign, dateOrder }),
+    [rows, dateColumn, descriptionColumn, amountColumn, currencyColumn, currency, expenseSign, dateOrder],
   );
   const trackedKeys = new Set(
     alreadyTracked.map((subscription) => `${subscription.currency}:${subscription.name.trim().toLowerCase()}`),
@@ -66,6 +67,7 @@ export function StatementImporter({
       const dateIndex = guessColumn(headerRow, "date");
       const descriptionIndex = guessColumn(headerRow, "description");
       const amountIndex = guessColumn(headerRow, "amount");
+      const currencyIndex = guessColumn(headerRow, "currency");
 
       const statementRows = parsed.slice(1).map((record) =>
         Object.fromEntries(headerRow.map((header, index) => [header, record[index] ?? ""])),
@@ -76,6 +78,7 @@ export function StatementImporter({
       setDateColumn(dateIndex >= 0 ? headerRow[dateIndex] : "");
       setDescriptionColumn(descriptionIndex >= 0 ? headerRow[descriptionIndex] : "");
       setAmountColumn(amountIndex >= 0 ? headerRow[amountIndex] : "");
+      setCurrencyColumn(currencyIndex >= 0 ? headerRow[currencyIndex] : "");
       if (dateIndex < 0 || descriptionIndex < 0 || amountIndex < 0) {
         setMessage("I couldn’t identify every column automatically. Choose the date, description, and amount columns below.");
       }
@@ -155,7 +158,9 @@ export function StatementImporter({
         <h2 className="text-lg font-semibold text-[#1C1917]">Choose a bank statement</h2>
         <p className="mt-2 max-w-2xl text-sm leading-6 text-[#57534E]">
           Upload a CSV export with transaction dates, descriptions, and amounts. SubTrack looks for repeated charges
-          on monthly or yearly cycles, then lets you review each one before saving it.
+          on monthly or yearly cycles, then lets you review each one before saving it. Imported charges keep their
+          original currency; the dashboard can convert the display totals. Many banks offer CSV or Excel downloads
+          alongside PDFs; this importer currently accepts CSV files only.
         </p>
         <label className="mt-5 block text-sm font-medium text-[#1C1917]" htmlFor="statement-file">
           CSV statement
@@ -176,10 +181,16 @@ export function StatementImporter({
           >
             Download the column template
           </a>
+          <a href="/sample-bank-statement.csv" download className="font-medium text-[#9A3412] underline underline-offset-2">
+            Download fictional sample statement
+          </a>
         </div>
         <p className="mt-4 rounded-lg bg-[#FAFAF9] p-3 text-xs leading-5 text-[#57534E]">
           Your statement is read in this browser and is never uploaded. Only the recurring charges you approve are
           sent to SubTrack. Don’t upload a statement you don’t want processed.
+        </p>
+        <p className="mt-2 text-xs leading-5 text-[#57534E]">
+          The sample uses fictional transactions in ZAR and contains no bank account details.
         </p>
       </section>
 
@@ -190,8 +201,9 @@ export function StatementImporter({
             <ColumnPicker label="Date column" value={dateColumn} headers={headers} onChange={setDateColumn} />
             <ColumnPicker label="Description column" value={descriptionColumn} headers={headers} onChange={setDescriptionColumn} />
             <ColumnPicker label="Amount column" value={amountColumn} headers={headers} onChange={setAmountColumn} />
+            <ColumnPicker label="Currency column (optional)" value={currencyColumn} headers={headers} onChange={setCurrencyColumn} optional />
             <label className="block text-sm font-medium text-[#1C1917]">
-              Currency
+              Fallback currency
               <select value={currency} onChange={(event) => setCurrency(event.target.value)} className="mt-1.5 w-full rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-sm">
                 {SUPPORTED_CURRENCIES.map((code) => <option key={code} value={code}>{code}</option>)}
               </select>
@@ -215,7 +227,7 @@ export function StatementImporter({
             <div>
               <h3 className="font-semibold text-[#1C1917]">Detected recurring charges</h3>
               <p className="mt-1 text-sm text-[#57534E]">
-                Found {candidates.length} possible {candidates.length === 1 ? "subscription" : "subscriptions"}.
+                Found {candidates.length} possible {candidates.length === 1 ? "subscription" : "subscriptions"}. Currency codes are detected when available; otherwise the fallback is used.
               </p>
             </div>
             {candidates.length > 0 && (
@@ -289,11 +301,13 @@ function ColumnPicker({
   value,
   headers,
   onChange,
+  optional = false,
 }: {
   label: string;
   value: string;
   headers: string[];
   onChange: (value: string) => void;
+  optional?: boolean;
 }) {
   return (
     <label className="block text-sm font-medium text-[#1C1917]">
@@ -303,7 +317,7 @@ function ColumnPicker({
         onChange={(event) => onChange(event.target.value)}
         className="mt-1.5 w-full rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-sm"
       >
-        <option value="">Choose column</option>
+        <option value="">{optional ? "No currency column" : "Choose column"}</option>
         {headers.map((header, index) => (
           <option key={`${header}-${index}`} value={header}>{header || `Column ${index + 1}`}</option>
         ))}

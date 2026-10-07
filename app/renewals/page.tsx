@@ -4,6 +4,11 @@ import { auth } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 
 import { formatCurrency } from "@/src/lib/currency";
+import { convertCurrencyAmount } from "@/src/lib/currency";
+import type { ExchangeRates, SupportedCurrency } from "@/src/lib/currency";
+import { getExchangeRates } from "@/src/lib/exchange-rates";
+import { getDisplayCurrency } from "@/src/lib/display-currency";
+import { CurrencyPreferenceSelect } from "@/components/currency-preference-select";
 import { getDaysUntil, getNextRenewalDate } from "@/src/lib/renewals";
 import { db } from "@/src/prisma/db";
 
@@ -19,11 +24,17 @@ function renewalLabel(daysUntil: number | null) {
   return `In ${daysUntil} days`;
 }
 
+function displayAmount(cost: number, currency: string, preferred: SupportedCurrency, rates: ExchangeRates | null) {
+  const converted = convertCurrencyAmount(cost, currency, preferred, rates);
+  return formatCurrency(converted ?? cost, converted === null ? currency : preferred);
+}
+
 export default async function RenewalsPage() {
   const { userId } = await auth();
   if (!userId) redirect("/");
 
   const rows = await db.orm.public.Subscription.where({ userId, status: "active" }).all();
+  const [displayCurrency, exchangeRates] = await Promise.all([getDisplayCurrency(), getExchangeRates()]);
   const renewals = rows
     .map((subscription) => {
       const renewalDate = getNextRenewalDate(subscription.renewalDate, subscription.billingCycle);
@@ -39,12 +50,14 @@ export default async function RenewalsPage() {
     })
     .sort((left, right) => new Date(left.renewalDate).getTime() - new Date(right.renewalDate).getTime());
 
-  const monthlySpend = new Map<string, number>();
+  let monthlySpend = 0;
+  let canConvertMonthlySpend = true;
   for (const renewal of renewals) {
     const monthlyAmount = renewal.billingCycle === "yearly" ? renewal.cost / 12 : renewal.cost;
-    monthlySpend.set(renewal.currency, (monthlySpend.get(renewal.currency) ?? 0) + monthlyAmount);
+    const converted = convertCurrencyAmount(monthlyAmount, renewal.currency, displayCurrency, exchangeRates);
+    if (converted === null) canConvertMonthlySpend = false;
+    else monthlySpend += converted;
   }
-
   const dueSoon = renewals.filter((renewal) => renewal.daysUntil !== null && renewal.daysUntil <= 30);
 
   return (
@@ -57,25 +70,25 @@ export default async function RenewalsPage() {
             See the next expected charge for each active subscription. Dates are based on the billing cycle you track.
           </p>
         </div>
-        <Link href="/dashboard" className="w-fit text-sm font-medium text-[#9A3412] underline underline-offset-2">
-          Back to dashboard
-        </Link>
+        <div className="flex flex-wrap items-center gap-4">
+          <CurrencyPreferenceSelect currency={displayCurrency} />
+          <Link href="/dashboard" className="w-fit text-sm font-medium text-[#9A3412] underline underline-offset-2">
+            Back to dashboard
+          </Link>
+        </div>
       </header>
 
       <section aria-label="Renewal overview" className="grid gap-4 sm:grid-cols-2">
         <div className="rounded-2xl bg-[#1C1917] p-5 text-white">
           <p className="text-sm text-white/90">Expected monthly spend</p>
-          {monthlySpend.size === 0 ? (
+          {renewals.length === 0 ? (
             <p className="mt-2 text-xl font-semibold">No active subscriptions</p>
-          ) : (
-            <div className="mt-3 flex flex-wrap gap-4">
-              {Array.from(monthlySpend.entries()).map(([currency, amount]) => (
-                <p key={currency} className="text-2xl font-semibold">
-                  {formatCurrency(amount, currency)} <span className="text-sm font-normal text-white/90">/ month</span>
-                </p>
-              ))}
-            </div>
-          )}
+          ) : canConvertMonthlySpend ? (
+            <p className="mt-3 text-2xl font-semibold">
+              {formatCurrency(monthlySpend, displayCurrency)} <span className="text-sm font-normal text-white/90">/ month</span>
+            </p>
+          ) : <p className="mt-3 text-sm">Exchange rates are unavailable; see original currencies below.</p>}
+          {renewals.length > 0 && canConvertMonthlySpend && <p className="mt-2 text-xs text-white/90">{exchangeRates ? `Shown in ${displayCurrency} using ${exchangeRates.date} reference rates.` : `Amounts are already in ${displayCurrency}; no conversion was needed.`}</p>}
         </div>
         <div className="rounded-2xl border border-[#1C1917]/10 bg-white p-5">
           <p className="text-sm text-[#57534E]">Renewing in the next 30 days</p>
@@ -109,7 +122,10 @@ export default async function RenewalsPage() {
                 </div>
                 <div className="flex items-center justify-between gap-4 sm:justify-end">
                   <span className="text-sm font-medium text-[#9A3412]">{renewalLabel(renewal.daysUntil)}</span>
-                  <span className="font-semibold text-[#1C1917]">{formatCurrency(renewal.cost, renewal.currency)}</span>
+                  <span className="text-right">
+                    <span className="block font-semibold text-[#1C1917]">{displayAmount(renewal.cost, renewal.currency, displayCurrency, exchangeRates)}</span>
+                    {renewal.currency !== displayCurrency && <span className="block text-xs text-[#57534E]">Original: {formatCurrency(renewal.cost, renewal.currency)}</span>}
+                  </span>
                 </div>
               </li>
             ))}
