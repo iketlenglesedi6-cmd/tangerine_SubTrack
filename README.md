@@ -144,14 +144,15 @@ After signing in, a user can add subscriptions manually or import a CSV and revi
 
 ## Lighthouse results supplied for the production dashboard
 
-The report supplied on October 7, 2026 showed:
+The reports were captured on October 7, 2026 using Lighthouse 13.4.1:
 
-| Device | Performance | Accessibility | Best Practices | SEO |
+| Device and time (GMT+2) | Performance | Accessibility | Best Practices | SEO |
 | --- | ---: | ---: | ---: | ---: |
-| Desktop | 99 | 96 | 100 | 100 |
-| Mobile (Moto G Power, slow 4G) | 76 | 96 | 100 | 100 |
+| Desktop, 5:24 PM | 99 | 96 | 100 | 100 |
+| Mobile (Moto G Power, 5:26 PM) | 76 | 96 | 100 | 100 |
+| Mobile (Moto G Power, 5:54 PM, latest) | 75 | 100 | 100 | 100 |
 
-The report flagged a color-contrast opportunity. Muted text colors were darkened in a later feature-branch update; rerun Lighthouse against the deployed merged build before using these scores as the final submission results. The mobile run also reported 3.4 s Largest Contentful Paint and 620 ms Total Blocking Time.
+The latest mobile report no longer shows a color-contrast warning. Its metrics were FCP 1.0 s, LCP 3.6 s, TBT 550 ms, CLS 0.001, and Speed Index 3.2 s. Lighthouse also reported 3.7 s of main-thread work, 1.8 s JavaScript execution, an estimated 214 KiB of unused JavaScript, and 18 long tasks. Mobile performance is the main remaining Lighthouse opportunity; measure any future optimizations against the same device and throttling settings.
 
 ## Known limitations and next steps
 
@@ -160,5 +161,5 @@ The report flagged a color-contrast opportunity. Muted text colors were darkened
 - Recurring-charge detection is heuristic. It can miss variable charges or group unrelated charges; users should review matches before saving them.
 - When the statement has no currency column or currency code, the user must choose the correct fallback currency.
 - Exchange rates are reference rates and may differ from bank/card conversion rates, fees, and final settlement amounts.
-- The latest supplied Lighthouse report found a contrast issue, and the dashboard mobile performance score was 76. Rerun the audit after the latest branch changes are merged and deployed.
+- The latest supplied Lighthouse mobile performance score is 75. The most recent mobile report scored accessibility 100 and did not show the earlier contrast warning.
 - Category deletion is blocked while subscriptions still reference that category.
