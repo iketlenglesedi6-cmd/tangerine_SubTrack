@@ -213,7 +213,7 @@ export function SubscriptionEditor({
 
   return (
     <div>
-      <button type="button" aria-expanded={isOpen} onClick={() => setIsOpen((open) => !open)} className="text-sm font-medium text-[#9A3412] underline underline-offset-2">
+      <button type="button" aria-expanded={isOpen} onClick={() => setIsOpen((open) => !open)} className="text-sm font-medium text-[#7C2D12] underline underline-offset-2">
         {isOpen ? "Close edit" : "Edit"}
       </button>
       {isOpen && (

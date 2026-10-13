@@ -100,7 +100,7 @@ export function SubscriptionForm({
       className="space-y-4 rounded-2xl border border-[#1C1917]/8 bg-white p-5"
     >
       <div>
-        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#9A3412]">
+        <p className="text-xs font-semibold uppercase tracking-[0.16em] text-[#7C2D12]">
           Add subscription
         </p>
         <h2 className="mt-1 text-lg font-semibold text-[#1C1917]">

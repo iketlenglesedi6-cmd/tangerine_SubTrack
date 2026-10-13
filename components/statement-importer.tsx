@@ -182,16 +182,16 @@ export function StatementImporter({
           <a
             href="data:text/csv;charset=utf-8,date%2Cdescription%2Camount%0A"
             download="subtrack-statement-template.csv"
-            className="font-medium text-[#9A3412] underline underline-offset-2"
+            className="font-medium text-[#7C2D12] underline underline-offset-2"
           >
             Download the column template
           </a>
-          <a href="/sample-bank-statement.csv" download className="font-medium text-[#9A3412] underline underline-offset-2">
+          <a href="/sample-bank-statement.csv" download className="font-medium text-[#7C2D12] underline underline-offset-2">
             Download sample bank CSV
           </a>
         </div>
         <details className="mt-4 max-w-2xl overflow-hidden rounded-xl border border-[#1C1917]/10 bg-[#fffaf5]">
-          <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-[#9A3412] marker:text-[#9A3412]">
+          <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-[#7C2D12] marker:text-[#7C2D12]">
             Peek at the fictional statement
           </summary>
           <div className="border-t border-[#1C1917]/10">
@@ -267,7 +267,7 @@ export function StatementImporter({
               </p>
             </div>
             {candidates.length > 0 && (
-              <button type="button" onClick={selectNewCandidates} className="text-sm font-medium text-[#9A3412] underline underline-offset-2">
+              <button type="button" onClick={selectNewCandidates} className="text-sm font-medium text-[#7C2D12] underline underline-offset-2">
                 Select all new
               </button>
             )}

@@ -20,7 +20,7 @@ export default function Loading() {
         </div>
         <div>
           <p className="font-semibold text-[#1f1a17]">Getting things ready</p>
-          <p className="mt-1 text-sm text-[#6b625d]">Loading your subscriptions…</p>
+          <p className="mt-1 text-sm text-[#4B4742]">Loading your subscriptions…</p>
         </div>
       </div>
     </main>
