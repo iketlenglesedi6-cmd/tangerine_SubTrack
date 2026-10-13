@@ -21,8 +21,8 @@ export function SectionHeading({
         : "text-sm font-semibold uppercase tracking-[0.14em] text-[#4B4742]";
 
   return (
-    <div className={`flex items-center justify-between gap-3 ${className}`}>
-      <h2 id={id} className={titleClassName}>{title}</h2>
+    <div className={`flex min-w-0 flex-wrap items-center justify-between gap-3 ${className}`}>
+      <h2 id={id} className={`min-w-0 ${titleClassName}`}>{title}</h2>
       {children}
     </div>
   );

@@ -62,7 +62,7 @@ export default function FeaturesPage() {
             />
           </div>
         </div>
-        <p className="mt-7 w-fit rounded-lg bg-white/80 px-3 py-2 text-sm text-[#7C2D12]">
+        <p className="mt-7 inline-block max-w-full rounded-lg bg-white/80 px-3 py-2 text-sm text-[#7C2D12]">
           No bank connection. No cancel button. Just your own subscription list, neatly zipped.
         </p>
       </section>
