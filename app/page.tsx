@@ -17,7 +17,7 @@ export default function Home() {
           className="mb-4 h-auto w-64 max-w-full sm:w-72"
         />
 
-        <h1 className="text-[2.75rem] font-semibold leading-[1.1] tracking-tight text-[#1C1917]">
+        <h1 className="break-words text-4xl font-semibold leading-[1.1] tracking-tight text-[#1C1917] sm:text-[2.75rem]">
           Never pay for a
           <br />
           forgotten subscription again

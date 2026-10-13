@@ -65,7 +65,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </span>
             </Link>
 
-            <nav aria-label="Main navigation" className="flex min-w-0 items-center justify-between gap-2 sm:justify-start sm:gap-4">
+            <nav aria-label="Main navigation" className="flex min-w-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 sm:flex-nowrap sm:justify-start sm:gap-4">
               <Link
                 href="/pricing"
                 className="rounded-lg px-2 py-2 text-sm font-medium text-[#4B4742] hover:text-[#1C1917] sm:px-3"
@@ -74,7 +74,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </Link>
 
               <Show when="signed-out">
-                <div className="flex items-center gap-1 sm:gap-2">
+                <div className="flex flex-wrap items-center gap-1 sm:flex-nowrap sm:gap-2">
                   <SignInButton>
                     <button className="rounded-lg px-2 py-2 text-sm font-medium text-[#1C1917] transition-colors hover:bg-[#1C1917]/5 sm:px-4">
                       Sign in

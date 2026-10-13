@@ -147,12 +147,12 @@ export default async function DashboardPage() {
           ) : (
             <div className="mt-1 flex flex-wrap gap-x-6 gap-y-2">
               {monthlySpendTotal !== null ? (
-                <p className="text-4xl font-semibold tracking-tight text-[#1C1917]">
+                <p className="break-words text-3xl font-semibold tracking-tight text-[#1C1917] sm:text-4xl">
                   {formatCurrency(monthlySpendTotal, displayCurrency)}
                   <span className="ml-2 text-base font-normal text-[#4B4742]">/ month</span>
                 </p>
               ) : summary.monthlySpendByCurrency.map((item) => (
-                <p key={item.currency} className="text-4xl font-semibold tracking-tight text-[#1C1917]">
+                <p key={item.currency} className="break-words text-3xl font-semibold tracking-tight text-[#1C1917] sm:text-4xl">
                   {formatCurrency(item.monthlySpend, item.currency)}
                   <span className="ml-2 text-base font-normal text-[#4B4742]">/ month</span>
                 </p>
