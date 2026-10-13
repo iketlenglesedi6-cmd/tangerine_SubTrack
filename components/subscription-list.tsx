@@ -85,21 +85,21 @@ export function SubscriptionList({
           value={search}
           onChange={(event) => setSearch(event.target.value)}
           placeholder="Search name or category"
-          className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/20 bg-white px-3 py-2 text-sm text-[#1C1917] placeholder:text-[#57534E] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9A3412]"
+          className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/20 bg-white px-3 py-2 text-sm text-[#1C1917] placeholder:text-[#4B4742] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#9A3412]"
         />
         <details className="group relative">
           <summary className="flex h-full cursor-pointer list-none items-center justify-center gap-2 rounded-lg border border-[#1C1917]/20 bg-white px-3 py-2 text-sm font-medium text-[#1C1917] hover:bg-[#FAFAF9]">
             Filters{activeFilterCount > 0 && <span className="rounded-full bg-[#FAFAF9] px-1.5 text-xs">{activeFilterCount}</span>}
           </summary>
           <div className="absolute right-0 z-10 mt-2 grid w-60 gap-3 rounded-xl border border-[#1C1917]/15 bg-white p-4 shadow-lg">
-            <label className="text-xs font-medium text-[#57534E]" htmlFor="subscription-status">Status
+            <label className="text-xs font-medium text-[#4B4742]" htmlFor="subscription-status">Status
               <select id="subscription-status" value={status} onChange={(event) => setStatus(event.target.value)} className="mt-1 block w-full rounded-lg border border-[#1C1917]/20 bg-white px-3 py-2 text-sm text-[#1C1917]">
                 <option value="all">All statuses</option>
                 <option value="active">Active</option>
                 <option value="canceled">Canceled</option>
               </select>
             </label>
-            <label className="text-xs font-medium text-[#57534E]" htmlFor="subscription-category">Category
+            <label className="text-xs font-medium text-[#4B4742]" htmlFor="subscription-category">Category
               <select id="subscription-category" value={category} onChange={(event) => setCategory(event.target.value)} className="mt-1 block w-full rounded-lg border border-[#1C1917]/20 bg-white px-3 py-2 text-sm text-[#1C1917]">
                 <option value="all">All categories</option>
                 {categories.map((name) => <option key={name} value={name}>{name}</option>)}
@@ -125,7 +125,7 @@ export function SubscriptionList({
             <div key={subscription.id} className="flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
               <div className="min-w-0">
                 <p className="truncate font-medium text-[#1C1917]">{subscription.name}</p>
-                <p className="text-sm text-[#57534E]">
+                <p className="text-sm text-[#4B4742]">
                   {subscription.categoryName} · {subscription.billingCycle === "yearly" ? "yearly" : "monthly"}
                   {subscription.status === "canceled" && " · canceled"}
                 </p>
@@ -136,10 +136,10 @@ export function SubscriptionList({
                     const converted = convertCurrencyAmount(subscription.cost, subscription.currency, displayCurrency, exchangeRates);
                     return <>
                       <p className="font-medium text-[#1C1917]">{formatCurrency(converted ?? subscription.cost, converted === null ? subscription.currency : displayCurrency)}</p>
-                      {converted !== null && subscription.currency !== displayCurrency && <p className="text-xs text-[#57534E]">Original: {formatCurrency(subscription.cost, subscription.currency)}</p>}
+                      {converted !== null && subscription.currency !== displayCurrency && <p className="text-xs text-[#4B4742]">Original: {formatCurrency(subscription.cost, subscription.currency)}</p>}
                     </>;
                   })()}
-                  <p className="text-sm text-[#57534E]">{new Date(subscription.renewalDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</p>
+                  <p className="text-sm text-[#4B4742]">{new Date(subscription.renewalDate).toLocaleDateString(undefined, { month: "short", day: "numeric" })}</p>
                 </div>
                 <SubscriptionRowActions subscription={subscription} existingSubscriptions={subscriptions} />
               </div>

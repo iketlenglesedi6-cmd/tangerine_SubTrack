@@ -230,7 +230,7 @@ export function SubscriptionForm({
 
         {message && <InlineFeedback message={message} tone={messageTone} />}
       </div>
-      <p className="text-xs text-[#57534E]">
+      <p className="text-xs text-[#4B4742]">
         SubTrack tracks the subscription and its next renewal; it does not cancel or change your provider account.
       </p>
     </form>

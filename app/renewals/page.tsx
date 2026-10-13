@@ -91,7 +91,7 @@ export default async function RenewalsPage() {
           {renewals.length > 0 && canConvertMonthlySpend && <p className="mt-2 text-xs text-white/90">{exchangeRates ? `Shown in ${displayCurrency} using ${exchangeRates.date} reference rates.` : `Amounts are already in ${displayCurrency}; no conversion was needed.`}</p>}
         </div>
         <div className="rounded-2xl border border-[#1C1917]/10 bg-white p-5">
-          <p className="text-sm text-[#57534E]">Renewing in the next 30 days</p>
+          <p className="text-sm text-[#4B4742]">Renewing in the next 30 days</p>
           <p className="mt-2 text-2xl font-semibold text-[#1C1917]">
             {dueSoon.length} {dueSoon.length === 1 ? "subscription" : "subscriptions"}
           </p>
@@ -112,7 +112,7 @@ export default async function RenewalsPage() {
               <li key={renewal.id} className="flex flex-col gap-2 py-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                   <p className="font-medium text-[#1C1917]">{renewal.name}</p>
-                  <p className="text-sm text-[#57534E]">
+                  <p className="text-sm text-[#4B4742]">
                     {renewal.billingCycle === "yearly" ? "Yearly" : "Monthly"} · {new Date(renewal.renewalDate).toLocaleDateString(undefined, { year: "numeric", month: "long", day: "numeric" })}
                   </p>
                 </div>
@@ -120,7 +120,7 @@ export default async function RenewalsPage() {
                   <span className="text-sm font-medium text-[#9A3412]">{renewalLabel(renewal.daysUntil)}</span>
                   <span className="text-right">
                     <span className="block font-semibold text-[#1C1917]">{displayAmount(renewal.cost, renewal.currency, displayCurrency, exchangeRates)}</span>
-                    {renewal.currency !== displayCurrency && <span className="block text-xs text-[#57534E]">Original: {formatCurrency(renewal.cost, renewal.currency)}</span>}
+                    {renewal.currency !== displayCurrency && <span className="block text-xs text-[#4B4742]">Original: {formatCurrency(renewal.cost, renewal.currency)}</span>}
                   </span>
                 </div>
               </li>

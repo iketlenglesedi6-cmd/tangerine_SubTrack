@@ -18,7 +18,7 @@ export function SectionHeading({
       ? "text-lg font-semibold text-[#1C1917]"
       : variant === "inverse"
         ? "text-sm font-semibold uppercase tracking-[0.14em] text-white/80"
-        : "text-sm font-semibold uppercase tracking-[0.14em] text-[#57534E]";
+        : "text-sm font-semibold uppercase tracking-[0.14em] text-[#4B4742]";
 
   return (
     <div className={`flex items-center justify-between gap-3 ${className}`}>

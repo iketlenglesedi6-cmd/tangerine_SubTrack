@@ -126,19 +126,19 @@ export function CategoryManager({ categories: initialCategories }: { categories:
           onChange={(event) => setNewName(event.target.value)}
           maxLength={80}
           placeholder="Add a category"
-          className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none focus:border-[#C2410C]"
+          className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-[#1C1917] outline-none focus:border-[#9A3412]"
         />
         <button
           type="submit"
           disabled={isWorking || !newName.trim()}
-          className="rounded-lg bg-[#C2410C] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#9A3412] disabled:opacity-60"
+          className="rounded-lg bg-[#9A3412] px-5 py-2 text-sm font-medium text-white transition-colors hover:bg-[#7C2D12] disabled:opacity-60"
         >
           Add category
         </button>
       </form>
 
       {categories.length === 0 ? (
-        <EmptyState title="No categories yet" compact className="border-b border-[#1C1917]/10 text-sm text-[#57534E]" />
+        <EmptyState title="No categories yet" compact className="border-b border-[#1C1917]/10 text-sm text-[#4B4742]" />
       ) : (
         <ul className="divide-y divide-[#1C1917]/10">
           {categories.map((category) => (
@@ -162,7 +162,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
                     value={editingName}
                     onChange={(event) => setEditingName(event.target.value)}
                     maxLength={80}
-                    className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#C2410C]"
+                    className="min-w-0 flex-1 rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-sm outline-none focus:border-[#9A3412]"
                   />
                   <div className="flex gap-3">
                     <button
@@ -176,7 +176,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
                       type="button"
                       onClick={() => setEditingId(null)}
                       disabled={isWorking}
-                      className="text-sm text-[#57534E] underline disabled:opacity-50"
+                      className="text-sm text-[#4B4742] underline disabled:opacity-50"
                     >
                       Cancel
                     </button>
@@ -194,7 +194,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
                         setEditingName(category.name);
                         setMessage("");
                       }}
-                      className="text-sm text-[#57534E] underline decoration-dotted underline-offset-4 hover:text-[#1C1917] disabled:opacity-50"
+                      className="text-sm text-[#4B4742] underline decoration-dotted underline-offset-4 hover:text-[#1C1917] disabled:opacity-50"
                     >
                       Rename
                     </button>
@@ -202,7 +202,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
                       type="button"
                       disabled={isWorking}
                       onClick={() => void deleteCategory(category)}
-                      className="text-sm text-[#57534E] underline decoration-dotted underline-offset-4 hover:text-red-600 disabled:opacity-50"
+                      className="text-sm text-[#4B4742] underline decoration-dotted underline-offset-4 hover:text-red-600 disabled:opacity-50"
                     >
                       Delete
                     </button>
@@ -214,7 +214,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
         </ul>
       )}
 
-      <InlineFeedback message={message} className="min-h-6 pt-3 text-[#57534E]" />
+      <InlineFeedback message={message} className="min-h-6 pt-3 text-[#4B4742]" />
     </section>
   );
 }

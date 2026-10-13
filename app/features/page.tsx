@@ -44,7 +44,7 @@ export default function FeaturesPage() {
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#1C1917] sm:text-4xl">
               Keep your recurring costs zipped up in one place.
             </h1>
-            <p className="mt-4 max-w-xl text-base leading-7 text-[#57534E]">
+            <p className="mt-4 max-w-xl text-base leading-7 text-[#4B4742]">
               Find likely repeats, see what renews next, and get a clearer picture of your monthly spend.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
@@ -74,7 +74,7 @@ export default function FeaturesPage() {
             <article key={feature.title} className="rounded-xl border border-[#e7ddd2] bg-white p-5">
               <p className="text-xs font-semibold tracking-wide text-[#9A3412]">{feature.label}</p>
               <h3 className="mt-2 font-semibold text-[#1C1917]">{feature.title}</h3>
-              <p className="mt-2 text-sm leading-6 text-[#57534E]">{feature.text}</p>
+              <p className="mt-2 text-sm leading-6 text-[#4B4742]">{feature.text}</p>
             </article>
           ))}
         </div>

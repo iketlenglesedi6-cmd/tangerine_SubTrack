@@ -18,7 +18,7 @@ export function EmptyState({
       className={`${compact ? "py-6" : "mt-4 rounded-2xl border border-dashed border-[#1C1917]/15 p-8 text-center"} ${className}`}
     >
       <p className="font-medium text-[#1C1917]">{title}</p>
-      {description && <p className="mt-2 text-sm text-[#57534E]">{description}</p>}
+      {description && <p className="mt-2 text-sm text-[#4B4742]">{description}</p>}
       {action && <div className="mt-4">{action}</div>}
     </div>
   );

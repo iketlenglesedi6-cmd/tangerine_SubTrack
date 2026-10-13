@@ -41,7 +41,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               userButtonAvatarBox: {
                 width: "2.25rem",
                 height: "2.25rem",
-                backgroundColor: "#c2410c",
+                backgroundColor: "#9A3412",
                 color: "#ffffff",
                 border: "2px solid #ffedd5",
               },
@@ -68,7 +68,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <nav aria-label="Main navigation" className="flex items-center gap-2 sm:gap-4">
               <Link
                 href="/pricing"
-                className="rounded-lg px-2 py-2 text-sm font-medium text-[#57534E] hover:text-[#1C1917] sm:px-3"
+                className="rounded-lg px-2 py-2 text-sm font-medium text-[#4B4742] hover:text-[#1C1917] sm:px-3"
               >
                 Pricing
               </Link>
@@ -92,7 +92,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
                 <div className="flex items-center gap-3 sm:gap-4">
                   <Link
                     href="/dashboard"
-                    className="text-sm font-medium text-[#57534E] hover:text-[#1C1917]"
+                    className="text-sm font-medium text-[#4B4742] hover:text-[#1C1917]"
                   >
                     Dashboard
                   </Link>

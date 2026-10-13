@@ -67,7 +67,7 @@ export function SubscriptionRowActions({
       <button
         onClick={() => currentStatus === "active" ? setConfirmation("cancel") : void toggleStatus()}
         disabled={isWorking}
-        className="text-[#57534E] underline decoration-dotted underline-offset-4 hover:text-[#1C1917] disabled:opacity-50"
+        className="text-[#4B4742] underline decoration-dotted underline-offset-4 hover:text-[#1C1917] disabled:opacity-50"
       >
         {currentStatus === "active" ? "Mark canceled" : "Reactivate tracking"}
       </button>
@@ -75,7 +75,7 @@ export function SubscriptionRowActions({
       <button
         onClick={() => setConfirmation("delete")}
         disabled={isWorking}
-        className="text-[#57534E] underline decoration-dotted underline-offset-4 hover:text-red-600 disabled:opacity-50"
+        className="text-[#4B4742] underline decoration-dotted underline-offset-4 hover:text-red-600 disabled:opacity-50"
       >
         Delete
       </button>
@@ -107,13 +107,13 @@ export function SubscriptionRowActions({
                 />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#c2410c]">Quick check</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#9A3412]">Quick check</p>
                 <h2 id="subscription-confirm-title" className="mt-1 text-xl font-semibold text-[#1C1917]">
                   {confirmation === "delete" ? "Remove this subscription?" : "Mark this as canceled?"}
                 </h2>
               </div>
             </div>
-            <p id="subscription-confirm-description" className="mt-4 text-sm leading-6 text-[#57534E]">
+            <p id="subscription-confirm-description" className="mt-4 text-sm leading-6 text-[#4B4742]">
               {confirmation === "delete"
                 ? `“${subscription.name}” will be removed from your SubTrack list. This won't cancel it with the provider.`
                 : `“${subscription.name}” will move to your canceled subscriptions. This only updates SubTrack; it doesn't contact the provider.`}

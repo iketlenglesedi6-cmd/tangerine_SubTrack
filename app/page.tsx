@@ -23,7 +23,7 @@ export default function Home() {
           forgotten subscription again
         </h1>
 
-        <p className="mt-5 max-w-md text-lg leading-relaxed text-[#57534E]">
+        <p className="mt-5 max-w-md text-lg leading-relaxed text-[#4B4742]">
           Add what you&apos;re paying for, see it all in one place, and know
           exactly when the next charge is coming.
         </p>
@@ -32,7 +32,7 @@ export default function Home() {
           <Show when="signed-out">
             <div className="flex items-center gap-3">
               <SignUpButton>
-                <button className="rounded-lg bg-[#C2410C] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#9A3412]">
+                <button className="rounded-lg bg-[#9A3412] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#7C2D12]">
                   Start tracking
                 </button>
               </SignUpButton>
@@ -47,7 +47,7 @@ export default function Home() {
           <Show when="signed-in">
             <Link
               href="/dashboard"
-              className="inline-block rounded-lg bg-[#C2410C] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#9A3412]"
+              className="inline-block rounded-lg bg-[#9A3412] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#7C2D12]"
             >
               Go to your dashboard
             </Link>
