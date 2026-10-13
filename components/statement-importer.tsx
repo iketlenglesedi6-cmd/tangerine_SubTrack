@@ -161,7 +161,7 @@ export function StatementImporter({
     <div className="space-y-6">
       <section className="rounded-2xl border border-[#1C1917]/10 bg-white p-5 sm:p-7">
         <SectionHeading title="Choose a bank statement" variant="card" />
-        <p className="mt-2 max-w-2xl text-sm leading-6 text-[#57534E]">
+        <p className="mt-2 max-w-2xl text-sm leading-6 text-[#4B4742]">
           Upload a CSV export with transaction dates, descriptions, and amounts. SubTrack looks for repeated charges
           on monthly or yearly cycles, then lets you review each one before saving it. Imported charges keep their
           original currency; the dashboard can convert the display totals. Many banks offer CSV or Excel downloads
@@ -177,7 +177,7 @@ export function StatementImporter({
           onChange={readFile}
           className="mt-2 block w-full max-w-xl rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-sm text-[#1C1917] file:mr-3 file:rounded-md file:border-0 file:bg-[#9A3412] file:px-3 file:py-2 file:text-sm file:font-medium file:text-white"
         />
-        <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-[#57534E]">
+        <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-[#4B4742]">
           {fileName ? <span>Loaded: {fileName}</span> : <span>Maximum file size: 2 MB.</span>}
           <a
             href="data:text/csv;charset=utf-8,date%2Cdescription%2Camount%0A"
@@ -205,7 +205,7 @@ export function StatementImporter({
             <div className="overflow-x-auto px-4 py-2">
               <table className="w-full min-w-[470px] border-collapse text-left text-xs">
                 <thead>
-                  <tr className="border-b border-[#1C1917]/10 text-[10px] uppercase tracking-wider text-[#57534E]">
+                  <tr className="border-b border-[#1C1917]/10 text-[10px] uppercase tracking-wider text-[#4B4742]">
                     <th className="py-2 pr-3 font-semibold">Date</th>
                     <th className="py-2 pr-3 font-semibold">Description</th>
                     <th className="py-2 pr-3 text-right font-semibold">Debit</th>
@@ -221,11 +221,11 @@ export function StatementImporter({
             </div>
           </div>
         </details>
-        <p className="mt-4 rounded-lg bg-[#FAFAF9] p-3 text-xs leading-5 text-[#57534E]">
+        <p className="mt-4 rounded-lg bg-[#FAFAF9] p-3 text-xs leading-5 text-[#4B4742]">
           Your statement is read in this browser and is never uploaded. Only the recurring charges you approve are
           sent to SubTrack. Don’t upload a statement you don’t want processed.
         </p>
-        <p className="mt-2 text-xs leading-5 text-[#57534E]">
+        <p className="mt-2 text-xs leading-5 text-[#4B4742]">
           The sample has fictional South African transactions through this month, masked references, and no real account details. Its debit column is positive, and its dates use day/month/year format.
         </p>
       </section>
@@ -262,7 +262,7 @@ export function StatementImporter({
           <div className="mt-7 flex flex-wrap items-center justify-between gap-3">
             <div>
             <SectionHeading title="Detected recurring charges" variant="card" />
-              <p className="mt-1 text-sm text-[#57534E]">
+              <p className="mt-1 text-sm text-[#4B4742]">
                 Found {candidates.length} possible {candidates.length === 1 ? "subscription" : "subscriptions"}. Currency codes are detected when available; otherwise the fallback is used.
               </p>
             </div>
@@ -299,10 +299,10 @@ export function StatementImporter({
                         <span className="truncate font-medium text-[#1C1917]">{candidate.name}</span>
                         <span className="font-semibold text-[#1C1917]">{formatCurrency(candidate.cost, candidate.currency)}</span>
                       </span>
-                      <span className="mt-1 block text-sm text-[#57534E]">
+                      <span className="mt-1 block text-sm text-[#4B4742]">
                         {candidate.billingCycle} · {candidate.transactionCount} charges · next expected {new Date(candidate.renewalDate).toLocaleDateString()}
                       </span>
-                      <span className="mt-1 block text-xs text-[#57534E]">
+                      <span className="mt-1 block text-xs text-[#4B4742]">
                         {isSaved ? "Imported" : isTracked ? "Already tracked" : `${candidate.categoryName} category`}
                       </span>
                     </span>

@@ -5,11 +5,11 @@ import { useState, type SyntheticEvent } from "react";
 
 const SubscriptionForm = dynamic(
   () => import("@/components/subscription-form").then((module) => module.SubscriptionForm),
-  { loading: () => <p className="mt-4 text-sm text-[#57534E]">Getting the form ready…</p> },
+  { loading: () => <p className="mt-4 text-sm text-[#4B4742]">Getting the form ready…</p> },
 );
 const CategoryManager = dynamic(
   () => import("@/components/category-manager").then((module) => module.CategoryManager),
-  { loading: () => <p className="mt-4 text-sm text-[#57534E]">Getting categories ready…</p> },
+  { loading: () => <p className="mt-4 text-sm text-[#4B4742]">Getting categories ready…</p> },
 );
 
 type Category = { id: string; name: string };

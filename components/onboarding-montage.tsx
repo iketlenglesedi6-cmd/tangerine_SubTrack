@@ -66,7 +66,7 @@ export function OnboardingMontage() {
           type="button"
           onClick={() => void finish()}
           disabled={isFinishing}
-          className="absolute right-5 top-5 z-10 rounded-full px-3 py-2 text-sm font-medium text-[#57534E] transition hover:bg-[#f4ece3] hover:text-[#1c1917] disabled:opacity-50"
+          className="absolute right-5 top-5 z-10 rounded-full px-3 py-2 text-sm font-medium text-[#4B4742] transition hover:bg-[#f4ece3] hover:text-[#1c1917] disabled:opacity-50"
         >
           Skip intro
         </button>
@@ -92,11 +92,11 @@ export function OnboardingMontage() {
               {slide.bubble}
             </span>
             <span className="onboarding-spark absolute right-[13%] top-[18%] text-2xl text-[#ea7530]" aria-hidden="true">✦</span>
-            <span className="onboarding-spark onboarding-spark-late absolute bottom-[19%] left-[12%] text-lg text-[#c2410c]" aria-hidden="true">✦</span>
+            <span className="onboarding-spark onboarding-spark-late absolute bottom-[19%] left-[12%] text-lg text-[#9A3412]" aria-hidden="true">✦</span>
           </div>
 
           <div className="text-center sm:text-left">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#c2410c]">{slide.eyebrow}</p>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#9A3412]">{slide.eyebrow}</p>
             <h1 id="onboarding-title" className="mt-3 text-3xl font-semibold leading-tight tracking-tight text-[#29211c] sm:text-4xl">{slide.title}</h1>
             <p id="onboarding-copy" className="mt-4 text-base leading-7 text-[#65584f]">{slide.copy}</p>
             <p className="mt-4 inline-flex rounded-full bg-[#fff0dc] px-3.5 py-2 text-sm font-medium text-[#8a3a18]">{slide.note}</p>
@@ -104,7 +104,7 @@ export function OnboardingMontage() {
             <div className="mt-7 flex flex-col items-center justify-between gap-4 sm:flex-row">
               <div className="flex items-center gap-2" aria-label={`Step ${step + 1} of ${slides.length}`}>
                 {slides.map((item, index) => (
-                  <span key={item.eyebrow} className={`h-2 rounded-full transition-all duration-300 ${index === step ? "w-7 bg-[#c2410c]" : "w-2 bg-[#e7cbb4]"}`} />
+                  <span key={item.eyebrow} className={`h-2 rounded-full transition-all duration-300 ${index === step ? "w-7 bg-[#9A3412]" : "w-2 bg-[#e7cbb4]"}`} />
                 ))}
               </div>
               {step < slides.length - 1 ? (

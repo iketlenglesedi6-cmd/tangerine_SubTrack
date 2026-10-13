@@ -139,7 +139,7 @@ export default async function DashboardPage() {
       {showOnboarding && <OnboardingGate />}
       <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <h1 className="text-sm font-medium text-[#57534E]">Monthly recurring spend</h1>
+          <h1 className="text-sm font-medium text-[#4B4742]">Monthly recurring spend</h1>
           {summary.monthlySpendByCurrency.length === 0 ? (
             <p className="mt-2 text-lg font-medium text-[#1C1917]">
               Add a subscription to see your totals.
@@ -149,20 +149,20 @@ export default async function DashboardPage() {
               {monthlySpendTotal !== null ? (
                 <p className="text-4xl font-semibold tracking-tight text-[#1C1917]">
                   {formatCurrency(monthlySpendTotal, displayCurrency)}
-                  <span className="ml-2 text-base font-normal text-[#57534E]">/ month</span>
+                  <span className="ml-2 text-base font-normal text-[#4B4742]">/ month</span>
                 </p>
               ) : summary.monthlySpendByCurrency.map((item) => (
                 <p key={item.currency} className="text-4xl font-semibold tracking-tight text-[#1C1917]">
                   {formatCurrency(item.monthlySpend, item.currency)}
-                  <span className="ml-2 text-base font-normal text-[#57534E]">/ month</span>
+                  <span className="ml-2 text-base font-normal text-[#4B4742]">/ month</span>
                 </p>
               ))}
             </div>
           )}
-          {summary.monthlySpendByCurrency.length > 0 && <p className="mt-2 text-xs text-[#57534E]">
+          {summary.monthlySpendByCurrency.length > 0 && <p className="mt-2 text-xs text-[#4B4742]">
             {monthlySpendTotal === null ? "Exchange rates are unavailable; totals remain separated by currency." : exchangeRates ? `Converted to ${displayCurrency} using ${exchangeRates.date} reference rates.` : `Amounts are already in ${displayCurrency}; no conversion was needed.`}
           </p>}
-          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-sm text-[#57534E]">
+          <div className="mt-4 flex flex-wrap gap-x-6 gap-y-1 text-sm text-[#4B4742]">
             <span>{summary.activeSubscriptionCount} active subscriptions</span>
             <span>{renewalsWithin30Days} renewing in the next 30 days</span>
           </div>
@@ -179,7 +179,7 @@ export default async function DashboardPage() {
         {/* Main content: the subscriptions list itself, no card wrapper */}
         <div>
           <SectionHeading title="Subscriptions" className="mb-4">
-              <span className="text-sm font-normal normal-case tracking-normal text-[#57534E]">
+              <span className="text-sm font-normal normal-case tracking-normal text-[#4B4742]">
                 {subscriptions.length} saved
               </span>
           </SectionHeading>
@@ -228,7 +228,7 @@ export default async function DashboardPage() {
                   <div key={`${item.currency}:${item.name}`}>
                     <div className="mb-1.5 flex items-center justify-between text-sm">
                       <span className="text-[#1C1917]">{item.name}</span>
-                      <span className="text-[#57534E]">
+                      <span className="text-[#4B4742]">
                         {formatCurrency(item.cost, item.currency)}
                       </span>
                     </div>

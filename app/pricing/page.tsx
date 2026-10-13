@@ -27,7 +27,7 @@ export default function PricingPage() {
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#1C1917] sm:text-4xl">
               The demo is on us.
             </h1>
-            <p className="mt-4 max-w-xl text-base leading-7 text-[#57534E]">
+            <p className="mt-4 max-w-xl text-base leading-7 text-[#4B4742]">
               Every SubTrack feature is free to try during this project demo. There are no paid plans or checkout.
             </p>
             <p className="mt-3 text-sm text-[#7C2D12]">
@@ -64,7 +64,7 @@ export default function PricingPage() {
         <ul className="mt-4 divide-y divide-[#1C1917]/10 border-t border-[#1C1917]/10">
           {includedFeatures.map((feature) => (
             <li key={feature} className="flex items-start gap-3 py-3 text-sm leading-6 text-[#1C1917]">
-              <span aria-hidden="true" className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#C2410C]" />
+              <span aria-hidden="true" className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#9A3412]" />
               {feature}
             </li>
           ))}
