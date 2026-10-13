@@ -51,7 +51,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             },
           }}
         >
-          <header className="flex items-center justify-between gap-3 border-b border-[#1C1917]/8 px-4 py-4 sm:px-6">
+          <header className="flex flex-col items-stretch gap-3 border-b border-[#1C1917]/8 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
             <Link href="/" className="flex items-center gap-2">
               <Image
                 src="/tangerine-icon.png"
@@ -65,7 +65,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               </span>
             </Link>
 
-            <nav aria-label="Main navigation" className="flex items-center gap-2 sm:gap-4">
+            <nav aria-label="Main navigation" className="flex min-w-0 items-center justify-between gap-2 sm:justify-start sm:gap-4">
               <Link
                 href="/pricing"
                 className="rounded-lg px-2 py-2 text-sm font-medium text-[#4B4742] hover:text-[#1C1917] sm:px-3"

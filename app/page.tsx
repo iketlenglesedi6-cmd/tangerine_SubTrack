@@ -30,7 +30,7 @@ export default function Home() {
 
         <div className="mt-10">
           <Show when="signed-out">
-            <div className="flex items-center gap-3">
+            <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
               <SignUpButton>
                 <button className="rounded-lg bg-[#9A3412] px-6 py-3 text-sm font-medium text-white transition-colors hover:bg-[#7C2D12]">
                   Start tracking
