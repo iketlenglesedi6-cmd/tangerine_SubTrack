@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 import { SubscriptionEditor, type DashboardSubscription } from "@/components/subscription-list";
 import { InlineFeedback } from "@/components/ui/inline-feedback";
 
@@ -97,7 +98,13 @@ export function SubscriptionRowActions({
           >
             <div className="flex items-center gap-4">
               <div className="flex h-20 w-20 shrink-0 items-center justify-center overflow-hidden rounded-full bg-[#ffedd5] p-2">
-                <img src="/tangerine-subtrack-logo.png" alt="Tangerine SubTrack mascot" className="h-full w-full object-contain" />
+                <Image
+                  src="/tangerine-subtrack-logo.png"
+                  alt="Tangerine SubTrack mascot"
+                  width={64}
+                  height={64}
+                  className="h-full w-full object-contain"
+                />
               </div>
               <div>
                 <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#c2410c]">Quick check</p>
