@@ -12,7 +12,7 @@ export default function Home() {
           alt=""
           width={628}
           height={434}
-          priority
+          fetchPriority="high"
           unoptimized
           className="mb-4 h-auto w-64 max-w-full sm:w-72"
         />

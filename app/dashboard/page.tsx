@@ -169,7 +169,7 @@ export default async function DashboardPage() {
         </div>
         <div className="flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center">
           <CurrencyPreferenceSelect currency={displayCurrency} />
-          <ActionLink href="/import" variant="primary" className="w-full justify-center sm:w-fit">
+          <ActionLink href="/import" prefetch={false} variant="primary" className="w-full justify-center sm:w-fit">
             Import a bank statement
           </ActionLink>
         </div>
@@ -194,6 +194,7 @@ export default async function DashboardPage() {
             <SectionHeading title="Upcoming renewals" variant="inverse" stackOnMobile>
               <Link
                 href="/renewals"
+                prefetch={false}
                 className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-lg bg-white px-3 py-2 text-xs font-semibold text-[#7C2D12] shadow-sm transition hover:bg-[#FFF1E6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
               >
                 <svg aria-hidden="true" viewBox="0 0 20 20" fill="none" className="h-4 w-4">

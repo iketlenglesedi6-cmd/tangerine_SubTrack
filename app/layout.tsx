@@ -2,13 +2,12 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import {
   ClerkProvider,
-  SignInButton,
-  SignUpButton,
+  SignOutButton,
   Show,
-  UserButton,
 } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
+import { AuthActions } from "@/components/auth-actions";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -36,29 +35,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         <ClerkProvider
           signUpFallbackRedirectUrl="/dashboard"
           signInFallbackRedirectUrl="/dashboard"
-          appearance={{
-            elements: {
-              userButtonAvatarBox: {
-                width: "2.25rem",
-                height: "2.25rem",
-                backgroundColor: "#9A3412",
-                color: "#ffffff",
-                border: "2px solid #ffedd5",
-              },
-              userButtonPopoverCard: {
-                borderRadius: "0.75rem",
-              },
-            },
-          }}
         >
           <header className="flex flex-col items-stretch gap-3 border-b border-[#1C1917]/8 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-            <Link href="/" className="flex items-center gap-2">
+            <Link href="/" prefetch={false} className="flex items-center gap-2">
               <Image
                 src="/tangerine-icon.png"
                 alt=""
                 width={28}
                 height={28}
-                priority
+                fetchPriority="high"
               />
               <span className="text-sm font-semibold tracking-tight text-[#1C1917]">
                 SubTrack
@@ -68,35 +53,30 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <nav aria-label="Main navigation" className="flex min-w-0 flex-wrap items-center justify-between gap-x-2 gap-y-1 sm:flex-nowrap sm:justify-start sm:gap-4">
               <Link
                 href="/pricing"
+                prefetch={false}
                 className="rounded-lg px-2 py-2 text-sm font-medium text-[#4B4742] hover:text-[#1C1917] sm:px-3"
               >
                 Pricing
               </Link>
 
               <Show when="signed-out">
-                <div className="flex flex-wrap items-center gap-1 sm:flex-nowrap sm:gap-2">
-                  <SignInButton>
-                    <button className="rounded-lg px-2 py-2 text-sm font-medium text-[#1C1917] transition-colors hover:bg-[#1C1917]/5 sm:px-4">
-                      Sign in
-                    </button>
-                  </SignInButton>
-                  <SignUpButton>
-                    <button className="rounded-lg bg-[#9A3412] px-3 py-2 text-sm font-medium text-white transition-colors hover:bg-[#7C2D12] sm:px-4">
-                      Start tracking
-                    </button>
-                  </SignUpButton>
-                </div>
+                <AuthActions />
               </Show>
 
               <Show when="signed-in">
                 <div className="flex items-center gap-3 sm:gap-4">
                   <Link
                     href="/dashboard"
+                    prefetch={false}
                     className="text-sm font-medium text-[#4B4742] hover:text-[#1C1917]"
                   >
                     Dashboard
                   </Link>
-                  <UserButton />
+                  <SignOutButton redirectUrl="/">
+                    <button className="rounded-lg border border-[#1C1917]/15 bg-white px-3 py-2 text-sm font-medium text-[#1C1917] transition-colors hover:bg-[#FAFAF9]">
+                      Sign out
+                    </button>
+                  </SignOutButton>
                 </div>
               </Show>
             </nav>

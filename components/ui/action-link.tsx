@@ -14,14 +14,16 @@ export function ActionLink({
   children,
   variant = "text",
   className = "",
+  prefetch,
 }: {
   href: ComponentProps<typeof Link>["href"];
   children: ReactNode;
   variant?: keyof typeof variants;
   className?: string;
+  prefetch?: ComponentProps<typeof Link>["prefetch"];
 }) {
   return (
-    <Link href={href} className={`${variants[variant]} ${className}`}>
+    <Link href={href} prefetch={prefetch} className={`${variants[variant]} ${className}`}>
       {children}
     </Link>
   );
