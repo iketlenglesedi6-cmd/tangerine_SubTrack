@@ -164,14 +164,15 @@ After signing in, add subscriptions one at a time or import a CSV and review lik
 
 ## Lighthouse scores
 
-Lighthouse 13.4.1 scores for the production app, captured October 7, 2026, using Chromium 154. Both reports cover a single initial page load. The desktop run used custom throttling; the mobile run emulated a Moto G Power on slow 4G.
+Lighthouse 13.4.1 scores for the production app. The October 7, 2026 reports cover a single initial page load using Chromium 154; the desktop run used custom throttling and the mobile run emulated a Moto G Power on slow 4G. An additional `/dashboard` report was captured October 14, 2026.
 
 | Run | Performance | Accessibility | Best Practices | SEO | FCP | LCP | TBT | CLS | Speed Index |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
 | Desktop | 97 | 100 | 100 | 100 | 0.3 s | 0.8 s | 110 ms | 0.002 | 1.4 s |
 | Mobile (Moto G Power, slow 4G) | 76 | 100 | 100 | 100 | 2.1 s | 2.7 s | 760 ms | 0.001 | 2.6 s |
+| Dashboard (412 × 823 viewport; desktop form factor) | 100 | 100 | 100 | 100 | 0.3 s | 0.7 s | 0 ms | 0.001 | 0.9 s |
 
-Accessibility, Best Practices, and SEO tied as the strongest categories at 100; Performance was weakest at 76 on mobile. A responsive dashboard update was deployed on October 14, 2026, after these runs, so the scores above are a pre-update baseline; no post-update Lighthouse run has been recorded. Lighthouse scores are estimates and can shift with the browser, device, cache, network conditions, and page activity, so compare runs using the same page and settings. The full reports also flag unused JavaScript and long main-thread tasks for follow-up. Lighthouse's automated accessibility score does not replace manual accessibility checks.
+Accessibility, Best Practices, and SEO tied as the strongest categories at 100 in the October 7 mobile run; Performance was weakest at 76. The October 14 dashboard report scored 100 in all four categories, with FCP 0.3 s, LCP 0.7 s, TBT 0 ms, CLS 0.001, and Speed Index 0.9 s. Its configuration identifies the form factor as desktop and screen emulation as disabled, despite the 412 × 823 screen dimensions, so it is supplemental and should not replace the Moto G Power mobile result for the rubric. Lighthouse scores are estimates and can shift with the browser, device, cache, network conditions, and page activity, so compare runs using the same page and settings. The reports flag unused JavaScript and back/forward-cache restoration for follow-up. Lighthouse's automated accessibility score does not replace manual accessibility checks.
 
 Chrome DevTools CSS Overview was checked on October 13, 2026, across the landing, features, pricing, dashboard, renewal schedule, import, and category views. The checked pages reported **0 contrast issues**. Earlier WAVE scans also reported 0 contrast errors, though they listed structural or labeling alerts before the latest accessibility fixes: the logo images are now decorative, the dashboard has a first-level heading, and the display-currency label is associated with its control. CSS Overview listed unused `vertical-align: middle` declarations on images and SVGs; these come from Tailwind's reset and have no visual effect on block elements. Automated scans are useful evidence for the pages and states checked, but do not establish full WCAG AA or AAA conformance, so review remaining WAVE alerts manually.
 
