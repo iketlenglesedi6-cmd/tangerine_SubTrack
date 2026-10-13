@@ -40,7 +40,7 @@ export default function FeaturesPage() {
       <section className="relative overflow-hidden rounded-2xl border border-[#f1d2bd] bg-[#fff1e6] px-6 py-8 sm:px-9 sm:py-10">
         <div className="grid items-center gap-6 sm:grid-cols-[1fr_auto]">
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold text-[#9A3412]">A little less subscription surprise</p>
+            <p className="text-sm font-semibold text-[#7C2D12]">A little less subscription surprise</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#1C1917] sm:text-4xl">
               Keep your recurring costs zipped up in one place.
             </h1>
@@ -72,7 +72,7 @@ export default function FeaturesPage() {
         <div className="mt-4 grid gap-4 md:grid-cols-3">
           {featureGroups.map((feature) => (
             <article key={feature.title} className="rounded-xl border border-[#e7ddd2] bg-white p-5">
-              <p className="text-xs font-semibold tracking-wide text-[#9A3412]">{feature.label}</p>
+              <p className="text-xs font-semibold tracking-wide text-[#7C2D12]">{feature.label}</p>
               <h3 className="mt-2 font-semibold text-[#1C1917]">{feature.title}</h3>
               <p className="mt-2 text-sm leading-6 text-[#4B4742]">{feature.text}</p>
             </article>

@@ -60,7 +60,7 @@ export function OnboardingMontage() {
         className="onboarding-card relative my-auto w-full max-w-2xl overflow-hidden rounded-[2rem] border border-white/70 bg-[#fffaf4] shadow-[0_30px_100px_rgba(57,31,16,0.28)]"
       >
         <div className="absolute inset-x-0 top-0 h-1.5 bg-[#ffedd5]">
-          <div className="h-full rounded-r-full bg-[#ea7530] transition-[width] duration-500" style={{ width: `${((step + 1) / slides.length) * 100}%` }} />
+          <div className="h-full rounded-r-full bg-[#9A3412] transition-[width] duration-500" style={{ width: `${((step + 1) / slides.length) * 100}%` }} />
         </div>
         <button
           type="button"
@@ -88,18 +88,18 @@ export function OnboardingMontage() {
               priority
               className="onboarding-mascot relative z-10 h-[78%] w-[78%] object-contain drop-shadow-[0_16px_14px_rgba(154,52,18,0.16)]"
             />
-            <span className="onboarding-speech absolute -right-1 top-3 z-20 max-w-[145px] rounded-2xl rounded-bl-sm border border-[#f6c49d] bg-[#fffaf4] px-3 py-2 text-center text-xs font-semibold text-[#8a3a18] shadow-md sm:-right-3 sm:top-5">
+            <span className="onboarding-speech absolute -right-1 top-3 z-20 max-w-[145px] rounded-2xl rounded-bl-sm border border-[#f6c49d] bg-[#fffaf4] px-3 py-2 text-center text-xs font-semibold text-[#7C2D12] shadow-md sm:-right-3 sm:top-5">
               {slide.bubble}
             </span>
-            <span className="onboarding-spark absolute right-[13%] top-[18%] text-2xl text-[#ea7530]" aria-hidden="true">✦</span>
-            <span className="onboarding-spark onboarding-spark-late absolute bottom-[19%] left-[12%] text-lg text-[#9A3412]" aria-hidden="true">✦</span>
+            <span className="onboarding-spark absolute right-[13%] top-[18%] text-2xl text-[#6B260F]" aria-hidden="true">✦</span>
+            <span className="onboarding-spark onboarding-spark-late absolute bottom-[19%] left-[12%] text-lg text-[#7C2D12]" aria-hidden="true">✦</span>
           </div>
 
           <div className="text-center sm:text-left">
-            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#9A3412]">{slide.eyebrow}</p>
+            <p className="text-xs font-bold uppercase tracking-[0.18em] text-[#7C2D12]">{slide.eyebrow}</p>
             <h1 id="onboarding-title" className="mt-3 text-3xl font-semibold leading-tight tracking-tight text-[#29211c] sm:text-4xl">{slide.title}</h1>
-            <p id="onboarding-copy" className="mt-4 text-base leading-7 text-[#65584f]">{slide.copy}</p>
-            <p className="mt-4 inline-flex rounded-full bg-[#fff0dc] px-3.5 py-2 text-sm font-medium text-[#8a3a18]">{slide.note}</p>
+            <p id="onboarding-copy" className="mt-4 text-base leading-7 text-[#4B4742]">{slide.copy}</p>
+            <p className="mt-4 inline-flex rounded-full bg-[#fff0dc] px-3.5 py-2 text-sm font-medium text-[#7C2D12]">{slide.note}</p>
 
             <div className="mt-7 flex flex-col items-center justify-between gap-4 sm:flex-row">
               <div className="flex items-center gap-2" aria-label={`Step ${step + 1} of ${slides.length}`}>
@@ -117,7 +117,7 @@ export function OnboardingMontage() {
                 </button>
               )}
             </div>
-            {error && <p role="alert" className="mt-3 text-sm text-[#9a3412]">{error}</p>}
+            {error && <p role="alert" className="mt-3 text-sm text-[#7C2D12]">{error}</p>}
           </div>
         </div>
       </section>

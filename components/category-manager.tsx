@@ -202,7 +202,7 @@ export function CategoryManager({ categories: initialCategories }: { categories:
                       type="button"
                       disabled={isWorking}
                       onClick={() => void deleteCategory(category)}
-                      className="text-sm text-[#4B4742] underline decoration-dotted underline-offset-4 hover:text-red-600 disabled:opacity-50"
+                      className="text-sm text-[#4B4742] underline decoration-dotted underline-offset-4 hover:text-[#6B260F] disabled:opacity-50"
                     >
                       Delete
                     </button>

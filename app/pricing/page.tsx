@@ -23,7 +23,7 @@ export default function PricingPage() {
       <section className="relative overflow-hidden rounded-2xl border border-[#f1d2bd] bg-[#fff1e6] px-6 py-8 sm:px-9 sm:py-10">
         <div className="grid items-center gap-5 sm:grid-cols-[1fr_auto]">
           <div className="max-w-2xl">
-            <p className="text-sm font-semibold text-[#9A3412]">Pricing</p>
+            <p className="text-sm font-semibold text-[#7C2D12]">Pricing</p>
             <h1 className="mt-2 text-3xl font-semibold tracking-tight text-[#1C1917] sm:text-4xl">
               The demo is on us.
             </h1>

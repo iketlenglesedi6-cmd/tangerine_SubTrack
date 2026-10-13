@@ -75,7 +75,7 @@ export function SubscriptionRowActions({
       <button
         onClick={() => setConfirmation("delete")}
         disabled={isWorking}
-        className="text-[#4B4742] underline decoration-dotted underline-offset-4 hover:text-red-600 disabled:opacity-50"
+        className="text-[#4B4742] underline decoration-dotted underline-offset-4 hover:text-[#6B260F] disabled:opacity-50"
       >
         Delete
       </button>
@@ -107,7 +107,7 @@ export function SubscriptionRowActions({
                 />
               </div>
               <div>
-                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#9A3412]">Quick check</p>
+                <p className="text-xs font-semibold uppercase tracking-[0.14em] text-[#7C2D12]">Quick check</p>
                 <h2 id="subscription-confirm-title" className="mt-1 text-xl font-semibold text-[#1C1917]">
                   {confirmation === "delete" ? "Remove this subscription?" : "Mark this as canceled?"}
                 </h2>

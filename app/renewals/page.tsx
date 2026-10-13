@@ -117,7 +117,7 @@ export default async function RenewalsPage() {
                   </p>
                 </div>
                 <div className="flex items-center justify-between gap-4 sm:justify-end">
-                  <span className="text-sm font-medium text-[#9A3412]">{renewalLabel(renewal.daysUntil)}</span>
+                  <span className="text-sm font-medium text-[#7C2D12]">{renewalLabel(renewal.daysUntil)}</span>
                   <span className="text-right">
                     <span className="block font-semibold text-[#1C1917]">{displayAmount(renewal.cost, renewal.currency, displayCurrency, exchangeRates)}</span>
                     {renewal.currency !== displayCurrency && <span className="block text-xs text-[#4B4742]">Original: {formatCurrency(renewal.cost, renewal.currency)}</span>}
