@@ -60,24 +60,24 @@ Renewal dates must be today or later. The date input and the API both check this
 
 ## Authentication and trying the app
 
-The app uses **Clerk** for authentication (not Auth.js v5). `proxy.ts` installs Clerk middleware. Protected pages and API handlers use Clerk's server-side `auth()` helper, and database queries are scoped to the current user's Clerk ID. Signing up or signing in returns the user to the dashboard. The Clerk account menu includes sign-out.
+The app uses **Clerk** for authentication (not Auth.js v5). `proxy.ts` installs Clerk middleware. Protected pages and API handlers use Clerk's server-side `auth()` helper, and database queries are scoped to the current user's Clerk ID. Signing up or signing in returns the user to the dashboard; use **Sign out** in the site navigation when finished.
 
 ### Grader walkthrough
 
-Follow these steps with a **new account** so the first-time onboarding is included in the demo. Use an email address you can access to complete Clerk verification.
+An optional grader account is provided in the Canvas submission for graders who prefer not to use their own email. Open the live app and choose **Sign in** to use those credentials. Alternatively, choose **Start tracking** to create a new account with an email address you can access and complete Clerk verification if prompted.
 
-1. Open the [live app](https://tangerine-sub-track.vercel.app) and choose **Start tracking**. Create a new Clerk account and complete email verification if prompted. Do not sign in to an account that has already completed onboarding.
-2. On the dashboard, go through the three onboarding slides with **Next little tip**, then choose **Let's go to the dashboard**. The intro can also be dismissed with **Skip intro**.
-3. From the dashboard, choose **Import a bank statement**. On the import page, click **Download sample bank CSV**. Save the downloaded `sample-bank-statement.csv` file somewhere you can find it.
-4. On that same page, use the **CSV statement** file picker to select the downloaded file. SubTrack reads the file in your browser; it does not upload the original statement.
-5. Review the **Match your statement columns** controls. For the supplied sample, use **Transaction Date** for the date, **Description** for the description, and **Debit** for the amount. Leave the currency column unset, use **ZAR** as the fallback currency, choose **Expenses are positive amounts**, and choose **Day / month / year** for the date format. The app may fill in some of these choices automatically.
-6. Review the recurring-charge suggestions. Select the suggestions you want to track, or choose **Select all new**, then click **Import N selected**. Wait for the import confirmation.
-7. Return to the dashboard. Review monthly spend, category totals, upcoming renewals, and the imported subscriptions. Try searching, filtering, changing the display currency, and exporting the list as CSV.
-8. To demonstrate manual creation and subscription updates, expand **Add a subscription**. Enter a distinct name such as **Demo service**, a price and currency, choose a billing cycle and category, set a renewal date today or later, and click **Save subscription**. Use **Edit** on a row to change and save a value. Use **Mark canceled** and confirm; this changes the SubTrack record only and does not contact the provider. To demonstrate deletion, choose **Delete** on a test subscription and confirm **Yes, remove it**; this removes the record from SubTrack only.
-9. Choose **View schedule** to review active upcoming renewals. On the dashboard, expand **Manage categories** to add a category, rename it, and delete it while it has no linked subscriptions.
-10. Use the Clerk account menu to sign out when finished.
+The **Pricing** tab is also available to explore. It explains that all features are free during the project demo and there are no paid plans or checkout; the **Features** page gives a quick overview of what SubTrack includes.
 
-The intro is shown until an account completes or skips it; completion is stored in that user's Clerk public metadata. An existing Canvas demo account can be used to test the app, but may not show onboarding. For repeat onboarding tests, use a separate fresh account or, from the Clerk Dashboard, remove `subtrackOnboardingComplete` from the test user's public metadata. The deployed course demo uses Clerk development keys and displays Clerk's development-instance warning. Development and production Clerk instances have separate user lists, so any fallback demo credentials shared through Canvas must belong to the instance configured for the live deployment. For wider public use, configure a Clerk production instance and its production keys.
+1. Open the [live app](https://tangerine-sub-track.vercel.app) and choose **Sign in**. Enter the grader credentials from Canvas. If using your own new account instead, choose **Start tracking** and finish sign-up.
+2. If the account has not completed onboarding, go through the three slides with **Next little tip**, then choose **Let's go to the dashboard** (or **Skip intro**). The intro is shown only once per account.
+3. On the dashboard, review the spend summary, category totals, renewals, and empty state if the account has no saved items. Expand **Add a subscription**, create a sample entry such as **Demo service**, and save it with a renewal date today or later. Search/filter the list, change the display currency, and export the list as CSV.
+4. Use **Edit** on the sample subscription and save a change. Try **Mark canceled** and confirm, then reactivate it if you want to see both status states. To demonstrate delete, choose **Delete** and confirm **Yes, remove it**; these actions change SubTrack data only and never contact the provider.
+5. Expand **Manage categories**. Add a category, rename it, and delete it while it has no linked subscriptions. This demonstrates category create, update, and delete; existing categories can also be reviewed here.
+6. Choose **Import a bank statement**, then **Download sample bank CSV** and select the downloaded file using the **CSV statement** picker. The file is read in the browser and the original is not uploaded or stored.
+7. Review **Match your statement columns**. For the sample, use **Transaction Date** for date, **Description** for description, and **Debit** for amount. Leave currency unset, use **ZAR** as fallback, choose **Expenses are positive amounts**, and choose **Day / month / year**. Review the recurring-charge suggestions, select the ones to save (or **Select all new**), and click **Import N selected**.
+8. Return to the dashboard to see imported entries reflected in the summaries and list. Choose **View schedule** to inspect upcoming renewals. Use **Sign out** in the site navigation when finished.
+
+The intro's completion state is stored in the user's Clerk public metadata, so a grader account that has already completed or skipped it will not show it again. The deployed course demo uses Clerk development keys and displays Clerk's development-instance warning. Development and production Clerk instances have separate user lists, so the Canvas credentials must belong to the instance configured for the live deployment. For wider public use, configure a Clerk production instance and its production keys.
 
 ## API routes
 
