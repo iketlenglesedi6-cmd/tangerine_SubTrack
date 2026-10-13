@@ -135,10 +135,10 @@ export default async function DashboardPage() {
   }).length;
 
   return (
-    <PageShell className="max-w-5xl px-6 py-12">
+    <PageShell className="max-w-5xl px-4 py-8 sm:px-6 sm:py-12">
       {showOnboarding && <OnboardingGate />}
-      <div className="mb-10 flex flex-col gap-5 sm:flex-row sm:items-start sm:justify-between">
-        <div>
+      <div className="mb-8 flex flex-col gap-5 sm:mb-10 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-sm font-medium text-[#4B4742]">Monthly recurring spend</h1>
           {summary.monthlySpendByCurrency.length === 0 ? (
             <p className="mt-2 text-lg font-medium text-[#1C1917]">
@@ -167,9 +167,9 @@ export default async function DashboardPage() {
             <span>{renewalsWithin30Days} renewing in the next 30 days</span>
           </div>
         </div>
-        <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-col items-start gap-3 sm:flex-row sm:flex-wrap sm:items-center">
           <CurrencyPreferenceSelect currency={displayCurrency} />
-          <ActionLink href="/import" variant="primary">
+          <ActionLink href="/import" variant="primary" className="w-full justify-center sm:w-fit">
             Import a bank statement
           </ActionLink>
         </div>
@@ -177,7 +177,7 @@ export default async function DashboardPage() {
 
       <div className="grid gap-8 lg:grid-cols-[1.6fr_1fr]">
         {/* Main content: the subscriptions list itself, no card wrapper */}
-        <div>
+        <div className="order-2 min-w-0 lg:order-1">
           <SectionHeading title="Subscriptions" className="mb-4">
               <span className="text-sm font-normal normal-case tracking-normal text-[#4B4742]">
                 {subscriptions.length} saved
@@ -189,9 +189,9 @@ export default async function DashboardPage() {
         </div>
 
         {/* Sidebar: filled background instead of another white bordered card */}
-        <div className="space-y-8">
-          <div className="rounded-xl bg-[#1C1917] p-5 text-white">
-            <SectionHeading title="Upcoming renewals" variant="inverse">
+        <div className="order-1 min-w-0 space-y-8 lg:order-2">
+          <div className="rounded-xl bg-[#1C1917] p-4 text-white sm:p-5">
+            <SectionHeading title="Upcoming renewals" variant="inverse" stackOnMobile>
               <Link
                 href="/renewals"
                 className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-lg bg-white px-3 py-2 text-xs font-semibold text-[#7C2D12] shadow-sm transition hover:bg-[#FFF1E6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
@@ -226,9 +226,9 @@ export default async function DashboardPage() {
               <div className="mt-4 space-y-3">
                 {categoryBreakdown.map((item) => (
                   <div key={`${item.currency}:${item.name}`}>
-                    <div className="mb-1.5 flex items-center justify-between text-sm">
-                      <span className="text-[#1C1917]">{item.name}</span>
-                      <span className="text-[#4B4742]">
+                    <div className="mb-1.5 flex min-w-0 items-start justify-between gap-3 text-sm">
+                      <span className="min-w-0 flex-1 break-words text-[#1C1917]">{item.name}</span>
+                      <span className="shrink-0 text-[#4B4742]">
                         {formatCurrency(item.cost, item.currency)}
                       </span>
                     </div>
